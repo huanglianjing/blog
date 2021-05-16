@@ -369,7 +369,7 @@ p {margin-left: 20px}
 
 
 
-# 4. Reference
+# 4. 参考
 
 1. [W3School HTML 教程](https://www.w3school.com.cn/html/index.asp)
 
