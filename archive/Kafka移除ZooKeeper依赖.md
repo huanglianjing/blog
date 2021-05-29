@@ -10,11 +10,15 @@
 
 但是目前据官方声称有些功能还不是太完善，建议先不要用于生产环境。
 
+
+
 # 2. 依赖ZooKeeper的Kafka
 
 Kafka体系架构包含若干Producer、若干Broker、若干Consumer，以及一个ZooKeeper集群。Kafka通过ZooKeeper管理集群broker和消费者的元数据，以及用于进行控制器选举。
 
 ![kafka_architecture](image/kafka_architecture.png)
+
+
 
 # 3. Kafka在ZooKeeper中的数据
 
@@ -66,11 +70,15 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
 
 节点路径为/consumers/[group_id]/offsets/[topic]/[broker_id-partition_id]，节点内容就是Offset值。
 
-# 4. 去掉ZooKeeper的原因
+
+
+# 4. 为什么要去掉ZooKeeper
 
 1. 在之前的版本中，Kafka依赖于ZooKeeper，需要管理部署两个不同的系统，让运维复杂度翻倍，还让Kafka变得沉重，进而限制了Kafka在轻量环境下的应用。去掉ZooKeeper使得Kafka的部署更简单，更轻量级。
 2. ZooKeeper的分区特性限制Kafka的承载能力。在分区数量多的时候，控制器节点重新选举、分区首领切换需要进行很多的ZooKeeper操作，ZooKeeper存储的元数据数据量也更多，可能导致监听的延时增长或丢失，故障恢复耗时也更长。
 3. Raft协议比ZooKeeper的ZAB协议更易懂，更高效，能提高控制器选举的速度和分区首领选举的速度。
+
+
 
 # 5. 去掉ZooKeeper的Kafka
 
@@ -80,19 +88,94 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
 
 左图所示为目前的结构，有着3个ZooKeeper节点和4个Kafka broker节点，其中橙色的为broker节点中的控制器，控制器会向其他broker节点推送消息。
 
-右图所示为去掉ZooKeeper后的结构，用控制器节点代替了ZooKeeper节点，还有普通的broker节点。控制器节点为元数据分区选举出一个橙色的leader，也称为活动控制器（active controller），broker节点从leader拉取元数据。控制器进程与broker进程逻辑上分开，但是物理上不必分开，可以部署在同样的节点上。
+右图所示为去掉ZooKeeper后的结构，用控制器节点代替了ZooKeeper节点，还有普通的broker节点。控制器节点为元数据分区选举出一个橙色的leader，也称为活动控制器（active controller），其他控制器节点为follower节点。普通节点从leader拉取元数据。控制器进程与broker进程逻辑上分开，但是物理上不必分开，可以部署在同样的节点上。
 
-控制器节点们使用Raft quorum来管理元数据日志，元数据日志包含集群元数据的每次更改，之前存在ZooKeeper的主题、分区、配置等信息都存在这个日志中。
+控制器节点们使用Raft quorum来管理元数据日志，元数据日志包含集群元数据的每次更改，之前存在ZooKeeper的主题、分区、配置等信息都存在这个日志中。控制器节点中leader节点（上方右图的橙色节点）处理所有broker节点的请求，而其他follower节点（上方右图的蓝色节点节点）则复制数据，以在leader节点故障时转移状态为leader。Raft需要超过半数节点运行才能继续运行，所以三个节点的控制器允许一个节点故障，五个节点的控制器允许两个节点的故障。
 
-控制器节点中leader节点处理所有broker节点的请求，而其他follower节点则复制数据，以在leader节点故障时转移状态为leader。Raft需要超过半数节点运行才能继续运行，所以三个节点的控制器允许一个节点故障，五个节点的控制器允许两个节点的故障。
-
-元数据的更新也从通过向ZooKeeper注册监听的方式修改为broker节点主动从活动控制器拉取的方式。
+元数据的更新也从通过向ZooKeeper注册监听的方式修改为普通节点主动从活动控制器拉取的方式。
 
 ## 5.2 配置
 
+1. 为Kafka集群生成一个集群ID
 
+   ```bash
+   $ ./bin/kafka-storage.sh random-uuid
+   xtzWWN4bTjitpL3kfd9s5g
+   ```
 
-## 5.3 Raft算法
+2. 用生成的ID格式化存储目录，对于单节点在该节点运行，对多节点则在每一个节点运行
+
+   ```bash
+   $ ./bin/kafka-storage.sh format -t <uuid> -c ./config/kraft/server.properties
+   Formatting /tmp/kraft-combined-logs
+   ```
+
+3. 在每个节点上启动Kafka，然后Kafka就启动起来了，过程中没有用到ZooKeeper
+
+   ```bash
+   $ ./bin/kafka-server-start.sh ./config/kraft/server.properties
+   ```
+
+4. 每个Kafka broker需要在配置文件中配置一个process.roles，他的值可能是如下几个：
+
+   - broker，该节点设置为KRaft模式的一个普通节点
+   - controller，该节点设置为KRaft模式的控制器节点
+   - broker,controller，该节点设置为KRaft模式的既是控制器节点也是普通节点，上面说了，控制器节点和普通节点在逻辑上不同，但是是可以部署在同一个节点上的
+   - 未设置，该节点设置为ZooKeeper模式
+
+5. 每个控制器节点需要配置节点id，即node.id，例如集群中配置3个控制器节点，节点id可以设置为0,1,2
+
+   ```
+   node.id=0
+   ```
+
+6. 每个控制器节点和普通节点必须配置监听地址
+
+   ```
+   # 普通节点
+   listeners=PLAINTEXT://localhost:9092
+   # 控制器节点
+   listeners=PLAINTEXT://:9093
+   # 普通节点&控制器节点
+   listeners=PLAINTEXT://:9092,CONTROLLER://:9093
+   ```
+
+7. 每个控制器节点和普通节点必须配置Quorum Voters，也就是controller.quorum.voters
+
+   ```
+   controller.quorum.voters=id1@host1:port1,id2@host2:port2,id3@host3:port3
+   ```
+
+8. 元数据日志查看的两种方式
+
+   ```bash
+   # kafka-dump-log
+   $ ./bin/kafka-dump-log.sh  --cluster-metadata-decoder --skip-record-metadata --files /tmp/kraft-combined-logs/\@metadata-0/*.log
+   
+   # Metadata Shell
+   $ ./bin/kafka-metadata-shell.sh  --snapshot /tmp/kraft-combined-logs/\@metadata-0/00000000000000000000.log
+   >> ls /
+   brokers  local  metadataQuorum  topicIds  topics
+   >> ls /topics
+   foo
+   >> cat /topics/foo/0/data
+   {
+     "partitionId" : 0,
+     "topicId" : "5zoAlv-xEh9xRANKXt1Lbg",
+     "replicas" : [ 1 ],
+     "isr" : [ 1 ],
+     "removingReplicas" : null,
+     "addingReplicas" : null,
+     "leader" : 1,
+     "leaderEpoch" : 0,
+     "partitionEpoch" : 0
+   }
+   >> exit
+   ```
+
+## 5.3 性能对比
+
+## 5.4 Raft算法
 
 
 
@@ -101,6 +184,7 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
 - [《从Paxos到Zookeeper》](https://book.douban.com/subject/26292004/)
 - [《Kafka权威指南》](https://book.douban.com/subject/27665114/)
 - [KIP-500: Replace ZooKeeper with a Self-Managed Metadata Quorum](https://cwiki.apache.org/confluence/display/KAFKA/KIP-500%3A+Replace+ZooKeeper+with+a+Self-Managed+Metadata+Quorum)
+- [kafka/README.md at trunk · apache/kafka](https://github.com/apache/kafka/blob/trunk/config/kraft/README.md)
 - [帅呆了！Kafka移除了Zookeeper！](https://blog.csdn.net/lycyingO/article/details/116246371)
 - [深度解读：Kafka 放弃 ZooKeeper，消息系统兴起二次革命](https://www.infoq.cn/article/PHF3gFjUTDhWmctg6kXe)
 
