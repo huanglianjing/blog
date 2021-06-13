@@ -98,8 +98,6 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
 
 元数据的更新也从通过向ZooKeeper注册监听的方式修改为普通节点主动从活动控制器拉取的方式。
 
-驱动架构
-
 ![kafka_quorum_controller](image/kafka_quorum_controller.png)
 
 ## 5.2 启动方式
@@ -192,7 +190,11 @@ http://thesecretlivesofdata.com/raft/
 
 ## 5.5 性能对比
 
+quorum控制器的引入极大降低了多分区情形下关闭与重启的耗时，从而提高了分区的数量上限。
 
+以下为Kafka在新旧的架构中拥有200万分区时关闭和启动恢复的速度，可以看出在新的架构下时间是大大缩短的。
+
+![kafka_shutdown_2m_partitions_time](image/kafka_shutdown_2m_partitions_time.png)
 
 
 
