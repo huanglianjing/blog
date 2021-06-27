@@ -135,20 +135,20 @@ $ systemctl stop kafka
 
 ```
 |-- bin                           // Kafka和ZooKeeper的脚本工具
-    |-- kafka-console-consumer.sh
-    |-- kafka-console-producer.sh
-    |-- kafka-server-start.sh
-    |-- kafka-server-stop.sh
-    |-- kafka-topics.sh
-    |-- windows                   // windows下的bat脚本
-    |-- zookeeper-server-start.sh
-    |-- zookeeper-server-stop.sh
-    `-- ...
+|   |-- kafka-console-consumer.sh
+|   |-- kafka-console-producer.sh
+|   |-- kafka-server-start.sh
+|   |-- kafka-server-stop.sh
+|   |-- kafka-topics.sh
+|   |-- windows                   // windows下的bat脚本
+|   |-- zookeeper-server-start.sh
+|   |-- zookeeper-server-stop.sh
+|   `-- ...
 |-- config                        // Kafka和ZooKeeper的配置文件
-    |-- kraft                     // Kafka2.8开始移除ZooKeeper依赖的新启动配置，本文暂不介绍
-    |-- server.properties
-    |-- zookeeper.properties
-    `-- ...
+|   |-- kraft                     // Kafka2.8开始移除ZooKeeper依赖的新启动配置，本文暂不介绍
+|   |-- server.properties
+|   |-- zookeeper.properties
+|   `-- ...
 |-- libs                          // 一些依赖的jar包
 |-- LICENSE
 |-- licenses
