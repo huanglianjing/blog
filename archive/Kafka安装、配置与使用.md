@@ -55,7 +55,7 @@ $ vi zookeeper.service
 
 贴上以下内容
 
-```
+```properties
 [Unit]
 Description=Apache Zookeeper server
 Documentation=http://zookeeper.apache.org
@@ -98,7 +98,7 @@ $ vi kafka.service
 
 贴上以下内容
 
-```
+```properties
 [Unit]
 Description=Apache Kafka Server
 Documentation=http://kafka.apache.org/documentation.html
@@ -201,6 +201,51 @@ $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
 
 
 # 5. 配置
+
+## 5.1 server.properties
+
+Kafka服务端配置文件。
+
+```properties
+# 集群中broker的唯一标识，默认值为0，各个broker不同，设置为0开始的枚举值
+broker.id=0
+
+# 端口，默认为9092
+port=9092
+
+# broker连接的ZooKeeper集群的地址和端口，多个节点用逗号分隔
+zookeeper.connect=localhost:2181
+
+# 监听客户端连接的地址列表
+# protocol 协议，支持的协议有PLAINTEXT、SSL、SASL_SSL等
+# host     主机名，不指定表示默认网卡，0.0.0.0表示所有网卡
+# port     端口，默认值为null
+listeners=protocol1://host1:port1,protocol2://host2:port2,protocol3://host3:port3
+listeners=PLAINTEXT://:9092
+
+# 日志文件目录
+# log.dirs存放多个目录，以逗号分隔，优先级更高
+# log.dir存放单个目录
+log.dirs=/tmp/kafka-logs
+
+# 单个消息的最大值
+message.max.bytes=1000000
+
+# 创建新主题默认的分区数
+num.partitions=1
+
+# 数据可以被保留多久，默认为一周
+log.retention.hours=168
+
+# 根据保留消息字节数判断消息是否过期，默认为1GB
+log.retention.bytes=1073741824
+
+# 日志片段大小上限，默认为1GB，达到上限时会打开新的日志片段
+log.segment.bytes=1073741824
+
+# 多长时间后日志片段会被关闭
+log.segment.ms
+```
 
 
 
