@@ -1,8 +1,6 @@
-> Kafka自2.8开始，移除了之前用于集群的元数据管理、控制器选举等的ZooKeeper的依赖，转而使用Kraft代替，本文来聊聊这一改动的差异和影响。
-
-
-
 # 1. 概述
+
+Kafka自2.8开始，移除了之前用于集群的元数据管理、控制器选举等的ZooKeeper的依赖，转而使用Kraft代替，本文来聊聊这一改动的差异和影响。
 
 使用过Kafka都知道，在安装Kafka之前，需要先安装Java和ZooKeeper。需要Java是因为ZooKeeper和Kafka都是用Java编写的，运行需要Java环境。而需要ZooKeeper则是因为，Kafka是使用ZooKeeper来保存集群的元数据信息和消费者信息，进行控制器选举的，因此Kafka的运行需要ZooKeeper的支持。
 
