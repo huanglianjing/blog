@@ -153,7 +153,7 @@ $ git merge <branch>
 
 
 
-# 4. 参考
+# 参考
 
 - [Git - Reference](https://git-scm.com/docs)
 - [Git - Book](https://git-scm.com/book/zh/v2)

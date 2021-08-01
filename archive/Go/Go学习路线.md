@@ -6,7 +6,7 @@
 
 
 
-# 2. 参考
+# 参考
 
 - [《Go程序设计语言》](https://book.douban.com/subject/27044219/)
 

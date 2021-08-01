@@ -98,7 +98,7 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
 
 ![kafka_quorum_controller](image/kafka_quorum_controller.png)
 
-## 5.2 启动方式
+## 5.3 启动方式
 
 1. 为Kafka集群生成一个集群ID
 
@@ -121,7 +121,7 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
    ```
 
 
-## 5.3 配置
+## 5.4 配置
 
 1. 每个Kafka broker需要在配置文件中配置一个process.roles，他的值可能是如下几个：
 
@@ -180,13 +180,13 @@ ZooKeeper同时还记录了消费者对指定消息分区进行消息消费的�
    >> exit
    ```
 
-## 5.4 Raft算法
+## 5.5 Raft算法
 
 以下动画网页很好地展示了Raft算法的原理和同步、复制、领导选举等步骤：
 
 http://thesecretlivesofdata.com/raft/
 
-## 5.5 性能对比
+## 5.6 性能对比
 
 quorum控制器的引入极大降低了多分区情形下关闭与重启的耗时，从而提高了分区的数量上限。
 
@@ -196,7 +196,7 @@ quorum控制器的引入极大降低了多分区情形下关闭与重启的耗�
 
 
 
-# 6. 参考
+# 参考
 
 - [《从Paxos到Zookeeper》](https://book.douban.com/subject/26292004/)
 - [《Kafka权威指南》](https://book.douban.com/subject/27665114/)

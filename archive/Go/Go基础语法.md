@@ -4,7 +4,7 @@ Go语言发布于2009年11月，其发明人是来自于Google的Robert Grieseme
 
 
 
-# 1. 参考
+# 参考
 
 [《Go程序设计语言》](https://book.douban.com/subject/27044219/)
 
