@@ -167,10 +167,19 @@ Kafka提供了很多脚本工具，可以用来进行主题创建和查看、生
 
 ```bash
 # 查看已创建的主题
-$ ./bin/kafka-topics.sh --list --zookeeper localhost:2181
+$ ./bin/kafka-topics.sh --zookeeper localhost:2181 --list
 
 # 创建主题
-$ ./bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic test
+$ ./bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic test --replication-factor 1 --partitions 1
+
+# 增加主题的分区数
+$ ./bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic test --partitions 3
+
+# 删除主题
+$ ./bin/kafka-topics.sh --zookeeper localhost:2181 --delete -topic test
+
+# 查看主题分区
+$ ./bin/kafka-topics.sh --zookeeper localhost:2181 --describe -topic test
 ```
 
 ## 4.2 kafka-console-producer.sh
@@ -193,6 +202,37 @@ $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
 # 通过消费者接收消息，从头开始
 $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 ```
+
+## 4.4 kafka-configs.sh
+
+配置管理脚本。
+
+## 4.5 kafka-preferred-replica-election.sh
+
+分区leader副本选举脚本。
+
+```bash
+# 分区leader副本选举
+$ ./bin/kafka-preferred-replica-election.sh --zookeeper localhost:2181
+```
+
+## 4.6 kafka-reassign-partitions.sh
+
+分区脚本。
+
+```bash
+# 分区重分配
+$ ./bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --generate --topic-to-move-json-file reassign.json
+
+# 修改副本因子
+$ ./bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --execute --reassignment-json-file add.json
+```
+
+## 4.7 性能测试工具
+
+kafka-producer-perf-test.sh用于生产者性能测试。
+
+kafka-consumer-perf-test.sh用于消费者性能测试。
 
 
 
