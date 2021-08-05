@@ -37,23 +37,23 @@ Kafka的消息以主题进行归类，这是一个逻辑上的概念。生产者
 
 #### 副本Replica
 
-分区的多副本机制可以增加副本数量以提升容灾能力，统一分区的不同副本保存相同的消息，副本之间为一主多从的关系，其中leader副本负责处理读写请求，follower副本之负责与leader副本的消息同步。副本处于不同的broker重，当leader副本出现故障时，便从follower副本重新选举新的leader副本对外提供服务。
+分区的多副本机制可以增加副本数量以提升容灾能力，统一分区的不同副本保存相同的消息，副本之间为一主多从的关系，其中leader副本负责处理读写请求，follower副本只负责与leader副本的消息同步。副本处于不同的broker重，当leader副本出现故障时，便从follower副本重新选举新的leader副本对外提供服务。
 
 下图展示了在一个有4个broker的集群中，一个主题配置了3个分区P1、P2、P3。副本因子为3，即每个分区包含有3个副本，一个是leader副本两个是follower副本，这3个副本存储在不同的broker中。
 
 ![kafka_partition_replica](image/kafka_partition_replica.png)
 
-分区的所有副本统称为AR（Assigned Replicas），leader副本以及与leader副本保持一定程度同步的副本组成ISR（In-Sync Replicas），与leader副本同步滞后过多的副本组成OSR（Out-of-Sync Replicas），因此AR=ISR+OSR。leader副本维护和跟踪ISR集合与自己的滞后状态，滞后太多或失效的副本会被从ISR剔除，OSR中的副本追上leader副本则会被转移至ISR。默认配置下，leader副本发生故障后只会在ISR集合中选举新leader。
+分区的所有副本统称为AR（Assigned Replicas），leader副本以及与leader副本保持一定程度同步的副本组成ISR（In-Sync Replicas），与leader副本同步滞后过多的副本组成OSR（Out-of-Sync Replicas），因此AR=ISR+OSR。leader副本维护和跟踪ISR集合与自己的滞后状态，滞后太多或失效的副本会被从ISR剔除，变为失效副本，OSR中的副本追上leader副本则会被转移至ISR。默认配置下，leader副本发生故障后只会在ISR集合中选举新leader。
 
 #### 偏移量offset
 
-LogStartOffset为0，是日志文件的起始处，也就是第一条消息。
+偏移量指消息在日志文件中的相对位置，它会被保存在Kafka内部主题__consumer_offsets中。
 
-HW（High Watermark）俗称高水位，标识了一个offset，消费者只能拉取到HW之前的消息。
+以下是三个有含义的偏移量：LogStartOffset、HW、LEO。
 
-LEO（Log End Offset）标识当前日志文件下一条待写入消息的offset，相当于当前日志分区最后一条消息的offset加1。
-
-分区的ISR集合每个副本都会维护自身的LEO，而ISR集合中最小的LEO就是分区的HW。
+- LogStartOffset为0，是日志文件的起始处，也就是第一条消息。
+- HW（High Watermark）俗称高水位，标识了一个offset，消费者只能拉取到HW之前的消息。
+- LEO（Log End Offset）标识当前日志文件下一条待写入消息的offset，相当于当前日志分区最后一条消息的offset加1。分区的ISR集合每个副本都会维护自身的LEO，而ISR集合中最小的LEO就是分区的HW。
 
 下图展示了一个日志文件，其中HW为6，LEO为9，因此消费者只能拉取偏移量0到5的消息，而下一条写入的消息偏移量将会是9。
 
@@ -201,6 +201,10 @@ public void close();
 再均衡指分区所属权从一个消费者转移到另一个消费者。在再均衡期间，消费组内的消费者是无法读取消息的，这段时间消费组将不可用。
 
 当某个消费者消费完部分消息时，还没来得及提交消费位移就发生再均衡操作时，这部分消息将会被重复消费。所以一般应尽量避免不必要的再均衡的发生。
+
+
+
+# 5 日志
 
 
 

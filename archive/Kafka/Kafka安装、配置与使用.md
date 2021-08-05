@@ -207,6 +207,72 @@ $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
 
 配置管理脚本。
 
+## 4.5 kafka-consumer-groups.sh
+
+消费组管理脚本。
+
+```bash
+# 列出当前集群所有消费组
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --list
+
+# 展示消费组的详细信息
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group groupname
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group groupname --state # 状态
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group groupname --members # 消费者成员信息
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --describe --group groupname --members --verbose # 消费者分配情况
+
+# 删除消费组
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --delete --group groupname
+
+# 将消费组所有分区的消费位移置0
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group groupname --all-topics --reset-offsets --to-earliest --execute
+
+# 将消费组某个分区的消费位移置为分区末尾
+$ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group groupname --topic test --reset-offsets --to-latest --execute
+```
+
+## 4.6 kafka-delete-records.sh
+
+删除消息脚本。
+
+以下是一个示例delete.json，该json指明删除主题topic-monitor下，分区0中偏移量为10、分区1中偏移量为11、分区2中偏移量为12的消息：
+
+```json
+{
+  "partitions": [
+    {
+      "topic": "topic-monitor",
+      "partition": 0,
+      "offset": 10
+    },
+    {
+      "topic": "topic-monitor",
+      "partition": 1,
+      "offset": 11
+    },
+    {
+      "topic": "topic-monitor",
+      "partition": 2,
+      "offset": 12
+    }
+  ],
+  "version": 1
+}
+```
+
+```bash
+# 根据json文件规则删除消息
+$ ./bin/kafka-delete-records.sh --bootstrap-server localhost:9092 --offset-json-file delete.json
+```
+
+
+
+TODO 改标点数字
+
+## 4.4 kafka-configs.sh
+
+配置管理脚本。
+
 ## 4.5 kafka-preferred-replica-election.sh
 
 分区leader副本选举脚本。
