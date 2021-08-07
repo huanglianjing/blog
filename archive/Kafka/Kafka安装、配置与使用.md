@@ -161,7 +161,25 @@ Kafka提供了很多脚本工具，可以用来进行主题创建和查看、生
 
 以下脚本执行需要先进入Kafka目录进行操作，脚本工具都在bin目录下。
 
-## 4.1 kafka-topics.sh
+#### kafka-server-start.sh
+
+Kafka启动脚本。
+
+```bash
+# 启动Kafka
+$ ./bin/kafka-server-start.sh config/server.properties
+```
+
+#### kafka-server-stop.sh
+
+Kafka关闭脚本。通过发送SIGTERM信号给Kafka进程实现优雅关闭。
+
+```bash
+# 关闭Kafka
+$ ./bin/kafka-server-stop.sh
+```
+
+#### kafka-topics.sh
 
 与主题相关的脚本，用于查看主题、创建主题。
 
@@ -182,7 +200,7 @@ $ ./bin/kafka-topics.sh --zookeeper localhost:2181 --delete -topic test
 $ ./bin/kafka-topics.sh --zookeeper localhost:2181 --describe -topic test
 ```
 
-## 4.2 kafka-console-producer.sh
+#### kafka-console-producer.sh
 
 生产者脚本。
 
@@ -191,7 +209,7 @@ $ ./bin/kafka-topics.sh --zookeeper localhost:2181 --describe -topic test
 $ ./bin/kafka-console-producer.sh --broker-list localhost:9092 --topic test
 ```
 
-## 4.3 kafka-console-consumer.sh
+#### kafka-console-consumer.sh
 
 消费者脚本。
 
@@ -203,11 +221,11 @@ $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
 $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
 ```
 
-## 4.4 kafka-configs.sh
+#### kafka-configs.sh
 
 配置管理脚本。
 
-## 4.5 kafka-consumer-groups.sh
+#### kafka-consumer-groups.sh
 
 消费组管理脚本。
 
@@ -231,7 +249,7 @@ $ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group group
 $ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group groupname --topic test --reset-offsets --to-latest --execute
 ```
 
-## 4.6 kafka-delete-records.sh
+#### kafka-delete-records.sh
 
 删除消息脚本。
 
@@ -265,15 +283,11 @@ $ ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group group
 $ ./bin/kafka-delete-records.sh --bootstrap-server localhost:9092 --offset-json-file delete.json
 ```
 
-
-
-TODO 改标点数字
-
-## 4.4 kafka-configs.sh
+#### kafka-configs.sh
 
 配置管理脚本。
 
-## 4.5 kafka-preferred-replica-election.sh
+#### kafka-preferred-replica-election.sh
 
 分区leader副本选举脚本。
 
@@ -282,7 +296,7 @@ TODO 改标点数字
 $ ./bin/kafka-preferred-replica-election.sh --zookeeper localhost:2181
 ```
 
-## 4.6 kafka-reassign-partitions.sh
+#### kafka-reassign-partitions.sh
 
 分区脚本。
 
@@ -294,7 +308,7 @@ $ ./bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --generate --top
 $ ./bin/kafka-reassign-partitions.sh --zookeeper localhost:2181 --execute --reassignment-json-file add.json
 ```
 
-## 4.7 性能测试工具
+#### 性能测试工具
 
 kafka-producer-perf-test.sh用于生产者性能测试。
 
@@ -306,7 +320,7 @@ kafka-consumer-perf-test.sh用于消费者性能测试。
 
 ## 5.1 server.properties
 
-Kafka服务端配置文件。
+Kafka服务端配置文件，启动Kafka时用到。
 
 ```properties
 # 集群中broker的唯一标识，默认值为0，各个broker不同，设置为0开始的枚举值
@@ -338,6 +352,10 @@ num.partitions=1
 
 # 数据可以被保留多久，默认为一周
 log.retention.hours=168
+
+# 数据可以被保留多久
+log.retention.minutes = 100
+log.retention.ms = 100
 
 # 根据保留消息字节数判断消息是否过期，默认为1GB
 log.retention.bytes=1073741824
