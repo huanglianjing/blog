@@ -287,7 +287,7 @@ public void close();
 
 #### enable.auto.commit
 
-让消费者基于任务调度自动提交偏移量。
+让消费者基于任务调度自动提交偏移量。若消费者中途宕机，会出现这段时间消费了却没有提交offset，造成重复消费。
 
 #### auto.commit.interval.ms
 
