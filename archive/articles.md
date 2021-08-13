@@ -1,23 +1,54 @@
-# 正在写的，准备开始写的文章
+# 已发布
+
+
+
+# 已准备
+
+- 关于
+  - 关于我
+- 编码
+  - Markdown语法
+- Kafka
+  - Kafka安装、配置与使用
+  - Kafka对ZooKeeper的依赖与移除
+  - Kafka基础概念
+  - Kafka常见问题
+  - Kafka学习路线
+- Linux
+  - Vim操作命令
+
+
+
+# 写作中
 
 - 版本控制
-  - Git常用命令⚠️
+  - Git常用命令
+- Kafka
+  - Kafka消费组Rebalance原理及源码解析
+- Linux
+  - Centos软件安装
+- web
+  - HTML基础知识
+  - CSS基础知识
+
+
+
+# 计划中
+
+- 版本控制
   - Git分支管理
   - Git提交控制
   - Git源码
 - 编码
   - markdown flow/mermaid
 - Go
-  - Go安装和使用⚠️
-  - Go基础语法⚠️
+  - Go安装和使用
+  - Go基础语法
+  - Go学习路线
 - Kafka
-  - Kafka基础概念⚠️
-  - Kafka源码分析⚠️
+  - Kafka源码分析
 - Linux
   - Linux常用命令
   - Linux系统管理命令
   - Linux网络管理命令
-- web
-  - HTML 重写⚠️
-  - CSS
 
