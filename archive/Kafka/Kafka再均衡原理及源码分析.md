@@ -526,11 +526,176 @@ GroupCoordinator主要有以下几个作用：
 3. 记录消费组的相关信息，即使broker宕机导致消费组由新的GroupCoordinator进行管理，新的GroupCoordinator也可以知道消费组中每个消费者所负责处理的分区信息
 4. 通过心跳检测每个消费者的状态
 
+GroupCoordinator为每个消费组维护了一个状态机，消费组的状态只能在这四个状态之间转换。
+
+![kafka_rebalance_group_state_machine](image/kafka_rebalance_group_state_machine.png)
+
+| 状态               | 含义                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| PreparingRebalance | 消费组当前正在准备进行再均衡操作                             |
+| AwaitingSync       | 消费组正在等待leader消费者将分区的分配结果发送到GroupCoordinator |
+| Stable             | 消费组处于正常状态，也是初始状态                             |
+| Dead               | 消费组已经没有消费者存在了                                   |
+
+### 四个状态的状态转换
+
+- PreparingRebalance状态
+
+  对于处于该状态的消费组，GroupCoordinator可以处理OffsetFetchRequest、LeaveGroupRequest、OffsetCommitRequest。收到JoinGroupRequest时，GroupCoordinator会创建对应的DelayedJoin，等待条件满足后对其进行响应。
+
+  PreparingRebalance -> AwaitingSync：当有DelayedJoin超时或消费组的成员都已经重新申请加入时进行切换。
+
+  PreparingRebalance -> Dead：所有消费者都离开消费组时进行切换。
+
+- AwaitingSync状态
+
+  对于处于该状态的消费组，正在等待leader消费者的SyncGroupRequest请求。收到其它普通消费者的SyncGroupRequest请求时直接抛弃，直到收到leader消费者的SyncGroupRequest请求时一起响应。
+  AwaitingSync -> Stable：当收到leader消费者发来的SyncGroupRequest请求时进行状态切换。
+
+  AwaitingSync -> PreparingRebalance：导致此状态切换的情况有：有消费者加入或退出消费组，消费者的心跳检测超时。
+
+- Stable状态
+  对处于此状态的消费组，GroupCoordinator可以处理所有请求，如JoinGroupRequest、SyncGroupRequest、HeartbeatRequest。
+  Stable -> PreparingRebalance：导致此状态切换的情况有：消费者的心跳检测超时、消费者推出、leader消费者发送JoinGroupRequest、新的消费者请求加入消费组。
+
+- Dead状态
+  消费组已经没有消费者了，对应的metadata也将被删除，只接受OffsetCommitRequest请求。
+
+### 源码分析
+
+Kafka服务端是由scala编写的，具体的处理函数入口在KafkaApis.handle()方法。其中定义了每种request请求对应的处理方法，如JoinGroupRequest请求对应KafkaApis.handleJoinGroupRequest()方法，SyncGroupRequest请求对应KafkaApis.handleSyncGroupRequest()方法，具体不再深入探讨。
+
 
 
 # 4. 分区分配策略
 
-最后来聊聊分区分配的策略。
+最后来聊聊分区分配的策略。分区分配策略指的是，一个主题的多个分区，以何种策略分配给一个消费组的多个消费者。
+
+由消费者客户端参数partition.assignment.strategy设置消费者与订阅主题之间的分区分配策略，默认为RangeAssignor分配策略，也可配置多个分配策略并以逗号分隔。在再均衡的过程中，消费组的leader消费者会根据各个消费者所支持的分配策略，票选出一个最终的分配策略，并进行分区分配，各个消费者获得分配给自己的分区，就可以进行消费了。
+
+### RangeAssignor分配策略
+
+按照消费者总数和分区总数整除运算获得跨度，将分区按跨度平均分配。将消费组内所有订阅该主题的消费者按名称字典序排序，每个消费者划分固定分区范围，不够平均分配时字典序靠前的消费者会多分配一个分区。
+
+假设有2个消费者C0和C1，订阅了主题t0和t1，每个主题都有4个分区p0、p1、p2、p3，分配结果如下：
+
+消费者C0：t0p0、t0p1、t1p0、t1p1
+
+消费者C1：t0p2、t0p3、t1p2、t1p3
+
+![kafka_rebalance_strategy_range_1](image/kafka_rebalance_strategy_range_1.png)
+
+这个分配策略将消费组下的各个主题分隔开来考虑，有可能对于每个主题的分配有少许不均，多个主题的分配结果不均会叠加起来。例如上面的例子，当每个主题都有3个分区时，分配结果如下，会出现分配不均：
+
+消费者C0：t0p0、t0p1、t1p0、t1p1
+
+消费者C1：t0p2、t1p2
+
+![kafka_rebalance_strategy_range_2](image/kafka_rebalance_strategy_range_2.png)
+
+分区分配入口函数是RangeAssignor的assign()方法。代码如下：
+
+```java
+public Map<String, List<TopicPartition>> assign(Map<String, Integer> partitionsPerTopic,
+                                                Map<String, Subscription> subscriptions) {
+    Map<String, List<MemberInfo>> consumersPerTopic = consumersPerTopic(subscriptions);
+
+    Map<String, List<TopicPartition>> assignment = new HashMap<>();
+    for (String memberId : subscriptions.keySet())
+        assignment.put(memberId, new ArrayList<>());
+
+    for (Map.Entry<String, List<MemberInfo>> topicEntry : consumersPerTopic.entrySet()) {
+        String topic = topicEntry.getKey();
+        List<MemberInfo> consumersForTopic = topicEntry.getValue();
+
+        Integer numPartitionsForTopic = partitionsPerTopic.get(topic);
+        if (numPartitionsForTopic == null)
+            continue;
+
+        Collections.sort(consumersForTopic);
+
+        // 分区数 / 消费者数： 平均每个消费者所有的分区
+        int numPartitionsPerConsumer = numPartitionsForTopic / consumersForTopic.size();
+        // 分区数 % 消费者数： 无法整除，部分消费者多分配一个分区
+        int consumersWithExtraPartition = numPartitionsForTopic % consumersForTopic.size();
+
+        List<TopicPartition> partitions = AbstractPartitionAssignor.partitions(topic, numPartitionsForTopic);
+        for (int i = 0, n = consumersForTopic.size(); i < n; i++) {
+            // 每个消费者分配一段连续编号的分区
+            int start = numPartitionsPerConsumer * i + Math.min(i, consumersWithExtraPartition);
+            int length = numPartitionsPerConsumer + (i + 1 > consumersWithExtraPartition ? 0 : 1);
+            assignment.get(consumersForTopic.get(i).memberId).addAll(partitions.subList(start, start + length));
+        }
+    }
+    return assignment;
+}
+```
+
+### RoundRobinAssignor分配策略
+
+将消费组的所有消费者及其订阅的所有主题的分区按字典许排序，通过轮询逐个将分区分配给消费者。
+
+解决了RangeAssignor分配策略中每个主题3个分区的不均衡问题，分配结果如下：
+
+消费者C0：t0p0、t0p2、t1p1
+
+消费者C1：t0p1、t1p0、t1p2
+
+![kafka_rebalance_strategy_round_robin_1](image/kafka_rebalance_strategy_round_robin_1.png)
+
+但是当消费组内各消费者订阅的信息不同时，还有可能导致分区分配不均。
+
+举个例子，消费组中有三个消费者C0、C1、C2，它们共订阅了3个主题t0、t1、t2，这三个主题分别有1、2、3个分区，C0订阅主题t0，C1订阅主题t0和t1，C2订阅主题t0、t1和t2。按照RoundRobin最终分配结果为：
+
+消费者C0：t0p0
+
+消费者C1：t1p0
+
+消费者C2：t1p1、t2p0、t2p1、t2p2
+
+![kafka_rebalance_strategy_round_robin_2](image/kafka_rebalance_strategy_round_robin_2.png)
+
+这个分配并不是最优解，因为完全可以将t1p2分配给消费者C1。
+
+分区分配入口函数是RoundRobinAssignor的assign()方法。代码如下：
+
+```java
+public Map<String, List<TopicPartition>> assign(Map<String, Integer> partitionsPerTopic,
+                                                Map<String, Subscription> subscriptions) {
+    Map<String, List<TopicPartition>> assignment = new HashMap<>();
+    List<MemberInfo> memberInfoList = new ArrayList<>();
+    for (Map.Entry<String, Subscription> memberSubscription : subscriptions.entrySet()) {
+        // 存放每个消费者分配的分区
+        assignment.put(memberSubscription.getKey(), new ArrayList<>());
+        memberInfoList.add(new MemberInfo(memberSubscription.getKey(),
+                                          memberSubscription.getValue().groupInstanceId()));
+    }
+
+    // 所有消费者的回环迭代器
+    CircularIterator<MemberInfo> assigner = new CircularIterator<>(Utils.sorted(memberInfoList));
+
+    // 对于所有主题的所有分区
+    for (TopicPartition partition : allPartitionsSorted(partitionsPerTopic, subscriptions)) {
+        final String topic = partition.topic();
+        // 遍历消费者，直到找到消费者订阅该主题
+        while (!subscriptions.get(assigner.peek().memberId).topics().contains(topic))
+            assigner.next();
+        // 分配当前分区给找到的消费者
+        assignment.get(assigner.next().memberId).add(partition);
+    }
+    return assignment;
+}
+```
+
+### StickyAssignor分配策略
+
+黏性的分配策略，既要使分配尽可能均匀，也在重新分配时尽可能与上次分配保持相同，而不是每次重新排序分配。该分配策略更优异，代码实现也异常复杂。
+
+分区分配入口函数是CooperativeStickyAssignor的assign()方法。
+
+### 自定义分配策略
+
+通过实现org.apache.kafka.clients.consumer.internals.PartitionAssignor接口来自定义分配策略。
 
 
 
