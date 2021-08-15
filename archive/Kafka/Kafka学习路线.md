@@ -26,6 +26,14 @@
 
 
 
+# 4. 资源
+
+Kafka官网：[Apache Kafka](https://kafka.apache.org/)
+
+Kafka源码：[github.com/apache/kafka](https://github.com/apache/kafka)
+
+
+
 # 参考
 
 - [《深入理解Kafka：核心设计与实践原理》](https://book.douban.com/subject/30437872/)

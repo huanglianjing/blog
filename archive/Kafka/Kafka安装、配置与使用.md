@@ -1,5 +1,7 @@
 # 1. 安装
 
+## 1.1 Linux下安装
+
 Kafka运行环境需要先安装好Java环境。
 
 进入官网http://kafka.apache.org/downloads，选择相应的版本的Kafka链接并下载：
@@ -32,6 +34,42 @@ $ ./bin/kafka-server-start.sh config/server.properties
 
 # 后台运行
 $ nohup ./bin/kafka-server-start.sh config/server.properties >> kafka.log 2>&1 &
+```
+
+## 1.2 MacOS下通过brew安装
+
+在MacOS下，还可以通过brew来安装和运行Kafka，并且可以很方便地启动。
+
+安装：
+
+```bash
+$ brew install zookeeper
+$ brew install kafka
+```
+
+启动服务：
+
+```bash
+$ brew services start zookeeper
+$ brew services start kafka
+```
+
+如果只是临时启动的话：
+
+```bash
+$ zkServer start
+$ kafka-server-start /usr/local/etc/kafka/server.properties
+```
+
+这里需要注意的是，由于Kafka是依赖ZooKeeper来运作的，所以需要先启动ZooKeeper再启动Kafka，关闭的时候也注意要先关闭Kafka再关闭ZooKeeper。
+
+而Kafka对应的一系列脚本工具，可以直接用命令的方式进行调用，如以下的一些管理常用命令：
+
+```
+kafka-topics
+kafka-console-producer
+kafka-console-consumer
+...
 ```
 
 
@@ -219,6 +257,9 @@ $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test
 
 # 通过消费者接收消息，从头开始
 $ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+
+# 使用消费组
+$ ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --group consumer-group1
 ```
 
 #### kafka-configs.sh
