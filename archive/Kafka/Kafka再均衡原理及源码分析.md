@@ -703,4 +703,5 @@ public Map<String, List<TopicPartition>> assign(Map<String, Integer> partitionsP
 
 - [《Apache Kafka源码剖析》](https://book.douban.com/subject/27038473/)
 - [《深入理解Kafka：核心设计与实践原理》](https://book.douban.com/subject/30437872/)
+- [apache/kafka](https://github.com/apache/kafka)
 
