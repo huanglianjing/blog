@@ -22,6 +22,10 @@ Markdown文件后缀为.md或.markdown，常用于Github的readme文件和文档
 正文
 ```
 
+效果如下：
+
+![markdown_grammar_title](image/markdown_grammar_title.png)
+
 ### 目录
 
 根据Markdown文件中的标题结构产生层级目录
@@ -29,6 +33,10 @@ Markdown文件后缀为.md或.markdown，常用于Github的readme文件和文档
 ```
 [toc]
 ```
+
+效果如下：
+
+![markdown_grammar_toc](image/markdown_grammar_toc.png)
 
 ### 段落
 
@@ -50,6 +58,10 @@ line2
 ---
 ___
 ```
+
+效果如下：
+
+![markdown_grammar_line](image/markdown_grammar_line.png)
 
 ### 文本格式
 
@@ -73,6 +85,10 @@ ___text___
 <u>text</u>
 ```
 
+效果如下：
+
+![markdown_grammar_font_style](image/markdown_grammar_font_style.png)
+
 ### 注释
 
 ```
@@ -94,7 +110,9 @@ text [^1]
 [^1]: some comment
 ```
 
+效果如下：鼠标移动至1会显示文本
 
+![markdown_grammar_footnote](image/markdown_grammar_footnote.png)
 
 # 3. 列表
 
@@ -127,6 +145,10 @@ text [^1]
 * text
 ```
 
+效果分别如下：
+
+![markdown_grammar_list](image/markdown_grammar_list.png)
+
 ### 勾选框
 
 ```
@@ -134,7 +156,9 @@ text [^1]
 * [x] text
 ```
 
+效果如下：
 
+![markdown_grammar_checklist](image/markdown_grammar_checklist.png)
 
 # 4. 代码
 
@@ -145,6 +169,10 @@ text [^1]
 >> 第一层嵌套
 >>> 第二层嵌套
 ```
+
+效果如下：
+
+![markdown_grammar_quote](image/markdown_grammar_quote.png)
 
 ### 代码
 
@@ -170,6 +198,10 @@ code
 ```
 ````
 
+效果如下：
+
+![markdown_grammar_code](image/markdown_grammar_code.png)
+
 
 
 # 5. 链接
@@ -184,6 +216,10 @@ code
 [text][1]
 [1]:url
 ```
+
+效果如下：点击文本会打开链接
+
+![markdown_grammar_link](image/markdown_grammar_link.png)
 
 ### 图片
 
@@ -205,6 +241,10 @@ code
 |text|text|text|
 |text|text|text|
 ```
+
+效果如下：
+
+![markdown_grammar_table](image/markdown_grammar_table.png)
 
 ### 表格对齐
 
