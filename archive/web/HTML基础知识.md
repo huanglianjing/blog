@@ -1,52 +1,93 @@
-TODO: 看书重写
-
 # 1. HTML简介
 
 HTML是用来描述网页的一种语言，全称超文本标记语言(Hyper Text Markup Language)，它是一种标记语言，使用标记标签来描述网页，它的语法规则可以定义图片、表格、链接等。
 
-## 1.1 标签
+## 1.1 一个基础例子
 
-HTML标签是由尖括号包围、成对出现的关键词，如\<b\> 和 \</b\>，分别为开始标签和结束标签。HTML标签大小写不敏感，但推荐使用小写。
-
-HTML文档包含HTML标签和文本，也被称为网页，HTML由web浏览器读取解析，并生成对应的网页形式。
-
-一个基础的实例：
+一个基础的HTML例子：
 
 ```html
+<!DOCTYPE html>
 <html>
+<head>
+	<meta charset="utf-8">
+	<title>page name</title>
+</head>
 <body>
-
-<h1>我的第一个标题</h1>
-
-<p>我的第一个段落。</p>
-
+	<h1>title 1</h1>
+	<h2>sub title</h2>
+	<p>paragraph text</p>
+	<h1>title 2</h1>
+	<p>paragraph text</p>
 </body>
 </html>
 ```
 
-- \<html\> 与 \</html\> 之间的文本描述网页
-- \<body\> 与 \</body\> 之间的文本是可见的页面内容
-- \<h1\> 与 \</h1\> 之间的文本被显示为标题
-- \<p\> 与 \</p\> 之间的文本被显示为段落
+整个文件由html标签包着，其中由分为首部和主体两部分，分别用head标签和body标签包裹。
 
-更多标签的详情可参考[HTML 标签参考手册](https://www.w3school.com.cn/tags/index.asp)。
+首部告诉浏览器关于网页的信息，如页面标题，首部包括\<head\>和\</head\>之间的所有内容。其中的title标签定义了网页的标题，meta标签指定了字符编码。
 
-## 1.2 元素
+主体包含网页的所有内容和结构，也就是在浏览器直接看到的部分，主体包括\<body\>和\</body\>之间的所有内容。其中的h1标签和h2标签分别是一级标题和二级标题，p标签则是段落。
+
+保存为HTML文件，在浏览器打开后，页面效果如下：
+
+![html_example](image/html_example.png)
+
+此外，还可以在HTML的首部里增加一些样式，就是style标签。style标签有一个可选的属性type，一般指定为"text/css"。
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>page name</title>
+	<style type="text/css">
+		body {
+			background-color: #d2b48c;
+			margin-left: 20%;
+			margin-right: 20%;
+			border: 2px dotted black;
+			padding: 10px 10px 10px 10px;
+			font-family: sans-serif;
+		}
+	</style>
+</head>
+<body>
+	<h1>title 1</h1>
+	<h2>sub title</h2>
+	<p>paragraph text</p>
+	<h1>title 2</h1>
+	<p>paragraph text</p>
+</body>
+</html>
+```
+
+style标签中的body表示这段配置应用于主体中的body标签。
+
+保存刷新后看到页面效果：
+
+![html_example_1](image/html_example_1.png)
+
+可以看到通过增加style标签，给页面加了背景颜色、边框、字体。
+
+## 1.2 标签
+
+HTML标签是由尖括号包围、成对出现的关键词，如\<p> 和 \</p\>，分别为开始标签和结束标签。HTML标签大小写不敏感，但推荐使用小写。
+
+## 1.3 元素
 
 HTML元素是开始标签到对应的结束标签的所有代码，HTML元素可以嵌套包含其他HTML元素。
 
-\<html\>元素定义整个HTML文档，\<body\>元素定义文档的主体。
+html元素定义整个HTML文档，head元素定义文档的首部，body元素定义文档的主体。空元素没有内容，在开始标签中关闭，如br元素应当在开始标签添加斜杠：\<br /\>。
 
-空元素没有内容，在开始标签中关闭，如\<br\>，应当在开始标签添加斜杠：\<br /\>。
+## 1.4 属性
 
-## 1.3 属性
-
-HTML属性在开始标签中规定，以名称/值对name="value"的形式出现。属性和属性值大小写不敏感，但推荐小写。
+HTML属性在开始标签中设置，以名称/值对name="value"的形式出现。属性和属性值大小写不敏感，但推荐小写。
 
 以下是大多数HTML元素的属性：
 
-1. class：规定元素的类名（classname）
-2. id：规定元素的唯一 id
+1. class：规定元素的类名（classname），不同的元素可以有相同的类名
+2. id：规定元素的id，元素的id在HTML文档中是唯一的，其他a标签可以通过`href="url#label"`定位到此网页的该元素处
 3. style：规定元素的行内样式（inline style）
 4. title：规定元素的额外信息
 
@@ -55,7 +96,7 @@ HTML属性在开始标签中规定，以名称/值对name="value"的形式出现
 1. HTML链接的地址：
 
    ```html
-   <a href="http://www.w3school.com.cn">This is a link</a>
+   <a href="http://www.google.com">This is a link</a>
    ```
 
 2. HTML标题的对齐方式：
@@ -70,11 +111,84 @@ HTML属性在开始标签中规定，以名称/值对name="value"的形式出现
    <table border="1">
    ```
 
+## 1.5 字符实体
+
+若要在HTML文本中展示<和>，又不想和标签区分开，可以转化为字符实体，用来表示特殊字符。
+
+| 特殊字符 | 字符实体 | 说明                                 |
+| -------- | -------- | ------------------------------------ |
+| 空格     | \&nbsp;  |                                      |
+| <        | \&lt;    |                                      |
+| >        | \&gt;    |                                      |
+| &        | \&amp;   | 在&用于实体字符时转化，一般可直接用& |
+| "        | \&quot;  |                                      |
+| '        | \&apos;  |                                      |
+
+## 1.6 标准
+
+现在最新的标准是HTML5，可以通过 [The W3C Markup Validation Service](https://validator.w3.org/) 检查网页是否符合HTML标准。
+
 
 
 # 2. 标签
 
-## 2.1 基础标签
+## 2.1 首部
+
+html标签包裹整个HTML文件，其中又分为head元素和body元素表示首部和主体。
+
+```html
+<html>
+<head>
+</head>
+<body>
+</body>
+</html>
+```
+
+以下是几个专门用于首部的标签。
+
+**标题**
+
+title标签指定网页标题。
+
+```html
+<title>page name</title>
+```
+
+**默认链接**
+
+base标签为所有链接规定默认地址。
+
+```html
+<base href="http://www.google.com/" />
+<base target="_blank" />
+```
+
+**外部资源**
+
+link标签定义外部资源。
+
+```html
+<link rel="stylesheet" type="text/css" href="mystyle.css" />
+```
+
+**样式**
+
+style标签定了HTML文档的样式信息。
+
+```html
+<style type="text/css"></style>
+```
+
+**数据**
+
+meta标签定义元数据，如页面描述、修改时间、字符编码等。
+
+```html
+<meta charset="utf-8">
+```
+
+## 2.2 基础标签
 
 **注释**
 
@@ -84,7 +198,7 @@ HTML属性在开始标签中规定，以名称/值对name="value"的形式出现
 
 **标题**
 
-通过 \<h1\> - \<h6\> 等标签进行定义的，\<h1\>最大，\<h6\>最小。
+通过 h1 - h6 标签进行定义不同等级的标题，h1最大，h6最小。
 
 ```html
 <h1>This is a heading</h1>
@@ -93,6 +207,8 @@ HTML属性在开始标签中规定，以名称/值对name="value"的形式出现
 ```
 
 **段落**
+
+浏览器会忽略HTML文档中的制表符、回车和大部分空格，根据标记来确定换行或分段。
 
 ```html
 <p>This is a paragraph.</p>
@@ -118,9 +234,11 @@ HTML属性在开始标签中规定，以名称/值对name="value"的形式出现
 
 href属性指定链接地址，标签中间为显示的文本。
 
-target属性定义链接文档显示位置，`target="_blank"`表示在新窗口打开。
+target属性定义链接文档的显示位置，默认在当前窗口打开，`target="_blank"`表示在新窗口打开。
 
-name属性或id属性定义锚（anchor），name="label"，在同一文档创建链接`<a href="#label">`，或者其他页面创建链接`<a href="url#label">`，点击后直接跳转到该锚。
+id属性或name属性定义锚（anchor），id="label"，在同一文档创建链接`<a href="#label">`，或者其他页面创建链接`<a href="url#label">`，点击后直接跳转到该锚。
+
+将显示文本替换为img元素，可以展示一个可以点击的图像。
 
 ```html
 <a href="url">text</a>
@@ -130,13 +248,17 @@ name属性或id属性定义锚（anchor），name="label"，在同一文档创�
 
 属性指定了图像的名称和尺寸。
 
+src属性指定图片地址，可以是本地图片地址或网络图片地址。
+
+width、height属性指定图片宽高，默认为按实际图片大小显示，可以为具体像素值也可以为百分比，如`width="300"`、`width="300px"`、`width="50%"`。
+
 alt属性定义替换的文本，无法载入图片时显示。
 
-```
-<img src="w3school.jpg" width="104" height="142" />
+```html
+<img src="abc.jpg" width="104" height="142" />
 ```
 
-## 2.2 文本格式化
+## 2.3 文本格式
 
 **粗体文本**
 
@@ -192,11 +314,17 @@ alt属性定义替换的文本，无法载入图片时显示。
 <ins>text</ins>
 ```
 
-## 2.3 引用
+**代码格式**
+
+```html
+<code>a = 1;</code>
+```
+
+## 2.4 引用
 
 **短引用**
 
-单行的引用，用引号包围。
+单行的引用，会用引号包围。
 
 ```html
 <q>text</q>
@@ -204,7 +332,7 @@ alt属性定义替换的文本，无法载入图片时显示。
 
 **长引用**
 
-对整个元素进行缩进。
+会对整个元素进行缩进。
 
 ```html
 <blockquote cite="http://www.worldwildlife.org/who/index.html">
@@ -215,7 +343,7 @@ WWF 工作于 100 个国家，并得到美国一百二十万会员及全球近�
 
 **缩略词**
 
-对缩写标记，为浏览器、搜索引擎提供信息。
+对缩写进行标记，为浏览器、搜索引擎提供信息。
 
 ```html
 <abbr title="World Health Organization">WHO</abbr>
@@ -227,11 +355,11 @@ WWF 工作于 100 个国家，并得到美国一百二十万会员及全球近�
 
 ```html
 <address>
-Written by Donald Duck.<br> 
-Visit us at:<br>
-Example.com<br>
-Box 564, Disneyland<br>
-USA
+	Written by Donald Duck.<br> 
+	Visit us at:<br>
+	Example.com<br>
+	Box 564, Disneyland<br>
+	USA
 </address>
 ```
 
@@ -241,133 +369,192 @@ USA
 <cite>The Scream</cite>
 ```
 
-## 2.4 表格
+## 2.5 表格
 
-一个表格用\<table\>标签定义，每一行用\<tr\>标签定义，行的每个单元格用\<td\>标签定义。数据单元格可以包含文本、图片、列表、段落、表单、水平线、表格等等。第一行表头可用\<th\>标签定义，显示为粗体居中。
+一个表格用table标签定义，每一行用tr标签定义，行的每个单元格用td标签定义。第一行表头可用th标签定义，显示为粗体居中。
 
-\<table\>标签的border属性定义边框。
+数据单元格可以包含文本、图片、列表、段落、表单、水平线、表格等等。
+
+table标签的border属性定义边框。
 
 一个表格的例子：
 
 ```html
-<table border="1">
-    <tr>
-        <th>Heading</th>
-        <th>Another Heading</th>
-    </tr>
-    <tr>
-        <td>row 1, cell 1</td>
-        <td>row 1, cell 2</td>
-    </tr>
-    <tr>
-        <td>row 2, cell 1</td>
-        <td>row 2, cell 2</td>
-    </tr>
+<table>
+	<tr>
+		<th>Heading</th>
+		<th>Another Heading</th>
+	</tr>
+	<tr>
+		<td>row 1, cell 1</td>
+		<td>row 1, cell 2</td>
+	</tr>
+	<tr>
+		<td>row 2, cell 1</td>
+		<td>row 2, cell 2</td>
+	</tr>
 </table>
 ```
 
-## 2.5 列表
+## 2.6 列表
 
-不同的列表可以嵌套使用，即在\<li\>元素中定义新的列表。
+不同的列表可以嵌套使用，即在li元素中定义新的列表。
+
+li = list item
+
+ul = unordered list
+
+ol = ordered list
 
 **无序列表**
 
-用圆点标记每个项目。
+用圆点列出每个项目。
 
 ```html
 <ul>
-    <li>Coffee</li>
-    <li>Milk</li>
+	<li>Coffee</li>
+	<li>Milk</li>
 </ul>
+```
+
+也可以直接用li标签包裹每个元素：
+
+```html
+<li>Coffee</li>
+<li>Milk</li>
 ```
 
 **有序列表**
 
-用数字标记每个项目。
+用数字列出每个项目。
 
 ```html
 <ol>
-    <li>Coffee</li>
-    <li>Milk</li>
+	<li>Coffee</li>
+	<li>Milk</li>
 </ol>
 ```
 
-**自定义列表**
+**定义列表**
 
-用给定文本标记每个项目。
+用给定文本列出每个项目，列表的每一项都有dt标签和dd标签。
 
 ```html
 <dl>
-    <dt>Coffee</dt>
-    <dd>Black hot drink</dd>
-    <dt>Milk</dt>
-    <dd>White cold drink</dd>
+	<dt>Coffee</dt>
+	<dd>Black hot drink</dd>
+	<dt>Milk</dt>
+	<dd>White cold drink</dd>
 </dl>
 ```
 
+## 2.7 块
+
+使用div元素定义块，用于组合其它HTML元素，以对文档布局，将文档分割为独立的分区或节。
+
+用id或class属性标记div元素，和css一起使用，用于对内容块设置样式。
+
+```html
+<div style="color:#00FF00">
+	<h3>This is a header</h3>
+	<p>This is a paragraph.</p>
+</div>
+```
+
+用span元素来组合行内的文本，通过样式来格式化它们。span标签本身没有固定的格式表现，需要对它应用样式。
+
+```html
+<p><span>some text.</span>some other text.</p>
+```
+
+## 2.8 内联框架
+
+iframe元素用于在网页内显示网页。
+
+属性width和height规定框架的宽度和高度，默认单位为像素，也可以是百分比。
+
+```html
+<iframe src="url"></iframe>
+```
+
+## 2.9 JavaScript
+
+使用script标签定义JavaScript脚本。
+
+src属性指向外部脚本文件。
+
+```html
+<script>
+	document.write("Hello World!");
+</script>
+```
 
 
-# 3. 属性
 
-## 3.1 样式
+# 3. 样式
 
-可以通过HTML标签的style属性，将样式添加到HTML元素中，或者通过CSS进行定义。
+可以通过首部的style标签，将样式添加到HTML元素中，或者通过CSS进行定义。
 
-**外部样式表**
+## 3.1 内部样式表
 
-当样式需要被应用到很多页面的时候，外部样式表将是理想的选择。定义公共的css文件来被多个HTML文件引用，在head部分引用css文件。
+在HTML首部添加style标签，给指定元素定义样式。以下例子分别给HTML主体中的body元素和p元素指定了样式。
 
 ```html
 <head>
-<link rel="stylesheet" type="text/css" href="mystyle.css">
+	<style type="text/css">
+		body {background-color: red}
+		p {margin-left: 20px}
+	</style>
 </head>
 ```
 
-**内部样式表**
+## 3.2 外部样式表
 
-当单个文件需要特别样式时，就可以使用内部样式表。在head部分用\<style\>标签定义。
+当同一个样式需要被应用到很多页面的时候，可以选择外部样式表，定义一个公共的css文件来杯多个HTML文件引用，在每个HTML文件首部引用该css文件。
 
 ```html
 <head>
-<style type="text/css">
-body {background-color: red}
-p {margin-left: 20px}
-</style>
+	<link rel="stylesheet" type="text/css" href="mystyle.css">
 </head>
 ```
 
-**内联样式**
+## 3.3 内联样式
 
-当特殊的样式需要应用到个别元素时，就可以使用内联样式。为对应的元素添加style属性。
-
-一个样式的实例：通过style属性定义了各个层级元素的样式。
+当特殊的样式需要应用到个别元素时，就可以使用内联样式，为对应的元素添加style属性，只应用于该元素。
 
 ```html
-<html>
-<body style="background-color:yellow">
-<h2 style="background-color:red">This is a heading</h2>
-<p style="background-color:green">This is a paragraph.</p>
+<p style="background-color: green;">This is a paragraph.</p>
+```
+
+## 3.4 指定元素使用样式
+
+style标签指定对特定类型标签应用样式：
+
+```html
+<head>
+	<style type="text/css">
+		p {
+			background-color: #a0a0a0;
+		}
+	</style>
+</head>
+<body>
+	<h1>title</h1>
+	<p class="text" id="t1">paragraph text</p>
+	<p class="text" id="t2">paragraph text</p>
+	<p class="message" id="t3">paragraph text</p>
 </body>
-</html>
 ```
 
-以下是几个样式的实例：
+style元素内的css分为选择器和声明块两部分，如`p {background-color: #a0a0a0;}`中p为选择器，指定HTML文档主体中特定的元素，{}中的部分为声明块，为若干个设置。
 
-1. 通过`style="background-color:red"`淘汰bgcolor属性
-2. 通过`style="font-family:arial;color:red;font-size:20px;"`淘汰\<font\>标签
-3. 通过`style="text-align:center"`淘汰align属性
-
-## 3.2 颜色
-
-颜色定义为红绿蓝（RGB）的组合，每个颜色最小为0（十六进制：#00），最大为255（十六进制：#FF）。
-
-#加上六个十六进制数表示一个RGB颜色，如 #FF0000表示rgb(255,0,0)也就是红色。
-
-大多数浏览器支持的颜色名可以参考[HTML 颜色名](https://www.w3school.com.cn/html/html_colornames.asp)。
+css写成`p {}`表示对所有p元素设置样式。css还可以写成`.text {}`指定对所有类text设置样式，或者用`p.text {}`对p元素的类text设置样式。写成`#t1 {}`指定对特定id t1设置样式。
 
 
 
 # 参考
 
-1. [W3School HTML 教程](https://www.w3school.com.cn/html/index.asp)
+- [《Head First HTML与CSS（第2版）》](https://book.douban.com/subject/25752357/)
+- [W3school - HTML 教程](https://www.w3school.com.cn/html/index.asp)
+- [The W3C Markup Validation Service](https://validator.w3.org/)
 
