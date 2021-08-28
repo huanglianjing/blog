@@ -461,7 +461,7 @@ ol = ordered list
 </div>
 ```
 
-用span元素来组合行内的文本，通过样式来格式化它们。span标签本身没有固定的格式表现，需要对它应用样式。
+用span元素来组合行内的文本，再通过样式来格式化它们。span标签本身没有固定的格式表现，需要对它应用样式。
 
 ```html
 <p><span>some text.</span>some other text.</p>
@@ -488,6 +488,42 @@ src属性指向外部脚本文件。
 	document.write("Hello World!");
 </script>
 ```
+
+## 2.10 表单
+
+使用form标签定义HTML表单，收集用户输入。
+
+表单元素内，input标签定义输入，其中`<input type="text">`是输入文本框，`*<input type="radio">`是单选按钮，`<input type="submit">`是提交按钮。
+
+如下例子：
+
+```html
+<form>
+	input 1:<br>
+	<input type="text" name="input 1"><br />
+	input 2:<br>
+	<input type="text" name="input 2"><br />
+	<input type="radio" name="sex" value="male" checked>Male<br />
+	<input type="radio" name="sex" value="female">Female<br />
+	<input type="submit" value="submit">
+</form>
+```
+
+在网页中显示如下：
+
+![html_form](image/html_form.png)
+
+点击提交按钮，会讲上面文本框和单选按钮输入的key=value对，传给网页参数发送请求，例如会发送一个请求`a.html?input+1=val1&input+2=val2&sex=male`。
+
+form标签的action属性定义提交表单时执行的动作，如`<form action="action_page.php">`将会指定某个服务器脚本来处理被提交的表单，不指定action属性则设置为当前网页处理表单。
+
+form标签的method属性规定提交表单用的HTTP方法为GET或POST，如`<form action="action_page.php" method="GET">`指定为GET方法。
+
+## 2.11 画布
+
+canvas元素使用JavaScript在网页上绘制图像。
+
+
 
 
 
