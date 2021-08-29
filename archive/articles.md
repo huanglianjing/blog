@@ -16,6 +16,9 @@
   - Kafka学习路线
 - Linux
   - Vim操作命令
+- web
+  - HTML基础知识
+  - CSS基础知识
 
 
 
@@ -27,9 +30,6 @@
   - Kafka消费组Rebalance原理及源码解析
 - Linux
   - Centos软件安装
-- web
-  - HTML基础知识
-  - CSS基础知识
 
 
 
