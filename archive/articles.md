@@ -14,11 +14,15 @@
   - Kafka基础概念
   - Kafka常见问题
   - Kafka学习路线
+  - Kafka消费组Rebalance原理及源码解析
 - Linux
   - Vim操作命令
 - web
   - HTML基础知识
   - CSS基础知识
+- Go
+  - Go学习路线
+  - Go基础语法
 
 
 
@@ -27,7 +31,9 @@
 - 版本控制
   - Git常用命令
 - Kafka
-  - Kafka消费组Rebalance原理及源码解析
+  - 
+- Go
+  - Go安装和使用
 - Linux
   - Centos软件安装
 
@@ -42,15 +48,14 @@
 - 编码
   - markdown flow/mermaid
 - Go
-  - Go安装和使用
-  - Go基础语法
-  - Go学习路线
 - Kafka
   - Kafka源码分析
 - Linux
   - Linux常用命令
   - Linux系统管理命令
   - Linux网络管理命令
+  - Linux学习路线
 - 广告
   - 计算广告入门
+  - DSP管理端功能，市面常用管理端对比
 
