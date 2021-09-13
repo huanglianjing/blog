@@ -1,3 +1,5 @@
+![kafka_logo](image/kafka_logo.jpg)
+
 # 1. 基础概念
 
 [Kafka安装、配置与使用](Kafka安装、配置与使用.md)
@@ -6,7 +8,7 @@
 
 [Kafka基础概念](Kafka基础概念.md)
 
-介绍Kafka中的基本概念。
+详细介绍Kafka中的基础概念，包含了生产者、消费者、服务端、日志等方面。
 
 
 
@@ -14,7 +16,7 @@
 
 [Kafka常见问题](Kafka常见问题.md)
 
-列举介绍了Kafka会提及的具体问题
+列举介绍了Kafka中常见的具体问题。
 
 [Kafka移除ZooKeeper依赖](Kafka移除ZooKeeper依赖.md)
 
@@ -23,6 +25,10 @@
 
 
 # 3. 原理
+
+[Kafka再均衡原理及源码分析](Kafka再均衡原理及源码分析.md)
+
+介绍了再均衡的详细概念，消费者与GroupCoordinator所经历的流程，分析比较了常用的几种分区分配策略，并结合源码进行具体分析。
 
 
 

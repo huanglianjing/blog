@@ -1,3 +1,5 @@
+![go_logo](image/go_logo.png)
+
 # 1. Go基础
 
 [Go安装和使用](Go安装和使用.md)
