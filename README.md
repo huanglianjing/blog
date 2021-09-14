@@ -11,9 +11,9 @@ This is a repo for my blog code and articles.
 ```
 ├── archive         // 文章目录
 │   ├── <category>  // 分类目录
-│   │   └ image     // 图片目录
+│   │   └── image   // 图片目录
 │   └── articles.md // 文章列表
-├── blog            // 博客网站代码
+├── code            // 博客网站代码
 └── README.md
 ```
 

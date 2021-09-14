@@ -4,7 +4,7 @@
 
 Go中函数、变量、常量、类型、语句标签、包的名称遵循规则：开头是一个字母或下划线，后面可以跟任意数量的字符、数字和下划线，并区分大小写。
 
-对于语法中需要有变量但又用不到的，可以直接以一个下划线_表示空变量。
+对于语法中需要有变量名但程序逻辑用不到的，可以直接以一个下划线_表示空标识符。
 
 **关键字**
 
@@ -96,7 +96,7 @@ i, j = 0， 1
 i, j = j, i // 交换i和j的值
 ```
 
-递增递减，但Go不支持前置的递增和递减。
+递增递减，Go不支持前置的递增和递减。
 
 ```go
 i++
@@ -167,6 +167,117 @@ var h Height
 /*
 todo
 */
+```
+
+## 1.6 语句
+
+**判断语句**
+
+条件判断condition不需要加括号。
+
+```go
+if condition {
+    // do sth
+}
+
+if condition {
+    // do sth
+} else {
+    // do sth
+}
+
+if condition {
+    // do sth
+} else if {
+    // do sth
+} else {
+    // do sth
+}
+```
+
+**循环语句**
+
+for是Go支持的唯一一种循环语句，条件不需要加括号，左大括号{必须和post语句在同一行。
+
+init、condition、post三者都可以忽略。
+
+```go
+for init; condition; post {
+    // do sth
+}
+
+for condition { // 省略init和post
+    // do sth
+}
+
+for { // 省略三部分，无限循环
+    // do sth
+}
+```
+
+通过break、return语句退出循环或进入下一循环。
+
+**switch语句**
+
+判断x的值，从上至下匹配case的值，匹配就会对应后面的代码。
+
+默认情况下case自带break，匹配成功后不会执行接下来的case。如果需要继续执行下一个case，使用fallthrough。
+
+```go
+switch x {
+    case val1:
+        // do sth
+    case val2:
+        // do sth
+    default: // 可选
+        // do sth
+}
+
+switch x {
+    case val1, val2: // 多条件匹配
+        // do sth
+    default:
+        // do sth
+}
+
+switch { // 无标签，等价于switch true，会判断每个case的布尔值
+    case val1:
+        // do sth
+    case val2:
+        // do sth
+    default: // 可选
+        // do sth
+}
+```
+
+**select语句**
+
+select语句中，每个case是一个发送或接收的操作。
+
+有任意个case可以进行操作时，会随机选一个执行，若没有一个case可操作，有default则执行，否则阻塞等待。
+
+```go
+select {
+    case case1:
+        // do sth
+    case case2:
+        // do sth
+    default: // 可选
+        // do sth
+}
+```
+
+**goto语句**
+
+设置一个标记，然后用goto转移到改行处运行。
+
+会造成程序逻辑混乱，不建议使用。
+
+```go
+MARK: if true {
+}
+
+goto MARK
 ```
 
 
@@ -529,7 +640,7 @@ data, err := json.MarshalIndent(st, "", "    ") // 整齐格式化
 
 ## 4.1 函数
 
-函数声明包括一个名字、一个形参列表、一个可选的返回列表以及函数体。当函数返回一个未命名的返回值或没有返回值时，返回列表的圆括号可以忽略。
+函数声明包括一个名字、一个形参列表、一个可选的返回列表以及函数体。当函数返回一个未命名的返回值或没有返回值时，返回列表的圆括号可以忽略。函数的左大括号{符号必须和关键字func在同一行。
 
 函数类型的零值是nil。
 
@@ -763,7 +874,9 @@ Go运行时包含一个自己的调度器，使用m:n调度技术，调度m个go
 
 ## 6.1 包
 
-每个Go源文件的开头都要进行包声明，当该包被其他包引入时作为包名。当包定义一条命令，是可执行的Go程序，包名是main。
+Go代码使用包来组织，一个包由一至多个.go源文件组成，放在一个文件夹中，文件夹名字描述了包的作用。
+
+每个Go源文件的开头都要进行包声明，当该包被其他包引入时作为包名。当包定义一条命令，是可执行的Go程序，包名是main，main包中的main函数是程序开始执行的地方。
 
 每个包有一个导入路径，是唯一的字符串来标识，包名是导入路径的最后一段。
 
