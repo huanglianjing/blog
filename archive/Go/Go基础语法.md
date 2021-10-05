@@ -441,7 +441,7 @@ itoa从0开始取值并逐项加1，可以通过itoa的计算表达式表示不�
 
 ```go
 // 从0开始递增加1
-type Weekday in
+type Weekday int
 const (
     Sunday Weekday = itoa
     Monday
