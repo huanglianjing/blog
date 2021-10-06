@@ -16,6 +16,7 @@
 - web
   - HTML基础知识
   - CSS基础知识
+  - JavaScript基础
 - Go
   - Go学习路线
   - Go基础语法
@@ -26,8 +27,6 @@
 
 - 版本控制
   - Git常用命令
-- Kafka
-  - 
 - Go
   - Go安装和使用
 - Linux
@@ -54,4 +53,6 @@
 - 广告
   - 计算广告入门
   - DSP管理端功能，市面常用管理端对比
+- macOS
+  - macOS快捷键与常用软件
 

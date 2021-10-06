@@ -479,14 +479,18 @@ iframe元素用于在网页内显示网页。
 
 ## 2.9 JavaScript
 
-使用script标签定义JavaScript脚本。
-
-src属性指向外部脚本文件。
+在head元素或body元素内，使用script标签定义JavaScript脚本。
 
 ```html
 <script>
 	document.write("Hello World!");
 </script>
+```
+
+也可以通过src属性，使用外部脚本文件。
+
+```html
+<script src="./js/example.js"></script>
 ```
 
 ## 2.10 表单
