@@ -439,5 +439,5 @@ clearTimeout(variable);
 
 # 参考
 
-- [JavaScript DOM编程艺术 （第2版）](https://book.douban.com/subject/6038371/)
+- [《JavaScript DOM编程艺术 （第2版）》](https://book.douban.com/subject/6038371/)
 
