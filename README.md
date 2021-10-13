@@ -1,8 +1,6 @@
 # blog
 
-建立此仓库以存放博客搭建代码和博客文章。
-
-This is a repo for my blog code and articles.
+huanglianjing.com 文章和网站代码。
 
 ***
 
