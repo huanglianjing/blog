@@ -44,24 +44,6 @@ $ go [commant] // 执行工具
 $ go help [commant] // 查看工具文档
 ```
 
-## run
-
-将一个或多个.go为后缀的源文件进行编译、链接，然后运行生成的可执行文件。
-
-```bash
-$ go run helloworld.go
-$ go run helloworld.go one two three # 带有运行参数
-```
-
-## build
-
-将源文件编译输出成一个可执行的程序，该可执行文件可以直接执行。
-
-```bash
-$ go build helloworld.go
-$ ./helloworld
-```
-
 ## env
 
 显示go环境变量。
@@ -82,13 +64,46 @@ GOPATH/
 
 环境变量GOROOT指定Go发行版的根目录，其中提供所有标准库的包。
 
-## get
+## version
 
-下载一个包。
+显示Go版本。
 
 ```bash
-$ go get github.com/golang/lint/golint
-$ go get -u github.com/golang/lint/golint # 获取包的最新版本
+$ go version
+```
+
+## run
+
+将一个或多个.go为后缀的源文件进行编译、链接，然后运行生成的可执行文件。
+
+```bash
+$ go run helloworld.go
+$ go run helloworld.go one two three # 带有运行参数
+```
+
+## build
+
+将源文件编译输出成一个可执行的程序，该可执行文件可以直接执行。
+
+```bash
+$ go build helloworld.go
+$ ./helloworld
+```
+
+## clean
+
+删除生成的对象文件和可执行文件。
+
+```bash
+$ go clean
+```
+
+## test
+
+运行测试。
+
+```bash
+$ go test
 ```
 
 ## list
@@ -98,6 +113,31 @@ $ go get -u github.com/golang/lint/golint # 获取包的最新版本
 ```bash
 $ go list
 $ go list java... # 使用...作通配符匹配子串
+```
+
+## get
+
+下载依赖包。
+
+```bash
+$ go get github.com/golang/lint/golint
+$ go get -u github.com/golang/lint/golint # 获取包的最新版本
+```
+
+## install
+
+编译运行依赖包。
+
+```bash
+$ go install [packages]
+```
+
+## fmt
+
+运行gofmt进行代码格式化。
+
+```bash
+$ go fmt
 ```
 
 
