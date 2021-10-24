@@ -31,5 +31,6 @@
 # 参考
 
 - [《Go程序设计语言》](https://book.douban.com/subject/27044219/)
-- [The Go Programming Language](https://golang.org/)
+- [Go文档](https://golang.org/doc/)
+- [Go标准库文档](https://pkg.go.dev/std)
 

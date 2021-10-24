@@ -21,6 +21,7 @@
   - Go安装和使用
   - Go学习路线
   - Go基础语法
+  - Go Modules：Go的包管理
 - macOS
   - macOS快捷键与常用软件
 
@@ -32,6 +33,7 @@
   - Git常用命令
 - Linux
   - Centos软件安装
+- Go
 
 
 
@@ -44,6 +46,11 @@
 - 编码
   - markdown flow/mermaid
 - Go
+  - 标准库
+  - 框架
+    - gorm
+    - gin
+    - zap
 - Kafka
   - Kafka源码分析
 - Linux

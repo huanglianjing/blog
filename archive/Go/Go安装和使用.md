@@ -37,7 +37,7 @@ version    显示go版本信息
 vet        运行工具vet
 ```
 
-执行工具
+执行工具：
 
 ```bash
 $ go [commant] // 执行工具
@@ -46,12 +46,17 @@ $ go help [commant] // 查看工具文档
 
 ## env
 
-显示go环境变量。
+显示Go环境变量。
 
 ```bash
-$ go env # 显示所有go环境变量
+$ go env # 显示所有Go环境变量
 $ go env GOPATH # 显示某个环境变量
+
+$ go env -w GO111MODULE=on # 设置Go环境变量
+$ go env -u GOPROXY # 取消env配置
 ```
+
+**GOPATH**
 
 环境变量GOPATH表示工作空间的根目录，其中有如下子目录：
 
@@ -62,7 +67,9 @@ GOPATH/
     pkg/  编译的包
 ```
 
-环境变量GOROOT指定Go发行版的根目录，其中提供所有标准库的包。
+**GOROOT**
+
+环境变量GOROOT指定Go发行版的根目录，也就安Go安装的目录，其中提供所有标准库的包。
 
 ## version
 
@@ -117,7 +124,7 @@ $ go list java... # 使用...作通配符匹配子串
 
 ## get
 
-下载依赖包。
+下载依赖包，将会被放到GOPATH/pkg里。
 
 ```bash
 $ go get github.com/golang/lint/golint
