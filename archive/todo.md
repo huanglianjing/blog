@@ -18,6 +18,7 @@
   - CSS基础知识
   - JavaScript基础
 - Go
+  - Go安装和使用
   - Go学习路线
   - Go基础语法
 - macOS
@@ -29,8 +30,6 @@
 
 - 版本控制
   - Git常用命令
-- Go
-  - Go安装和使用
 - Linux
   - Centos软件安装
 

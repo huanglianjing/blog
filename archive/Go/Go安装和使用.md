@@ -1,5 +1,19 @@
 # 1. 安装
 
+## 1.1 CentOS安装Go
+
+```bash
+$ yum install golang
+```
+
+## 1.2 macOS安装Go
+
+macOS可以通过brew安装Go，需要先安装brew。
+
+```bash
+$ brew install go
+```
+
 
 
 # 2. 工具
