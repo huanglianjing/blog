@@ -39,10 +39,8 @@
 
 # 计划中
 
-- 版本控制
-  - Git分支管理
-  - Git提交控制
-  - Git源码
+- 博客
+  - wordpress
 - 编码
   - markdown flow/mermaid
 - Go

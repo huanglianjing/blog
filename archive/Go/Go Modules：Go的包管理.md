@@ -74,9 +74,33 @@ go.mod中可以包含以下几个语句：
 - replace：替换依赖包，用来解决错误的包引用，或是用来调试以将依赖包替换成本地的版本。
 - retract：是Go 1.16新增的，在某个包的自身中定义，用于声明本包前面某个版本被撤回，提示大家不要用了。
 
+### 3.1.1 require
+
 require中的包后面带有版本号，就可以指定Go下载使用对应的包版本，若没有指定版本号则使用最新的版本。
 
 出现在源文件import中的包是直接依赖的包，而间接依赖的包则会加上indirect注释，且不是所有间接依赖都会出现在go.mod文件中。当module A引用的包B再引用别的包C时，如果B包还不支持Go Modules或go.mod没有带有包C，则会在module A的go.mod文件中以indirect注释引用包C。出现简介依赖可能意味着正在使用过时的包，推荐尽快消除简介依赖，使用依赖的新版本或替换间接依赖。
+
+### 3.1.2 replace
+
+当项目代码依赖一个第三方包，而又想做本地的修改和调试时，可以将这个包下载到本地，然后在go.mod中通过replace来使用它。
+
+首先将依赖的第三方包项目下载到本地。
+
+```bash
+$ cd /User/moondo/git
+$ git clone github.com/coreos/bbolt
+```
+
+然后在go.mod中已经require这个包之后，通过replace将依赖的包从使用GOPATH下的本地缓存目录，改为使用指定目录下的项目。这里指向的路径要用绝对路径。
+
+```
+require (
+	replace github.com/coreos/bbolt
+)
+replace github.com/coreos/bbolt => /User/moondo/git/bbolt
+```
+
+然后我们的项目引用这个包的时候，实际上就会引用replace后的路径下的包。我们可以修改它的代码，来测试和观察程序执行的结果了。
 
 ## 3.2 go.sum
 
@@ -154,6 +178,10 @@ $ go mod verify
 ### 3.3.7 vendor
 
 在当前项目新建目录vendor，并将所有依赖包复制到vendor目录里。
+
+```go
+$ go mod vendor
+```
 
 ### 3.3.8 graph
 

@@ -415,7 +415,8 @@ line3`
 ```go
 x := 123
 s := fmt.Sprintf("%d", x)
-s := strconv.Itoa(x)
+s := strconv.Itoa(x) // int
+s := strconv.FormatInt(2435345, 10) // int64，10进制
 ```
 
 字符串转整数
