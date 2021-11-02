@@ -487,6 +487,8 @@ const (
 
 ```go
 var a [3]int // 定义数组
+var t []int // 定义空数组，初始值为nil
+t := []int{} // 定义空数组，当用于json编码时会是空数组而不是null
 
 a[0] // 访问下标
 len(a) // 数组长度
@@ -570,6 +572,10 @@ m := map[string]int{ // 初始化值
 
 ```go
 m["a"] // 下标访问，若不存在则返回值的零值
+
+value, ok := m["a"]
+if ok { // 检测下标是否存在
+}
 
 // 遍历map，顺序是随机的
 for k, v := range m {
