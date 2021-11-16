@@ -4,6 +4,9 @@
   - 关于我
 - 编码
   - Markdown语法
+- 版本控制
+  - Git基础概念与常用命令
+
 - Kafka
   - Kafka安装、配置与使用
   - Kafka对ZooKeeper的依赖与移除
@@ -30,7 +33,8 @@
 # 写作中
 
 - 版本控制
-  - Git基础概念与常用命令
+  - Git分支merge与rebase对比
+  - Git开发规范
 - Linux
   - Centos软件安装
 - Go
