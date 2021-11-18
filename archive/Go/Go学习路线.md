@@ -18,6 +18,10 @@
 
 # 2. Go标准库
 
+以下为常用的 Go 标准库的包：
+
+[Go标准库之fmt：格式化IO](Go标准库之fmt：格式化IO.md)
+
 
 
 # 3. Go框架
@@ -31,6 +35,6 @@
 # 参考
 
 - [《Go程序设计语言》](https://book.douban.com/subject/27044219/)
-- [Go文档](https://golang.org/doc/)
+- [Go语言官方文档](https://golang.org/doc/)
 - [Go标准库文档](https://pkg.go.dev/std)
 
