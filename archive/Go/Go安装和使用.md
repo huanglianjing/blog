@@ -8,7 +8,7 @@ $ yum install golang
 
 ## 1.2 macOS安装Go
 
-macOS可以通过brew安装Go，需要先安装brew。
+macOS 可以通过 brew 安装 Go，需要先安装 brew。
 
 ```bash
 $ brew install go
@@ -58,7 +58,7 @@ $ go env -u GOPROXY # 取消env配置
 
 **GOPATH**
 
-环境变量GOPATH表示工作空间的根目录，其中有如下子目录：
+环境变量 GOPATH 表示工作空间的根目录，其中有如下子目录：
 
 ```
 GOPATH/
@@ -69,7 +69,7 @@ GOPATH/
 
 **GOROOT**
 
-环境变量GOROOT指定Go发行版的根目录，也就安Go安装的目录，其中提供所有标准库的包。
+环境变量 GOROOT 指定Go发行版的根目录，也就安Go安装的目录，其中提供所有标准库的包。
 
 ## version
 
@@ -124,11 +124,17 @@ $ go list java... # 使用...作通配符匹配子串
 
 ## get
 
-下载依赖包，将会被放到GOPATH/pkg里。
+下载依赖包，将会被放到 GOPATH/pkg 里，目前支持从 Github、BitBucket、Google Code、Launchpad 等代码管理平台获取远程代码包。
 
 ```bash
 $ go get github.com/golang/lint/golint
-$ go get -u github.com/golang/lint/golint # 获取包的最新版本
+
+# 选项
+# -d 只下载不安装
+# -u 更新包和它的依赖包
+# -f 带有-u时生效，不需要验证import的每一个包都获取了
+# -t 同时下载运行测试所需的包
+# -v 显示执行的命令
 ```
 
 ## install
@@ -141,10 +147,30 @@ $ go install [packages]
 
 ## fmt
 
-运行gofmt进行代码格式化。
+运行 gofmt 进行代码格式化。
 
 ```bash
-$ go fmt
+$ go fmt # 格式化当前目录下所有go文件，不包含子目录内的
+$ go fmt <file> # 格式化某个go文件
+
+# 选项
+# -n 显示要执行的命令而不实际执行
+```
+
+go fmt 实际执行的可执行程序是 gofmt，在不指定具体文件时，是会对每个要执行的go文件调用 gofmt的。以下是 gofmt 的用法和参数：
+
+```bash
+$ gofmt <file> # 对go文件格式化
+
+# 选项
+# -l        将不符合格式化规范的源码文件绝对路径打印到标准输出，标准输出的go文件名就是执行了格式化的，其他未输出的就是不需要执行格式化的go文件
+# -w        将格式化的内容写入文件
+# -s        简化文件的代码
+# -d        只把改写前后的对比内容打印到标准输出
+# -e        打印所有语法错误到标准输出
+# -comments 是否保留注释，默认隐式使用，默认值为true
+# -tabwidth 设置缩进的空格数量，默认值为8
+# -tabs     是否使用\t代表空格表示缩进，默认隐式使用，默认值为true
 ```
 
 

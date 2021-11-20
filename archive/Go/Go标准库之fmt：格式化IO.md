@@ -120,6 +120,8 @@ slice：
 
 # 3. 函数
 
+## 3.1 异常
+
 **func Errorf**
 
 ```go
@@ -127,6 +129,8 @@ func Errorf(format string, a ...interface{}) error
 ```
 
 格式化字符串，返回一个error对象。
+
+## 3.2 输出
 
 **func Fprint**
 
@@ -152,30 +156,6 @@ func Fprintln(w io.Writer, a ...interface{}) (n int, err error)
 
 将对象写到IO中，然后换行，返回写入的字节数。
 
-**func Fscan**
-
-```go
-func Fscan(r io.Reader, a ...interface{}) (n int, err error)
-```
-
-从IO读取写到对象，返回读取的字节数。
-
-**func Fscanf**
-
-```go
-func Fscanf(r io.Reader, format string, a ...interface{}) (n int, err error)
-```
-
-从IO读取写到对象，指定格式，返回读取的字节数。
-
-**func Fscanln**
-
-```go
-func Fscanln(r io.Reader, a ...interface{}) (n int, err error)
-```
-
-从IO读取写到对象，读到换行时停止，返回读取的字节数。
-
 **func Print**
 
 ```go
@@ -200,22 +180,6 @@ func Println(a ...interface{}) (n int, err error)
 
 将对象写到标准输出，然后换行。
 
-**func Scan**
-
-```go
-func Scan(a ...interface{}) (n int, err error)
-```
-
-从标准输入读对象。
-
-**func Scanln**
-
-```go
-func Scanln(a ...interface{}) (n int, err error)
-```
-
-从标准输入读对象，读到换行时停止。
-
 **func Sprint**
 
 ```go
@@ -239,6 +203,48 @@ func Sprintln(a ...interface{}) string
 ```
 
 将对象写到字符串加上换行返回。
+
+## 3.3 输入
+
+**func Fscan**
+
+```go
+func Fscan(r io.Reader, a ...interface{}) (n int, err error)
+```
+
+从IO读取写到对象，返回读取的字节数。
+
+**func Fscanf**
+
+```go
+func Fscanf(r io.Reader, format string, a ...interface{}) (n int, err error)
+```
+
+从IO读取写到对象，指定格式，返回读取的字节数。
+
+**func Fscanln**
+
+```go
+func Fscanln(r io.Reader, a ...interface{}) (n int, err error)
+```
+
+从IO读取写到对象，读到换行时停止，返回读取的字节数。
+
+**func Scan**
+
+```go
+func Scan(a ...interface{}) (n int, err error)
+```
+
+从标准输入读对象。
+
+**func Scanln**
+
+```go
+func Scanln(a ...interface{}) (n int, err error)
+```
+
+从标准输入读对象，读到换行时停止。
 
 **func Sscan**
 
