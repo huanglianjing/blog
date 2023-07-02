@@ -1,4 +1,4 @@
-![go_logo](image/go_logo.png)
+![go_logo](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/go/go_logo.png)
 
 # 1. Go基础
 

@@ -1,4 +1,4 @@
-![kafka_logo](image/kafka_logo.jpg)
+![kafka_logo](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/message_queue/kafka_logo.jpg)
 
 # 1. 基础概念
 

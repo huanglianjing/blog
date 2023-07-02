@@ -223,7 +223,7 @@ for { // 省略三部分，无限循环
 }
 ```
 
-通过break、return语句退出循环或进入下一循环。
+通过break、return语句退出循环或通过continue进入下一循环。
 
 **switch语句**
 

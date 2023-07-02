@@ -30,6 +30,7 @@
   - macOS快捷键与常用软件
 - 广告
   - 计算广告基础概念
+- 读书
 
 
 
@@ -57,7 +58,8 @@
 # 计划中
 
 - 博客
-  - wordpress
+  - WordPress数据库表设计
+  - WordPress源码解析
   - 我的博客网站功能
 - 编码
   - markdown flow/mermaid
@@ -79,7 +81,8 @@
   - DSP管理端功能，市面常用管理端对比
 - macOS
   - brew的安装和使用
-
 - web服务器
   - nginx
+- gradient
+- moolody
 
