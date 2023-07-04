@@ -44,7 +44,7 @@ $ go [commant] // 执行工具
 $ go help [commant] // 查看工具文档
 ```
 
-## env
+## 2.1 env
 
 显示Go环境变量。
 
@@ -71,7 +71,7 @@ GOPATH/
 
 环境变量 GOROOT 指定Go发行版的根目录，也就安Go安装的目录，其中提供所有标准库的包。
 
-## version
+## 2.2 version
 
 显示Go版本。
 
@@ -79,7 +79,7 @@ GOPATH/
 $ go version
 ```
 
-## run
+## 2.3 run
 
 将一个或多个.go为后缀的源文件进行编译、链接，然后运行生成的可执行文件。
 
@@ -88,7 +88,7 @@ $ go run helloworld.go
 $ go run helloworld.go one two three # 带有运行参数
 ```
 
-## build
+## 2.4 build
 
 将源文件编译输出成一个可执行的程序，该可执行文件可以直接执行。
 
@@ -97,7 +97,7 @@ $ go build helloworld.go
 $ ./helloworld
 ```
 
-## clean
+## 2.5 clean
 
 删除生成的对象文件和可执行文件。
 
@@ -105,7 +105,7 @@ $ ./helloworld
 $ go clean
 ```
 
-## test
+## 2.6 test
 
 运行测试。
 
@@ -113,7 +113,7 @@ $ go clean
 $ go test
 ```
 
-## list
+## 2.7 list
 
 列出可用的包。
 
@@ -122,7 +122,7 @@ $ go list
 $ go list java... # 使用...作通配符匹配子串
 ```
 
-## get
+## 2.8 get
 
 下载依赖包，将会被放到 GOPATH/pkg 里，目前支持从 Github、BitBucket、Google Code、Launchpad 等代码管理平台获取远程代码包。
 
@@ -137,7 +137,7 @@ $ go get github.com/golang/lint/golint
 # -v 显示执行的命令
 ```
 
-## install
+## 2.9 install
 
 编译运行依赖包。
 
@@ -145,7 +145,7 @@ $ go get github.com/golang/lint/golint
 $ go install [packages]
 ```
 
-## fmt
+## 2.10 fmt
 
 运行 gofmt 进行代码格式化。
 
@@ -173,9 +173,7 @@ $ gofmt <file> # 对go文件格式化
 # -tabs     是否使用\t代表空格表示缩进，默认隐式使用，默认值为true
 ```
 
-
-
-# 参考
+# 3. 参考
 
 - [《Go程序设计语言》](https://book.douban.com/subject/27044219/)
 

@@ -8,8 +8,8 @@
 
 ```
 ├── archive         // 文章目录
-│   ├── <category>  // 分类目录
-│   └── articles.md // 文章列表
+│   └── <category>  // 分类目录
+│       └── xxx.md // 文章
 └── README.md
 ```
 

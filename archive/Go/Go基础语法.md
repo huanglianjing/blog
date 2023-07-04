@@ -288,8 +288,6 @@ MARK: if true {
 goto MARK
 ```
 
-
-
 # 2. 类型
 
 Go的数据类型分为四大类：基础数据（basic type）、聚合类型（aggregate type）、引用类型（reference type）、接口类型（interface type）。
@@ -693,9 +691,9 @@ fmt.Printf("%v", err)
 ```go
 strings.Map(func(r rune) rune { return r + 1 }, "qwerty123")
 
-defer func() {
+defer func(param-list) {
     // do sth
-}
+}(variables)
 ```
 
 **变长函数**
@@ -713,7 +711,13 @@ func sum(vals ...int) int {
 在函数或方法调用前加defer，在执行return语句或者函数执行完毕，或异常情况如发生宕机时，会执行defer语句的函数调用。
 
 ```go
+// 执行指定函数
 defer mu.Unlock()
+
+// 执行一段代码，使用匿名函数
+defer func() {
+    // do sth
+}()
 ```
 
 defer语句没有使用次数限制，执行的时候以调用defer语句顺序的倒序进行。
@@ -750,21 +754,21 @@ type Poing struct{ X, Y float64 } // 定义类型
 func (p Point) f(q Point) float64 { // 定义方法
     return q.X - p.X
 }
-p.f() // 调用方法
+p.f() // 对象调用方法
 ```
 
-方法名字前的参数p称为方法的接收者，表达式p.f称作选择字（selector），即为接收者p选择合适的f方法。对一个类型拥有的所有方法名必须唯一。
+方法名字前的参数p称为方法的接收者（receiver），表达式p.f称作选择字（selector），即为接收者p选择合适的f方法。对一个类型拥有的所有方法名必须唯一。
 
-如果要设置方法不能通过对象访问到，则称作封装的方法，方法名称首字母为大写则可以访问到，否则不能由对象访问到。
+如果要设置方法不能通过对象访问到，则称作封装的方法，方法名称首字母为大写则可以访问到，否则不能由对象访问到，只能通过结构体的其他方法访问。
 
-需要更新接收者，为了避免复制整个接收者，可以绑定类型的指针。但是不允许本身是指针的类型进行方法声明。
+如果方法需要更新结构体中的成员值，将接收者`p Point`改为指针类型`p *Point`，将避免复制整个接收者。但是不允许本身是指针的类型进行方法声明。
 
 ```go
 type Poing struct{ X, Y float64 } // 定义类型
 func (p *Point) f(q Point) float64 { // 定义方法
     return q.X - p.X
 }
-(*p).f() // 调用方法
+(*p).f() // 对象指针调用方法
 ```
 
 如果接收者p是Point类型变量，但方法要求*Point接收者，可以使用简写p.f()，编译器会隐式转换为&p。
@@ -772,7 +776,7 @@ func (p *Point) f(q Point) float64 { // 定义方法
 可以将选择子p.f赋予一个方法类型的变量，它是一个函数。调用时不需要提供接收者，只需要提供实参。
 
 ```go
-varP := p.f // 赋值方法变量
+varP := p.f // 定义一个方法变量
 varP(q) // 调用方法变量
 ```
 
@@ -780,7 +784,7 @@ varP(q) // 调用方法变量
 
 接口是一种抽象类型，仅仅提供一些方法，没有具体的数据和内部结构。
 
-一个接口类型定义了一套方法，具体类型要实现该接口必须实现接口类型定义的所有方法。
+一个接口类型定义了一套方法，具体类型要实现该接口，必须实现接口类型定义的所有方法。只要结构体实现了接口定义的方法，就算是实现了该接口，不需要指定说明实现的是什么接口。
 
 ```go
 // 定义接口
@@ -798,11 +802,31 @@ type ReaderCloser interface {
 }
 ```
 
+类型实现接口示例：
+
+```go
+// Person 接口，定义了方法getName
+type Person interface {
+    getName() string
+}
+
+// Student 结构体，实现了接口Person
+type Student struct {
+    name string
+    age int
+}
+func (s Student) getName() string {
+    return s.name
+}
+
+// 声明一个Student对象为Person接口类型
+var p Person = &Student{name:"Tom",age:20}
+name := p.getName()
+```
+
 **类型断言**
 
 类型断言是作用在接口值的操作，如x.(T)，x是一个接口类型的表达式，T是一个类型（称为断言类型），会检查作为操作数的动态类型是否满足指定的断言类型。
-
-
 
 # 5. goroutine和通道
 
@@ -883,8 +907,6 @@ Go运行时包含一个自己的调度器，使用m:n调度技术，调度m个go
 
 线程有独特的标识，而goroutine没有可供程序员访问的标识。
 
-
-
 # 6. 包
 
 ## 6.1 包
@@ -942,9 +964,7 @@ func test() {
 }
 ```
 
-
-
-# 参考
+# 7. 参考
 
 - [《Go程序设计语言》](https://book.douban.com/subject/27044219/)
 
