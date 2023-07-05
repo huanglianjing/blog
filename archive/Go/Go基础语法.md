@@ -301,9 +301,9 @@ Go的数据类型分为四大类：基础数据（basic type）、聚合类型�
 
 有符号整数分为int8、int16、int32、int64，无符号整数分为uint8、uint16、uint32、uint64。还有类型int、uint，其大小根据平台决定，与原生的整数相同。
 
-rune类型等同于int32，常用于知名一个值是Unicode码点。
+rune类型等同于int32，表示任何一个字符，支持中文字符。
 
-byte类型等同于uint8，强调一个值是原始数据而非量值。
+byte类型等同于uint8，表示一个字节。
 
 uintptr大小不明确，但足够完整存放指针，仅仅用于底层编程。
 
