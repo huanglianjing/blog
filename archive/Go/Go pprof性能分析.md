@@ -22,7 +22,7 @@ pprof 可以分析包含以下几种：
 
 # 2. 使用方式
 
-## 2.1 端口监听
+## 2.1 net/http/pprof 端口监听
 
 该方式适合于服务型应用，通过添加监听端口，采集 HTTP Server 运行时的数据进行分析。
 
@@ -456,7 +456,7 @@ go tool trace trace.out
 
 每种类型的分析网站菜单都是一样的，而打开的列表、链路图、火焰图则是对应不同资源的情况，不再一一展示。
 
-## 2.2 生成 pprof 文件
+## 2.2 runtime/pprof 生成 pprof 文件
 
 该方式适合于工具型应用，在执行的代码中间通过使用 runtime/pprof 包，生成一个 pprof 文件，然后对该文件以命令行、浏览器等形式进行数据分析。
 
@@ -521,7 +521,7 @@ go tool pprof -http=:8081 cpu.pprof
 
 在 pprof 命令行使用 web 命令也可以在浏览器打开可视化的链路图svg文件，但是不能切换查看其它内容，因此不推荐这种方式。
 
-## 2.3 测试用例
+## 2.3 go test 测试用例
 
 还可以通过测试用例来进行程序性能分析。
 
@@ -801,7 +801,7 @@ Showing top 10 nodes out of 33
          0     0%   100%          1 20.00%  main.main.func2
 ```
 
-# 5. 参考
+# 4. 参考
 
 * [Go 大杀器之性能剖析 PProf](https://golang2.eddycjy.com/posts/ch6/01-pprof-1/)
 * [gin-contrib/pprof: gin pprof middleware](https://github.com/gin-contrib/pprof)

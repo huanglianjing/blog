@@ -27,7 +27,48 @@ typ := reflect.TypeOf(x)
 fmt.Println(typ)
 ```
 
-获取结构体成员的标签示例：
+根据函数名调用对应函数：
+
+```go
+func add(a int, b int) int {
+	return a + b
+}
+var FuncMap = map[string]interface{}{
+	"add":   add,
+}
+
+funcName := "add"
+f := reflect.ValueOf(FuncMap[funcName])
+args := []reflect.Value{
+	reflect.ValueOf(1),
+	reflect.ValueOf(2),
+}
+ret := f.Call(args)
+i := ret[0].Int()
+```
+
+根据方法名调用对应方法，需要注意方法需要是可导出方法才能被反射调用：
+
+```go
+type People struct {
+	name string
+}
+func (p *People) SetName(s string) {
+	p.name = s
+}
+func (p *People) GetName() string {
+	return p.name
+}
+
+p := People{}
+setFunc := reflect.ValueOf(&p).MethodByName("SetName")
+args := []reflect.Value{reflect.ValueOf("moondo")}
+setFunc.Call(args)
+getFunc := reflect.ValueOf(&p).MethodByName("GetName")
+name := getFunc.Call([]reflect.Value{})[0].String()
+```
+
+获取结构体成员的标签：
 
 ```go
 type S struct {
@@ -271,6 +312,9 @@ func ValueOf(i any) Value
 
 // Zero 创建指定类型变量并赋空值
 func Zero(typ Type) Value
+
+// Call 本身是一个函数，调用自己，传入in作为参数列表
+func (v Value) Call(in []Value) []Value
 
 // 还包括类型Value的许多方法，如判断能否转化为各种类型、设置各种类型的值、转为各种类型的值等
 ```
