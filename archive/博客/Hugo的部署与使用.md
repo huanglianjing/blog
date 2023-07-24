@@ -32,8 +32,9 @@ git init
 git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke
 git submodule add https://github.com/CaiJimmy/hugo-theme-stack.git themes/stack
 git submodule add https://github.com/adityatelange/hugo-PaperMod.git themes/papermod
+git submodule add https://github.com/Vimux/Mainroad.git themes/mainroad
 
-echo "theme = 'ananke'" >> hugo.toml
+echo "theme = 'papermod'" >> hugo.toml
 ```
 
 添加文章，将会在 content/posts 下创建文件，然后在创建的 markdown 文件的开头文本后面追加博文内容：
