@@ -2,7 +2,13 @@
 
 ![kafka_logo](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/message_queue/kafka_logo.jpg)
 
-Kafka是LinkedIn采用Scala开发的一个多分区、多副本、基于ZooKeeper协调的分布式消息系统，已被捐献给Apache基金会。kkokokokKafka定位为一个分布式流式处理平台，包含高吞吐、可持久化、可水平扩展、支持流数据处理等特性。Kafka有三大角色：
+Kafka是LinkedIn采用Scala开发的一个多分区、多副本、基于ZooKeeper协调的分布式消息系统，已被捐献给Apache基金会。kkokokokKafka定位为一个分布式流式处理平台，包含高吞吐、可持久化、可水平扩展、支持流数据处理等特性。
+
+Kafka官网：[Apache Kafka](https://kafka.apache.org/)
+
+Kafka源码：[github.com/apache/kafka](https://github.com/apache/kafka)
+
+Kafka有三大角色：
 
 - 消息系统：Kafka具备系统解耦、冗余存储、流量削峰、缓冲、异步通信、扩展性、可恢复性等功能。
 - 存储系统：Kafka把消息持久化到磁盘，并且有多副本机制，相比内存存储的系统降低了数据丢失的风险。
