@@ -92,6 +92,8 @@ git clone https://github.com/huanglianjing/huanglianjing.com.git
 
 ```bash
 # 本机执行
+hugo
+cd ..
 tar zcf huanglianjing.com.tgz huanglianjing.com/
 
 # 云主机执行
@@ -109,10 +111,18 @@ tar zxf hugo_0.115.3_Linux-64bit.tar.gz
 mv hugo /usr/bin/
 ```
 
+编辑配置文件 hugo.toml，至少包含以下配置：
+
+```toml
+baseURL = "/"
+title = "huanglianjing"
+theme = "papermod"
+```
+
 在网站仓库对应的文件夹，构建网站，网站将会保存在 public 文件夹中：
 
 ```bash
-hugo --baseURL "/"
+hugo
 ```
 
 启动 nginx 并调整配置：
@@ -178,7 +188,29 @@ hugo server
 # --navigateToChanged 编辑内容时自动重定向网页
 ```
 
-构建站点后，将会将站点发布到 public 文件夹，文件夹结构如下：
+构建站点后，将会将站点发布到 public 文件夹。
+
+# 4. 文件
+
+## 4.1 目录结构
+
+在站点的文件夹中，文件结构如下：
+
+```
+sitename/
+├── archetypes/    // 内容模板目录
+│   └── default.md // hugo new 创建文档的默认开头内容模版
+├── assets/        // 记录需要被处理的文件
+├── content/       // 内容目录，存放网站文章的 Markdown 源文件
+├── data/          // 数据目录，存储数据结构，文件格式可以是json/toml/yaml，用 .Site.Data.xxxx 来获取数据
+├── layouts/       // 模板目录，以html文件存储模板，指定如何将源文件转为静态网页
+├── public/        // 编译生成静态网站的所有文件
+├── static/        // 静态文件目录，存放如图片、CSS、JavaScript等文件
+├── themes/        // 存放主题文件
+└── hugo.toml      // 默认配置文件
+```
+
+public 文件夹结构如下：
 
 ```
 public/
@@ -198,23 +230,9 @@ public/
 └── sitemap.xml
 ```
 
-# 4. 文件结构
+## 4.2 配置文件
 
-在站点的文件夹中，文件结构如下：
-
-```
-sitename/
-├── archetypes/
-│   └── default.md // hugo new 创建文档的默认开头内容模版
-├── assets/        // 记录需要被处理的文件
-├── content/       // 网站的内容
-├── data/          // 生成网站的配置文件，格式如json/toml/yaml
-├── layouts/       // 网站的html模板文件
-├── public/
-├── static/        // 静态内容，如图片、CSS、JavaScript等
-├── themes/        // 存放主题文件
-└── hugo.toml
-```
+Hugo 默认的配置文件是文件根目录中的 hugo.toml，自 Hugo v0.110.0 开始默认配置文件从 config.toml 改为了 hugo.toml。
 
 Hugo 支持的配置文件格式包括 hugo.toml hugo.yaml hugo.json，可以指定配置文件构建网站：
 
@@ -222,9 +240,175 @@ Hugo 支持的配置文件格式包括 hugo.toml hugo.yaml hugo.json，可以指
 hugo --config a.toml
 ```
 
-自 Hugo v0.110.0 开始默认配置文件从 config.toml 改为了 hugo.toml。
+配置文件参数如下，部分参数可以在 hugo server 命令后面加上，以在运行时设定参数。
 
-# 5. 参考
+toml格式配置文件：
+
+```toml
+# 网站标题
+title = "website title"
+
+# 域名地址
+baseURL = "http://example.com/"
+
+# 主题名称
+theme = "papermod"
+
+# 网站的语言代码
+languageCode = "en-us"
+
+# 是否将相对URL变为绝对URL
+canonifyURLs = false
+
+# 生成静态站点的目录
+publishDir = "public"
+
+# 是否生成robots.txt文件
+enableRobotsTXT = false
+
+# 是否启用自动检测内容中的中文/日语/韩语，让.Summary和.WordCount对于CJK语言正确运行
+hasCJKLanguage = false
+
+# 摘要长度
+summaryLength = 70
+
+# 默认分页数
+paginate = 10
+
+# 启用.html后缀地址，默认URL为/filename/，启用为/filename.html
+uglyurls = false
+
+# 自定义参数，通过.Site.Params.xxxx获取参数
+[params]
+  postDir = "posts"
+  layoutReverse = false
+  copyright = "cprcpr"
+  description = "我的网站"
+
+# 菜单参数，通过.Site.Menus.main获取参数
+# Name为菜单名称、Weight为菜单排序参数、URL为菜单名称
+[Menus]
+  main = [
+      {Name = "Categories", Weight = 1, URL = "/categories/"},
+      {Name = "Tags", Weight = 2, URL = "/tags/"},
+      {Name = "Links", Weight = 3, URL = "/links/"},
+      {Name = "About", Weight = 4, URL = "/about/"},
+      {Name = "Feedback", Weight = 5, URL = "/feedback/"}
+  ]
+
+# 博客链接的路径格式
+[permalinks]
+  post = "/:year/:month/:title/"
+  page = "/:slug"
+
+# 顶部栏
+[[menu.navbar]]
+  name = "首页"
+  url = "http://localhost:1313"
+
+# 侧边栏，可以写多个
+[[menu.sidebar]]
+  name = "新浪"
+  url = "https://www.sina.com"
+[[menu.sidebar]]
+  name = "Github"
+  url = "https://github.com"
+
+# 属性设置
+[params]
+  # Site author
+  author = "作者名"
+
+  # homepage 页描述信息
+  description = "我的博客站点"
+
+  # Show header (default: true)
+  #header_visible = true
+
+  # Format dates with Go's time formatting
+  DateFormat = "2006-01-02"
+```
+
+yaml格式配置文件：
+
+```yaml
+# 网站标题
+title: "website title"
+
+# 域名地址
+baseURL: "http://example.com/"
+
+# 主题名称
+theme: "papermod"
+
+# 网站的语言代码
+languageCode: "en-us"
+
+# 首页配置，toml中的[[languages.en.params]]在yaml中表示为树形结构
+languages:
+  en:
+    params:
+      languageName: "English"
+      weight: 1
+      profileMode:
+        enabled: true
+        title: "huanglianjing's blog"
+        subtitle:
+        imageUrl: "img/DO_COOL_THINGS_THAT_MATTER_BLUE.png"
+        imageTitle:
+        imageWidth: 640
+        imageHeight: 360
+```
+
+## 4.3 源文件
+
+存放在 content 目录下的 Markdown 源文件，格式如下：
+
+```
+---
+文章属性内容
+---
+Markdown 正文
+```
+
+前面部分存放这篇文章的属性，后面是文章的正文 Markdown 内容。创建文章时默认的文章属性定义在 archetypes/default.md 中，然后可以手动修改内容。
+
+常用文章属性如下：
+
+```
+---
+title: "文章标题"        # 文章标题
+author: "作者"          # 文章作者
+description: "描述信息" # 文章描述信息
+date: 2015-09-28       # 文章编写日期
+lastmod: 2015-04-06    # 文章修改日期
+tags: [                # 文章所属标签
+    "文章标签1",
+    "文章标签2"
+]
+categories: [ # 文章所属标签
+    "文章分类1",
+    "文章分类2",
+]
+keywords = [ # 文章关键词
+    "Hugo",
+    "static",
+    "generator",
+]
+next: /tutorials/github-pages-blog     # 下一篇博客地址
+prev: /tutorials/automated-deployments # 上一篇博客地址
+---
+```
+
+# 5. 网站改造
+
+博客设置参考以下博客：https://www.sulvblog.cn
+
+源码：[xyming108/sulv-hugo-papermod](https://github.com/xyming108/sulv-hugo-papermod)
+
+# 6. 参考
 
 * [Hugo](https://gohugo.io/)
+* [HUGO 目录详解，创建自己的网站系统 · 回忆中的明天](https://ichochy.com/posts/20200810.html)
+* [Hugo博客目录放在侧边 | PaperMod主题 | Sulv's Blog](https://www.sulvblog.cn/posts/blog/hugo_toc_side/)
 
