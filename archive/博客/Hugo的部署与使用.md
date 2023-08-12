@@ -94,11 +94,14 @@ git clone https://github.com/huanglianjing/huanglianjing.com.git
 # 本机执行
 hugo
 cd ..
+rm -f huanglianjing.com.tgz
 tar zcf huanglianjing.com.tgz huanglianjing.com/
 
 # 云主机执行
+rm -rf huanglianjing.com/
+rm -f huanglianjing.com.tgz
 rz
-tar zxf huanglianjing.com.tgz
+tar zxf huanglianjing.com.tgz 2>> /dev/null
 ```
 
 安装 Hugo：
@@ -139,6 +142,132 @@ nginx -s reload
 ```
 
 然后在浏览器打开网址 http://huanglianjing.com/，成功看到内容！！！
+
+### 2.2.1 部署https
+
+以上只是开启了http的网站部署，如果申请了SSL证书，可以进行https部署。
+
+首先进入腾讯云控制台，对于腾讯云服务器，进入安全组，对于腾讯云轻量应用服务器，进入防火墙，配置打开https(443)端口。
+
+从控制台下载SSL证书的压缩包，如果是不分服务器类型的，解压后进入nginx文件夹，如果分服务器类型，则选择nginx的下载，下载下来解压后，在里面找到crt格式和key格式的文件，我的文件名如下：
+
+```
+huanglianjing.com_bundle.crt
+huanglianjing.com.key
+```
+
+将这两个文件上传到服务器的 /etc/nginx 中。
+
+编辑 /etc/nginx/nginx.conf，如下是我的配置，需要改动的地方已用序号标记出来：
+
+```
+# For more information on configuration, see:
+#   * Official English Documentation: http://nginx.org/en/docs/
+#   * Official Russian Documentation: http://nginx.org/ru/docs/
+
+# 1. 用户改成root，否则可能没有权限
+user root;
+worker_processes auto;
+error_log /var/log/nginx/error.log;
+pid /run/nginx.pid;
+
+# Load dynamic modules. See /usr/share/doc/nginx/README.dynamic.
+include /usr/share/nginx/modules/*.conf;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile            on;
+    tcp_nopush          on;
+    tcp_nodelay         on;
+    keepalive_timeout   65;
+    types_hash_max_size 2048;
+
+    include             /etc/nginx/mime.types;
+    default_type        application/octet-stream;
+
+    # Load modular configuration files from the /etc/nginx/conf.d directory.
+    # See http://nginx.org/en/docs/ngx_core_module.html#include
+    # for more information.
+    include /etc/nginx/conf.d/*.conf;
+
+    server {
+        listen       80 default_server;
+        listen       [::]:80 default_server;
+        # 2. 配置域名
+        server_name  huanglianjing.com;
+        # 3. 配置public文件夹的绝对路径
+        root         /root/git/huanglianjing.com/public;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        location / {
+            root /root/git/huanglianjing.com/public;
+            index index.html index.htm;
+        }
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+
+    # 4. 取消下面https的注释
+    server {
+        listen       443 ssl http2 default_server;
+        listen       [::]:443 ssl http2 default_server;
+        # 5. 配置域名
+        server_name  huanglianjing.com;
+        # 6. 配置public文件夹的绝对路径
+        root         /root/git/huanglianjing.com/public;
+
+        # 6. 配置ssl证书路径
+        ssl_certificate "/etc/nginx/huanglianjing.com_bundle.crt";
+        ssl_certificate_key "/etc/nginx/huanglianjing.com.key";
+        ssl_session_cache shared:SSL:1m;
+        ssl_session_timeout  10m;
+        ssl_ciphers PROFILE=SYSTEM;
+        ssl_prefer_server_ciphers on;
+
+        # Load configuration files for the default server block.
+        include /etc/nginx/default.d/*.conf;
+
+        location / {
+        }
+
+        error_page 404 /404.html;
+            location = /40x.html {
+        }
+
+        error_page 500 502 503 504 /50x.html;
+            location = /50x.html {
+        }
+    }
+
+}
+
+```
+
+保存后重启Nginx：
+
+```bash
+nginx -t
+nginx -s reload
+```
+
+然后在浏览器打开网址 https://huanglianjing.com/，成功打开网页。
 
 # 3. 命令
 
