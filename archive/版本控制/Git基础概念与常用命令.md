@@ -1,4 +1,4 @@
-# 1. 基础概念
+#### 1. 基础概念
 
 **仓库**
 
@@ -142,9 +142,38 @@ $ git clone -b <branch> <url> # 克隆某个分支
 $ git remote # 远程库名称，一般为origin
 $ git remote -v # 查看远程库地址
 $ git remote add <name> <url> # 添加新的远程仓库
+
+# 将本地分支映射到远程仓库的分支
+git remote add origin https://github.com/a/b.git
 ```
 
+### submodule
 
+将其他仓库作为本仓库的子模块，并保持父项目和子项目的相互独立。
+
+```bash
+# 将对应仓库作为本仓库的子模块，clone到当前路径
+git submodule add <url>
+
+# 将对应仓库作为本仓库的子模块，clone到指定路径
+git submodule add <url> <path>
+
+git submodule add https:////github.com/a/b.git component/b
+```
+
+当前仓库添加子仓库后，会在仓库根目录添加文件 .gitmodules，记录子模块的信息，内容格式如下：
+
+```
+[submodule "themes/ananke"]
+	path = themes/ananke
+	url = https://github.com/theNewDynamic/gohugo-theme-ananke.git
+```
+
+clone仓库时，对于有子模块的仓库，需要添加 --recurse-submodules，否则会丢失子模块文件。
+
+```bash
+git clone --recurse-submodules <url>
+```
 
 ## 3.2 拉取上传
 
@@ -174,6 +203,10 @@ $ git fetch <remote> # 从远程库抓取
 $ git push # 本地提交推送至当前分支对应的远程库
 $ git push <remote> <branch> # 将指定分支推送更新指定远程库
 $ git push <remote> HEAD # 将当前分支推送更新指定远程库
+
+# 从本地分支推送至master分支
+# -u: 相当于先执行 git branch --set-upstream-to=origin/master master，然后再执行 git push origin master
+git push -u origin master
 ```
 
 
@@ -206,9 +239,19 @@ $ git merge <branch>
 
 将当前分支对于基于的分支变基。
 
-假设当前分支 dev 基于 release 分支开发，并且又提交了两次 commit C1 和 C2，而 release 分支在我们新建 dev 分支后又有了新的提交，变基就是从基于的 release 分支最新的一次提交，参照 commit C1 和 C2，生成新的 commit C1' 和 C2'，然后将 dev 分支的指针指向 C2‘。进行变基操作需要当前的工作区没有未提交的修改，如果有可以先提交或者暂时 stash。
+假设当前分支 dev 基于 release 分支开发，并且又提交了两次 commit C1 和 C2，而 release 分支在我们新建 dev 分支后又有了新的提交。
 
-通过 merge 合并分支会生成一个两条分支的合并，而通过 rebase 将分支变基再合并则往往会变成一条直线的提交，提交记录更加优雅整洁。当然如果变基过程有文件冲突的话，需要解决冲突，变基还是会产生两条分支合并的提交记录。
+![git_before_rebase](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/version_control/git_before_rebase.png)
+
+变基就是从基于的 release 分支最新的一次提交，参照 commit C1 和 C2，生成新的 commit C1' 和 C2'，然后将 dev 分支的指针指向 C2‘。进行变基操作需要当前的工作区没有未提交的修改，如果有可以先提交或者暂时 stash。当然变基操作的前提是这些分支和基于的分支的改动没有代码冲突，否则建议先执行从 release 分支合并到 dev 分支的操作，解决冲突问题，然后再进行变基。
+
+![git_after_rebase](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/version_control/git_after_rebase.png)
+
+如果不变基而是通过 merge 合并分支，会生成一个两条分支的合并。
+
+![git_merge](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/version_control/git_merge.png)
+
+而通过 rebase 将分支变基再合并则往往会变成一条直线的提交，提交记录更加优雅整洁。当然如果变基过程有文件冲突的话，需要解决冲突，变基还是会产生两条分支合并的提交记录。
 
 ```bash
 $ git rebase <branch1> # 当前分支基于分支1变基
