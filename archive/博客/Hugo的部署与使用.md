@@ -82,13 +82,35 @@ git push -u origin master
 
 ## 2.2 在云主机部署
 
+在云主机中部署可以将项目上传至 Github，然后通过云主机拉取下来，进行编译。也可以在本机编译好，将整个项目或者 public 目录传到云主机。两种方式二选一。
+
+### 2.2.1 通过Github拉取并编译
+
+安装 Hugo：
+
+```bash
+# 打开 https://github.com/gohugoio/hugo/releases 选择最新版本的对应平台版本
+
+wget https://github.com/gohugoio/hugo/releases/download/v0.115.3/hugo_0.115.3_Linux-64bit.tar.gz
+tar zxf hugo_0.115.3_Linux-64bit.tar.gz
+mv hugo /usr/bin/
+```
+
 从 GitHub 上拉取仓库。
 
 ```bash
 git clone https://github.com/huanglianjing/huanglianjing.com.git
 ```
 
-如果网络没有反应，则可以从本地压缩整个文件夹，通过rz上传上去再解压。
+在网站仓库对应的文件夹，使用 hugo 命令构建网站，网站将会保存在 public 文件夹中：
+
+```bash
+hugo
+```
+
+### 2.2.2 本地编译后上传
+
+对于云主机无法拉取 Github 代码的情况，可以从本地压缩整个文件夹，通过rz上传上去再解压。
 
 ```bash
 # 本机执行
@@ -104,31 +126,9 @@ rz
 tar zxf huanglianjing.com.tgz 2>> /dev/null
 ```
 
-安装 Hugo：
+### 2.2.3 配置Nginx
 
-```bash
-# 打开 https://github.com/gohugoio/hugo/releases 选择最新版本的对应平台版本
-
-wget https://github.com/gohugoio/hugo/releases/download/v0.115.3/hugo_0.115.3_Linux-64bit.tar.gz
-tar zxf hugo_0.115.3_Linux-64bit.tar.gz
-mv hugo /usr/bin/
-```
-
-编辑配置文件 hugo.toml，至少包含以下配置：
-
-```toml
-baseURL = "/"
-title = "huanglianjing"
-theme = "papermod"
-```
-
-在网站仓库对应的文件夹，构建网站，网站将会保存在 public 文件夹中：
-
-```bash
-hugo
-```
-
-启动 nginx 并调整配置：
+在云主机安装 nginx，启动 nginx 并调整配置：
 
 ```bash
 service nginx start
@@ -143,7 +143,7 @@ nginx -s reload
 
 然后在浏览器打开网址 http://huanglianjing.com/，成功看到内容！！！
 
-### 2.2.1 部署https
+### 2.2.4 部署https
 
 以上只是开启了http的网站部署，如果申请了SSL证书，可以进行https部署。
 

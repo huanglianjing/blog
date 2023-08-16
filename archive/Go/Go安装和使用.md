@@ -14,8 +14,6 @@ macOS 可以通过 brew 安装 Go，需要先安装 brew。
 $ brew install go
 ```
 
-
-
 # 2. 工具
 
 Go的工具链通过go命令配合子命令使用。
@@ -58,7 +56,7 @@ $ go env -u GOPROXY # 取消env配置
 
 **GOPATH**
 
-环境变量 GOPATH 表示工作空间的根目录，其中有如下子目录：
+环境变量 GOPATH 表示工作空间的根目录，默认在 ~/go，其中有如下子目录：
 
 ```
 GOPATH/
@@ -69,7 +67,7 @@ GOPATH/
 
 **GOROOT**
 
-环境变量 GOROOT 指定Go发行版的根目录，也就安Go安装的目录，其中提供所有标准库的包。
+环境变量 GOROOT 指定Go发行版的根目录，也就是Go安装的目录，其中提供所有标准库的包。
 
 ## 2.2 version
 
@@ -126,8 +124,13 @@ $ go list java... # 使用...作通配符匹配子串
 
 下载依赖包，将会被放到 GOPATH/pkg 里，目前支持从 Github、BitBucket、Google Code、Launchpad 等代码管理平台获取远程代码包。
 
+从 Go 1.16 开始，go get 命令已经不再支持在不使用模块的情况下使用，应该使用 go install 命令。
+
 ```bash
-$ go get github.com/golang/lint/golint
+# 下载最新版本
+go get github.com/golang/lint/golint
+# 下载指定版本
+go get github.com/golang/lint/golint@v1.0.3
 
 # 选项
 # -d 只下载不安装
@@ -141,8 +144,14 @@ $ go get github.com/golang/lint/golint
 
 编译运行依赖包。
 
+先将对应版本的依赖包下载到 GOPATH/pkg 下，然后进行编译安装，将可执行文件放到 GOPATH/bin 下。
+
 ```bash
-$ go install [packages]
+# 安装最新版本
+go install <package>
+go install <package>@latest
+# 安装指定版本
+go install <package>@<version>
 ```
 
 ## 2.10 fmt
