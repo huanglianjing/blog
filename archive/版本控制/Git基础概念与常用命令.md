@@ -175,6 +175,14 @@ clone仓库时，对于有子模块的仓库，需要添加 --recurse-submodules
 git clone --recurse-submodules <url>
 ```
 
+删除子模块：
+
+```bash
+git submodule deinit <path>
+git rm <path>
+rm -rf .git/modules/<path>
+```
+
 ## 3.2 拉取上传
 
 ### pull

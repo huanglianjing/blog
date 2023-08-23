@@ -60,10 +60,13 @@ $ go env -u GOPROXY # 取消env配置
 
 ```
 GOPATH/
-    src/  源文件
-    bin/  可执行程序
-    pkg/  编译的包
+    src/ 包的源文件
+    bin/ 生成的可执行程序
+    pkg/ 编译生成的文件
+        mod/ go mod下载的第三方包存放路径
 ```
+
+go mod 下载的包存放在 GOPATH/pkg/mod/ 中，例如：包的 github 地址为 https://github.com/google/pprof，下载后包存放路径为 ~/go/pkg/mod/github.com/google/pprof@v0.0.0-20230705174524-200ffdc848b8，最底层路径中带有下载的版本号。
 
 **GOROOT**
 

@@ -1171,6 +1171,9 @@ find <dir> -name *.log
 
 # 搜索1天内修改的文件
 find <dir> -mtime -1
+
+# 查看目录下文件数量
+find <dir> | wc -l
 ```
 
 ## locate
@@ -1193,10 +1196,22 @@ updatedb
 
 在不同机器间复制文件，其中一个是本机器则不用写用户名和IP。
 
--r 递归目录
+-r 复制目录
+
+-q 复制过程不打印进度
 
 ```bash
 scp <user>@<ip>:<file> <user>@<ip>:<file>
+```
+
+## rsync
+
+在不同及其间复制文件，其中一个是本机器则不用写用户名和IP。与 scp 的区别在于 scp 是全量拷贝，而 rsync 默认只拷贝变动的文件。
+
+-r 复制目录
+
+```bash
+rsync <user>@<ip>:<file> <user>@<ip>:<file>
 ```
 
 ## sz
