@@ -151,6 +151,15 @@ git remote add origin https://github.com/a/b.git
 
 将其他仓库作为本仓库的子模块，并保持父项目和子项目的相互独立。
 
+查看子模块：
+
+```bash
+git submodule
+git submodule status
+```
+
+添加子模块：
+
 ```bash
 # 将对应仓库作为本仓库的子模块，clone到当前路径
 git submodule add <url>
@@ -169,10 +178,23 @@ git submodule add https:////github.com/a/b.git component/b
 	url = https://github.com/theNewDynamic/gohugo-theme-ananke.git
 ```
 
+更新子模块：
+
+```bash
+git submodule update
+```
+
 clone仓库时，对于有子模块的仓库，需要添加 --recurse-submodules，否则会丢失子模块文件。
 
 ```bash
 git clone --recurse-submodules <url>
+```
+
+如果 clone 的时候忘记加这个参数，后续可以再去拉取更新子模块：
+
+```bash
+git submodule init
+git submodule update
 ```
 
 删除子模块：
@@ -181,6 +203,7 @@ git clone --recurse-submodules <url>
 git submodule deinit <path>
 git rm <path>
 rm -rf .git/modules/<path>
+# 打开 .gitmodules 删除对应模块
 ```
 
 ## 3.2 拉取上传
