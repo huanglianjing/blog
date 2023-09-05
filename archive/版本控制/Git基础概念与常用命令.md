@@ -441,6 +441,7 @@ $ git commit -m "..." # 提交暂存区的修改
 ```bash
 $ git checkout <branch> # 切换分支
 $ git checkout -b <branch> # 创建并切换分支
+$ git checkout -b <branch> <commit> # 基于某一提交创建
 $ git checkout -- <file> # 撤销工作区文件修改
 $ git checkout -- . # 撤销工作区所有文件修改
 ```
