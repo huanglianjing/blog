@@ -24,7 +24,7 @@ continue  for          import  return     var
 
 ```
 常量
-true false itoa nil
+true false iota nil
 
 类型
 int int8 int16 int32 int64
@@ -66,6 +66,17 @@ var name = expression
 
 ```go
 var name type
+```
+
+批量声明，声明多个变量并分别指定类型吗，可以选择给它们赋值，不进行赋值则默认为该类型的零值。
+
+```go
+var (
+	a string
+	b int = 234
+	c bool
+	d float64
+)
 ```
 
 短变量声明，用来声明和初始化局部变量，变量类型由表达式的类型决定。在局部变量中主要使用短声明，var声明通常用于跟初始化表达式类型不一致的局部变量，或后面才赋值的情况。
@@ -136,6 +147,7 @@ type声明为一个已有类型定义一个新的类型名字，然后可以使�
 
 ```go
 type newTypeName oldTypeName
+type newTypeName = oldTypeName
 
 type Height float64
 var h Height
@@ -264,7 +276,7 @@ switch { // 无标签，等价于switch true，会判断每个case的布尔值
 
 select语句中，每个case是一个发送或接收的操作。
 
-有任意个case可以进行操作时，会随机选一个执行，若没有一个case可操作，有default则执行，否则阻塞等待。
+有任意个case可以进行操作时，会随机选一个执行。若没有一个case可操作，有default则执行，否则阻塞等待。
 
 ```go
 select {
@@ -297,7 +309,7 @@ Go的数据类型分为四大类：基础数据（basic type）、聚合类型�
 - 基础类型：包括数字、字符串和布尔型。
 - 聚合类型：数组和结构。
 - 引用类型：包括指针、slice、map、函数和通道。
-- 接口类型
+- 接口类型：定义一组方法的集合。
 
 ## 2.1 整数
 
@@ -442,17 +454,19 @@ const (
 )
 ```
 
-**常量生成器itoa**
+**常量生成器iota**
 
-itoa用于创建一系列的相关值，而不是逐个写出，这种类型称为枚举型enum。
+iota用于创建一系列的相关值，而不是逐个写出，这种类型称为枚举型enum。
 
-itoa从0开始取值并逐项加1，可以通过itoa的计算表达式表示不同的递增关系。
+iota从0开始取值并逐项加1，可以通过iota的计算表达式表示不同的递增关系。
+
+在中间插入一些_可以跳过某些值。
 
 ```go
 // 从0开始递增加1
 type Weekday int
 const (
-    Sunday Weekday = itoa
+    Sunday Weekday = iota
     Monday
     Tuesday
     Wednesday
@@ -461,10 +475,18 @@ const (
     Saturday
 )
 
+// 指定起始值和递增值
+const (
+    a = iota*2 + 1
+    b
+    c
+    d
+)
+
 // 从1开始左移1位，即乘以2
 type Flag uint
 const (
-    Flag1 Flag 1 << itoa
+    Flag1 Flag 1 << iota
     Flag2
     Flag3
     Flag4
@@ -509,6 +531,14 @@ for _, v := range a {
 var a [3]int = [3]int{1, 2, 3} // 固定长度，若初始化的长度少于数组定义长度，后面下标设为零值
 a = [3]int{0: 1, 2: 3} // 指定下标的初始化值，其他下标设为零值
 a := [...]int{1, 2, 3} // 数组长度根据初始化的元素个数决定
+```
+
+多维数组：
+
+```go
+var a [5][3]int // 定义数组
+a := [2][3]int{{1, 2, 3}, {4, 5, 6}} // 定义数组并赋值
+b := [...][2]int{{1, 1}, {2, 2}, {3, 3}}  // 定义数组并赋值，只有第一个维度可以用...
 ```
 
 数组的长度必须是常量表达式，在程序编译的时候就确定了。不能给一个数组变量赋值不同长度的数组。
@@ -585,7 +615,7 @@ for k, v := range m {
 delete(m, "a") // 移除元素
 ```
 
-集合通常用map[T]bool来实现。
+集合通常用 map[T]bool 或 map[T]struct{} 来实现。
 
 ## 3.4 结构体
 
@@ -826,9 +856,27 @@ var p Person = &Student{name:"Tom",age:20}
 name := p.getName()
 ```
 
+**空接口**
+
+空接口没有定义任何方法，因此任何类型都实现了空接口，所以空接口类型的变量可以储存任何类型的变量。
+
+空接口可以作为函数参数，用以接受任意类型的参数，也可用于作为map的key类型，实现保存任意类型值的map。
+
+```go
+var x interface{}
+```
+
 **类型断言**
 
 类型断言是作用在接口值的操作，如x.(T)，x是一个接口类型的表达式，T是一个类型（称为断言类型），会检查作为操作数的动态类型是否满足指定的断言类型。
+
+```go
+var x interface{}
+x = "hello"
+var, ok := x.(string) // ok 为 true 表示类型断言成功
+```
+
+
 
 # 5. 协程和通道
 
