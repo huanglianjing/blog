@@ -1,5 +1,3 @@
-
-
 # 1. 程序结构
 
 ## 1.1 名称
@@ -515,6 +513,10 @@ t := []int{} // 定义空数组，当用于json编码时会是空数组而不是
 a[0] // 访问下标
 len(a) // 数组长度
 
+// 遍历数组索引
+for i := range a {
+    fmt.Printf("%d %d\n", i, a[i])
+}
 // 遍历数组索引和元素
 for i, v := range a {
     fmt.Printf("%d %d\n", i, v)
@@ -555,6 +557,11 @@ s[i:j]创建一个新的slice，s可以是数组、指向数组的指针或slice
 
 ```go
 sl := s[1:5] // 创建slice
+// s[:high] 等同于 s[0:high]
+// s[low:] 等同于 s[low:len(s)]
+// s[:] 等同于 s[0:len(s)]
+// s[low:high:max] 取切片，但是max限制了长度，这里low可以忽略
+
 sl[1] // 引用元素
 ```
 
@@ -580,6 +587,14 @@ sl = append(sl, 3)
 ```
 
 调用append会检查slice是否有足够容量存储，如果slice容量足够，就会在同样底层数组定义一个新的slice，追加新元素，并返回新的slice。如果slice容量不够，就会创建足够容量的新的底层数组，将元素从旧的slice复制到这个数组，追加新元素并返回。创建新的底层数组往往会比实际需要更大，通常扩展一倍容量，减少数组扩展的内存分配次数。
+
+**copy函数**
+
+将源slice数据逐个拷贝到目标slice，拷贝数量取两个slice现有元素长度最小值。
+
+```go
+copy(dst, src)
+```
 
 ## 3.3 map
 
@@ -608,6 +623,9 @@ if ok { // 检测下标是否存在
 }
 
 // 遍历map，顺序是随机的
+for k := range m {
+    fmt.Printf("%s:%d\n", k, m[k])
+}
 for k, v := range m {
     fmt.Printf("%s:%d\n", k, v)
 }

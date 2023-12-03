@@ -4,8 +4,6 @@ Go Modules是Go管理包的依赖的工具，自Go 1.11加入，以解决Go的�
 
 旧的GOPATH模式将代码存放在GOPATH/src目录下，通过go get来下载外部依赖包。但是GOPATH模式没有版本控制的概念，无法确保下载的依赖包是期望的版本。因此引入了Go Modules解决这些问题。
 
-
-
 # 2. 使用Go Modules
 
 首先要确保Go升级到了1.11或以上版本。
@@ -19,12 +17,22 @@ Go Modules是Go管理包的依赖的工具，自Go 1.11加入，以解决Go的�
 设置GO111MODULE：
 
 ```bash
+$ go env GO111MODULE # 默认模式为auto
+auto
+
 $ go env -w GO111MODULE=on # 设置GO111MODULE
 ```
 
 当启用modules功能时，依赖包存放位置在GOPATH/pkg/mod，并且允许同一个package的多个版本并存，供项目指定引用。
 
+默认的源地址下载包很容易超时，可以将下载源替换为国内源：
 
+```shell
+$ go env GOPROXY # 默认源地址
+https://proxy.golang.org,direct
+
+$ go env -w GOPROXY=https://goproxy.cn # 替换为国内源
+```
 
 # 3. go mod
 
@@ -191,9 +199,7 @@ $ go mod vendor
 $ go mod graph
 ```
 
-
-
-# 参考
+# 4. 参考
 
 - [Go Modules Reference](https://golang.org/ref/mod)
 - [go mod 使用 - 掘金](https://juejin.cn/post/6844903798658301960)
