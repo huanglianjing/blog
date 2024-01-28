@@ -336,6 +336,10 @@ func WithLogger(logger Logger) Option {}
 
 # 3. 源码分析
 
+ants主要的结构体与函数调用流程图如下：
+
+![ants_flow_graph](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/go/ants_flow_graph.png)
+
 ## 3.1 常量与默认协程池
 
 ants 在 ants.go 中定义了一些常量、一些异常全局变量、一个默认的协程池，以及对默认协程池的操作函数。
@@ -398,7 +402,7 @@ type Pool struct {
 * lock：锁，用于保护 worker 队列。ants 自己实现了一个自旋锁，用于同步并发操作。
 * workers：存放一组 worker 对象的容器，可能是栈或循环队列。
 * state：记录协程池当前的状态是否已关闭。
-* conf：条件变量，处理任务等待和唤醒。
+* cond：条件变量，处理任务等待和唤醒。
 * workerCache：使用 sync.Pool 对象池管理和创建 worker 对象。
 * waiting：执行 Submit 阻塞的协程数量。
 * options：协程池配置变量结构体。
@@ -466,8 +470,8 @@ type workerQueue interface {
 * isEmpty：worker 数量是否为0。
 * insert：goroutine 任务执行结束后将 worker 插入。
 * detach：取出一个 worker。
-* refresh：清除过期 worker 并返回它们
-* reset：重制容器。
+* refresh：清除过期 worker 并返回它们。
+* reset：重置容器。
 
 workerQueue 有两种实现，分别为 workerStack 和 loopQueue，具体使用哪个实现根据创建 Pool 时的选项 PreAlloc 决定，设置了 PreAlloc 则使用  loopQueue 实现，否则使用 workerStack 实现。
 
@@ -884,4 +888,5 @@ func NewSpinLock() sync.Locker {
 
 * [Go 每日一库之 ants - 大俊的博客](https://darjun.github.io/2021/06/03/godailylib/ants/)
 * [Go 每日一库之 ants（源码赏析） - 大俊的博客](https://darjun.github.io/2021/06/04/godailylib/ants-src/)
+* [GMP 并发调度器深度解析之手撸一个高性能 goroutine pool - Strike Freedom](https://taohuawu.club/archives/high-performance-implementation-of-goroutine-pool)
 

@@ -208,7 +208,7 @@ type Locker interface {
 
 ## 2.7 Cond
 
-Cond 是一个可供多个协程等待和触发事件的条件变量。关联的 Locker 变量通常是一个 Mutex 或 RWMutex。
+Cond 是一个可供多个协程等待和触发事件的条件变量。关联的 Locker 变量通常是一个 Mutex 或 RWMutex。Cond 能够做到控制协程让出处理器使用权、唤醒协程、广播所有等待的协程。
 
 类型定义：
 
