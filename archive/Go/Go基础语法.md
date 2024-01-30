@@ -796,7 +796,9 @@ panic("x is nil")
 
 **恢复**
 
-内置函数recover在延迟函数defer内部调用，函数发生宕机时recover会终止当前的宕机状态并且返回宕机的值。函数不会从宕机的地方继续运行，而是正常返回。
+内置函数recover可以捕获代码调用的panic或程序执行时触发的panic，使panic不会发生，并返回panic的内容，如果没有触发panic则返回nil。
+
+通常在延迟函数defer内部调用，函数发生宕机时recover会终止当前的宕机状态并且返回宕机的值。函数不会从宕机的地方继续运行，而是正常返回。
 
 ```go
 func Parse(input string) (s *Syntax, err error) {
@@ -804,7 +806,7 @@ func Parse(input string) (s *Syntax, err error) {
         if p := recover(); p != nil {
             err = fmt.Errorf("internal error: %v", p)
         }
-    }
+    }()
     // do sth
 }
 ```
