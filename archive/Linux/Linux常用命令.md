@@ -379,6 +379,20 @@ date +'%Y-%m-%d %H:%M:%S'
 date +%s
 ```
 
+## time
+
+计算命令执行的时间
+
+-o FILE 将结果输出文件
+
+-a 追加到文件
+
+-f FORMAT 设置结果显示格式
+
+```bash
+time <命令>
+```
+
 ## cal
 
 日历
@@ -645,6 +659,9 @@ lsof -i:<port>
 
 ```bash
 netstat -tunap
+
+# 查看监听中的端口
+netstat -tunap | grep LISTEN
 ```
 
 ## ifconfig
@@ -662,6 +679,29 @@ ifconfig
 ```bash
 ping <ip>
 ping <hostname>
+```
+
+## nmap
+
+扫描网络中的所有主机
+
+-sn 表示用 ping 扫描，每个活动主机的 IP 地址和 ping 延迟都会被列出来
+
+-sT tcp扫描
+
+-sU udp扫描
+
+-sS syn扫描
+
+-sA ack扫描
+
+--script=FILE 执行指定脚本
+
+```bash
+nmap 目标
+
+# 使用 ping 扫描
+nmap -sn 192.168.0.0/24
 ```
 
 ## traceroute
@@ -691,8 +731,32 @@ nc <ip> <port>
 
 -O 根据url中的文件名保存
 
+-H 添加HTTP请求的头
+
+-X POST 指定请求方法
+
+-d/--data 指定POST请求的数据体
+
 ```bash
 curl <url>
+
+# 发送 GET 请求
+curl -X GET https://example.com/api/endpoint
+
+# 发送 POST 请求，JSON数据
+curl -X POST \
+  -H "Content-Type: application/json" \
+  --data '{"key1":"value1", "key2":"value2"}' \
+  https://example.com/api/endpoint
+# 发送 POST 请求，表单数据
+curl -X POST \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data "param1=value1&param2=value2" \
+  https://example.com/api/endpoint
+curl -X POST \
+  -F "param1=value1" \
+  -F "file=@localfile.txt" \
+  https://example.com/upload
 ```
 
 ## wget
@@ -986,6 +1050,14 @@ ls <file>
 
 # 显示当前目录，按修改时间从旧到新排序
 ls -lrt
+```
+
+## tree
+
+以树形结构显示目录内容，默认是当前目录，也可以指定目录。
+
+```bash
+tree
 ```
 
 ## cd

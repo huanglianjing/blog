@@ -59,5 +59,13 @@ yum -y install golang
 
 ```bash
 yum -y install nginx
+systemctl start nginx
+```
+
+## 2.4 redis
+
+```bash
+yum -y install redis
+systemctl start redis
 ```
 

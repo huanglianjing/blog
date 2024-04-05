@@ -83,3 +83,28 @@ brew upgrade <package>
 brew uninstall <package>
 ```
 
+服务管理：
+
+```bash
+# 查看服务列表
+brew services list
+
+# 查看服务状态
+brew services info <package>
+
+# 启动服务，不开机启动
+brew services run <package>
+
+# 启动服务，注册到开机启动
+brew services start <package>
+
+# 重启服务
+brew services restart <package>
+
+# 停止服务
+brew services stop <package>
+
+# 清楚已卸载应用的无用配置
+brew services cleanup
+```
+
