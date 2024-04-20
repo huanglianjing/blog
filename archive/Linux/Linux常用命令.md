@@ -1230,9 +1230,13 @@ stat <file>
 
 -name file 文件名
 
+-iname file 文件名，不区分大小写
+
 -mtime n/+n/-n 改动时间等于/大于/小于n天
 
 -atime n 访问时间
+
+-size n/+n/-n 文件大小等于/大于/小于n，指定单位
 
 ```bash
 # 列出目录下所有文件
@@ -1243,6 +1247,9 @@ find <dir> -name *.log
 
 # 搜索1天内修改的文件
 find <dir> -mtime -1
+
+# 搜索大于1GB的文件
+find <dir> -size +1G
 
 # 查看目录下文件数量
 find <dir> | wc -l
