@@ -823,6 +823,28 @@ func Parse(input string) (s *Syntax, err error) {
 }
 ```
 
+可以将一个函数的 panic 转换为 error，避免单个函数执行的错误引起整个程序的崩溃。
+
+```go
+// PanicToError Panic转换为error
+func PanicToError(f func()) (err error) {
+	defer func() {
+		if e := recover(); e != nil {
+			err = fmt.Errorf(PanicTrace(e))
+		}
+	}()
+	f()
+	return
+}
+
+// PanicTrace panic调用链跟踪
+func PanicTrace(err interface{}) string {
+	stackBuf := make([]byte, 4096)
+	n := runtime.Stack(stackBuf, false)
+	return fmt.Sprintf("panic: %v %s", err, stackBuf[:n])
+}
+```
+
 ## 4.2 方法
 
 在函数名字前面多加一个参数，就变成了方法，方法的声明把函数绑定到某个类型上。
