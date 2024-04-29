@@ -1,3 +1,5 @@
+![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/go/go_logo.png)
+
 # 1. 程序结构
 
 ## 1.1 名称
