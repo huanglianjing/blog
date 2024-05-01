@@ -16,7 +16,7 @@ Docker 包含三个基本概念：
 
 * 镜像（Image）：镜像相是一个 root 文件系统，用户基于镜像来运行容器。
 * 容器（Container）：容器基于镜像启动，容器中可以运行一个或多个进程，是镜像运行的实体。
-* 仓库（Registry/Repository）：仓库保存用户构建的镜像，分为公有和私有，Docker 公司的公共 Registry 叫做 Docker Hub，用户可以下载和上传镜像，也可以架设自己的私有 Registry。
+* 仓库（Registry/Repository）：Registry 是镜像仓库平台，保存用户构建的镜像，分为公有和私有，Docker 公司的公共 Registry 叫做 Docker Hub，用户可以下载和上传镜像，也可以架设自己的私有 Registry。而 Repository 指的是 Registry 中某个用户下的某个仓库，和 Github 中的仓库类似。
 
 Docker Hub 是官方的 Registry，地址为：https://hub.docker.com/。也可以在本地运行自己的 Registry，对应的镜像为 registry。
 
@@ -307,6 +307,7 @@ docker ps
 * -p \<port\>：控制容器公开给宿主机的网络端口，-p p2 将容器内的 p2 端口随机映射到宿主机 32768~61000 的某个端口，-p p1:p2 将容器内的 p2 端口映射到宿主机的 p1 端口
 * -P：对外公开所有 EXPOSE 指令的端口，绑定到宿主机随机端口上
 * --rm：容器退出后将其删除
+* -v file:file：映射本地文件或目录与容器中的文件或目录
 * --log-driver=""：控制容器的日志驱动，默认为 json-file，即开启 docker logs 命令，syslog 将禁用 docker logs 命令并将容器日志输出重定向到 Syslog，none 将禁用所有容器的日志
 * --restart=：设置容器错误停止时的重启条件，always 表示无论容器退出代码是什么都会自动重启，on-failure:5 表示退出代码非 0 才重启，可以设置最多重试 5 次
 * --entrypoint：覆盖 ENTRYPOINT 指令
