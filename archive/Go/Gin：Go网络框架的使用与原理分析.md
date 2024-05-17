@@ -6,7 +6,7 @@ github仓库地址：https://github.com/gin-gonic/gin
 
 文档地址：https://pkg.go.dev/github.com/gin-gonic/gin
 
-Gin 是一个 Go 语言编写的的 HTTP Web框架，它包含的特性如下：
+Gin 是一个 Go 语言编写的的 HTTP Web 框架，它包含的特性如下：
 
 * 快速：基于 Radix 树的路由，小内存占用。没有反射。可预测的 API 性能；
 * 支持中间件：传入的 HTTP 请求可以由一系列中间件和最终操作来处理。 例如：Logger，Authorization，GZIP，最终操作 DB；

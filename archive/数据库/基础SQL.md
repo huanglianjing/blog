@@ -369,10 +369,19 @@ BEGIN;
 COMMIT;
 ```
 
+设置保存点，以便回滚到保存点：
+
+```sql
+SAVEPOINT savepoint_name;
+```
+
 回滚：
 
 ```sql
 ROLLBACK;
+
+# 回滚至保存点
+ROLLBACK TO SAVEPOINT savepoint_name;
 ```
 
 # 7. 视图
