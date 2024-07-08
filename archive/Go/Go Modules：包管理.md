@@ -103,7 +103,7 @@ $ git clone github.com/coreos/bbolt
 
 ```
 require (
-	replace github.com/coreos/bbolt
+	github.com/coreos/bbolt
 )
 replace github.com/coreos/bbolt => /User/moondo/git/bbolt
 ```

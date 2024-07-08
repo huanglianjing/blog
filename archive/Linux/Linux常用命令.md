@@ -51,6 +51,25 @@ ssh <user>@<ip>:<path>
 ssh <use>r@<ip> <cmd>
 ```
 
+## sshpass
+
+执行执行命令时，明文指定密码。如登陆远程服务器，远程执行命令或脚本，文件跨机器复制。
+
+-p passwd 密码
+
+```bash
+sshpass -p <passwd> <cmd>
+
+# 登陆远程服务器
+sshpass -p '123456' ssh root@192.168.1.2
+
+# 远程执行命令或脚本
+sshpass -p '123456' ssh root@192.168.1.2 "touch a.txt"
+
+# 文件跨机器复制
+sshpass -p '123456' scp a.txt root@192.168.1.2:/data/
+```
+
 ## ssh-keygen
 
 创建ssh key
@@ -492,7 +511,7 @@ strace <exe>
 
 进程面板
 
--p pid 只显示该进程
+-p pid 只显示该进程，可以带多个
 
 -H 线程模式
 
@@ -571,9 +590,17 @@ bg <jobid>
 
 ## free
 
-内存占用
+内存占用，默认单位是 KB
 
 -h 大小转为合适单位
+
+-b B单位
+
+-k KB单位
+
+-m MB单位
+
+-g GB单位
 
 ```bash
 free
@@ -1276,6 +1303,8 @@ updatedb
 在不同机器间复制文件，其中一个是本机器则不用写用户名和IP。
 
 -r 复制目录
+
+-P port 指定端口，默认端口22
 
 -q 复制过程不打印进度
 

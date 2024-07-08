@@ -72,6 +72,14 @@ go mod 下载的包存放在 GOPATH/pkg/mod/ 中，例如：包的 github 地址
 
 环境变量 GOROOT 指定Go发行版的根目录，也就是Go安装的目录，其中提供所有标准库的包。
 
+**GOINSECURE**
+
+用于指定特定域名使用 http 而非 https 拉取，通常在私有部署的 gitlab 只使用 http 时设置。
+
+```bash
+go env -w GOINSECURE gitlab.xxx.com
+```
+
 ## 2.2 version
 
 显示Go版本。

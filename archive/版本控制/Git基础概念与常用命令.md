@@ -195,6 +195,9 @@ git clone --recurse-submodules <url>
 ```bash
 git submodule init
 git submodule update
+
+# 初始化拉取更新子模块，先 init 再 update
+git submodule update --init --recursive
 ```
 
 删除子模块：
@@ -344,7 +347,8 @@ $ git status -s # 简洁状态
 $ git log # 查看提交记录
 $ git log <file> # 和指定文件或目录相关的提交记录
 $ git log <branch1> ^<branch2> # 显示包含分支1不包含分支2提交
-$ git log --oneline --decorate --graph --all # 查看分叉历史
+$ git log --oneline --decorate --graph --all # 查看所有分叉历史
+$ git log --oneline --decorate --graph -<n> # 查看最新分叉历史
 
 # 选项
 # -<n> 显示最新n个提交
@@ -491,6 +495,8 @@ $ git stash clear # 清空工作现场
 
 ```bash
 $ git blame <file> # 显示文件每一行的最新提交
+
+$ git blame -L 1,10 <file> # 显示文件指定范围的最新提交
 ```
 
 
