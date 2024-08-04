@@ -263,6 +263,12 @@ LSB版本信息
 lsb_release
 ```
 
+查看操作系统信息。
+
+```bash
+cat /etc/os-release
+```
+
 ## hostname
 
 机器名
@@ -315,7 +321,7 @@ passwd <user>
 
 ## service
 
-系统服务
+系统服务管理
 
 ```bash
 # 查看所有服务状态
@@ -334,6 +340,40 @@ service <serv> stop
 service <serv> restart
 ```
 
+## systemctl
+
+系统服务管理
+
+管理的服务可以在 `/usr/lib/systemd/system`  中查看
+
+```bash
+# 查看服务状态
+systemctl status <serv>
+
+# 启动服务
+systemctl start <serv>
+
+# 停止服务
+systemctl stop <serv>
+
+# 重启服务
+systemctl restart <serv>
+
+# 设置服务开机启动
+systemctl enable <serv>
+
+# 取消服务开机启动
+systemctl disable <serv>
+
+# 列出当前加载的内容
+systemctl list-units # 单元
+systemctl list-sockets # socket单元
+systemctl list-unit-files # 安装的单元
+
+# 重新加载系统配置
+systemctl daemon-reload
+```
+
 ## ulimit
 
 查看各系统选项的限额
@@ -347,6 +387,21 @@ ulimit -<option> n
 
 # 不限制core文件大小，用于生成core文件进行分析
 ulimit -c unlimited
+```
+
+## timedatectl
+
+查看和设置时区
+
+```bash
+# 查看系统时区，如 Asia/Shanghai (CST, +0800)
+timedatectl
+
+# 列出所有时区
+timedatectl list-timezones
+
+# 设置时区，使用一个可用的时区名称
+sudo timedatectl set-timezone Asia/Shanghai
 ```
 
 # 4. 工具
@@ -562,6 +617,20 @@ pstree
 pstree -p 1234
 ```
 
+## pgrep
+
+根据进程名称查找进程id
+
+-l 列出进程id和名称
+
+-a 列出进程id和执行命令
+
+-c 只输出匹配的进程数量
+
+```bash
+pgrep <process>
+```
+
 ## jobs
 
 当前终端在后台运行的进程
@@ -664,6 +733,20 @@ lsof -i
 
 # 列出端口被哪些进程占用
 lsof -i:<port>
+```
+
+## fuser
+
+查看文件或 socket 被哪些进程使用
+
+-u 同时展示用户名
+
+-v 显示详细信息
+
+-k 关闭使用该文件的进程
+
+```bash
+fuser a.log
 ```
 
 # 7. 网络
@@ -1247,7 +1330,7 @@ stat <file>
 
 ## find
 
-搜索目录的所有文件
+搜索目录的所有文件。当目录中有大量文件时，ls 统计全部文件可能会很卡和出现大量打开错误，这时候可以使用 find 来替代。
 
 ! 取反
 

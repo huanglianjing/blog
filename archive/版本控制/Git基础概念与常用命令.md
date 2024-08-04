@@ -209,6 +209,14 @@ rm -rf .git/modules/<path>
 # 打开 .gitmodules 删除对应模块
 ```
 
+让子模块指向不同的 commit 版本：
+
+```bash
+cd <submodule_path>
+git checkout <commit>
+git add <submodule_path> # 将子模块对应的版本改动提交本仓库
+```
+
 ## 3.2 拉取上传
 
 ### pull
@@ -297,6 +305,7 @@ $ git rebase --onto <branch1> <branch2> <branch3> # 当分支3基于分支2而�
 
 ```bash
 $ git rebase -i HEAD~<n> # 编辑最新的n个提交
+$ git rebase -i <commit> # 从指定提交到HEAD的所有提交
 ```
 
 然后会打开一个临时文本进行编辑，将第二个到最后的 pick 改为 squash，然后保存退出。就可以将多个本地提交合并了。
@@ -458,6 +467,14 @@ $ git checkout -- . # 撤销工作区所有文件修改
 $ git reset <commit> # 版本回退到某一提交
 $ git reset HEAD <file> # 将暂存区文件放回工作区
 $ git reset HEAD # 将暂存区所有文件放回工作区
+```
+
+也可以将已 commit 但未 push 至 origin 的提交回退。
+
+```bash
+$ git reset --hard HEAD^ # 撤销最后一次 commit
+$ git reset --soft HEAD^ # 撤销最后一次 commit 并保留修改至工作区
+$ git reset --hard HEAD~2 # 撤销最后两个 commit
 ```
 
 ### clean

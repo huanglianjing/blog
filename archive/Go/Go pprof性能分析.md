@@ -95,7 +95,7 @@ import _ "net/http/pprof"
 * threadcreate：查看创建新操作系统线程的堆栈跟踪。
 * trace：生成对目前程序执行的分析文件，用于通过 `go tool trace` 进行分析，可以通过GET请求参数指定时间范围。
 
-以及点击 [full goroutine stack dump](http://localhost:8080/debug/pprof/goroutine?debug=2) 将会列出各个协程详细的调用栈信息。
+以及点击 `full goroutine stack dump` 将会列出各个协程详细的调用栈信息。
 
 ### 2.1.2 终端命令行分析
 
