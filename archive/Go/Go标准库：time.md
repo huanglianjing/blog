@@ -9,8 +9,34 @@ Go 标准库 time 用于测量和展示时间。
 ```go
 start := time.Now()
 // do sth.
-end := time.Now
+end := time.Now()
 elapsed := end.Sub(start)
+fmt.Printf("%s\n", elapsed)
+```
+
+从已知格式字符串解析时间对象：
+
+```go
+str := "2024-02-13 15:30:00"
+t, _ = time.Parse("2006-01-02 15:04:05", str)
+```
+
+格式化时间：
+
+```go
+t := time.Now()
+fmt.Println(t.Format("2006-01-02 15:04:05-07:00"))
+```
+
+设置时间的时区：
+
+```go
+// 指定时区
+loc, _ := time.LoadLocation("Asia/Tokyo")
+t := time.Now().In(loc)
+
+// UTC 时区
+t = time.Now().UTC()
 ```
 
 # 2. 常量

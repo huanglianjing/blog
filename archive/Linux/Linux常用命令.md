@@ -430,6 +430,7 @@ format：
 * %M 分
 * %S 秒
 * %s 时间戳
+* %N 一秒内的纳秒数
 
 -s time 设置时间
 
@@ -1052,6 +1053,18 @@ who
 whoami
 ```
 
+## id
+
+显示用户id和所属群组id
+
+```bash
+# 获取用户id和群组id
+id
+
+# 获取用户id
+id -u
+```
+
 ## su
 
 切换用户，需要root密码
@@ -1077,6 +1090,9 @@ sudo <cmd>
 
 # 切换用户为root
 sudo su
+
+# 使用某个用户执行命令
+sudo -u <user> <cmd>
 ```
 
 ## useradd

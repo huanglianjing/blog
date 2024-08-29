@@ -161,6 +161,8 @@ $ go test
 ```bash
 $ go list
 $ go list java... # 使用...作通配符匹配子串
+$ go list -m all # 所有已安装的依赖包
+$ go list -m go list -m github.com/redis/go-redis/v9 # 某个指定的依赖包
 ```
 
 ## 2.8 get
