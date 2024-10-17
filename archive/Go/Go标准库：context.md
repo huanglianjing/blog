@@ -110,5 +110,8 @@ func WithCancelCause(parent Context) (ctx Context, cancel CancelCauseFunc)
 
 // WithTimeout 带有过期时间
 func WithTimeout(parent Context, timeout time.Duration) (Context, CancelFunc)
+
+// WithValue 返回父context的复制，并关联key-val，用于传递过程和API，不要用于传递多个kv值以读取，因为每个kv的储存和查询是顺着父context一层层记录的
+func WithValue(parent Context, key, val any) Context
 ```
 

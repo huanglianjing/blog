@@ -72,6 +72,40 @@ go mod 下载的包存放在 GOPATH/pkg/mod/ 中，例如：包的 github 地址
 
 环境变量 GOROOT 指定Go发行版的根目录，也就是Go安装的目录，其中提供所有标准库的包。
 
+**GOPROXY**
+
+包下载的代理服务器地址，默认为 https://proxy.golang.org,direct
+
+可以换成国内其他地址或公司内部地址，提升包的下载速度。
+
+**GOSUMDB**
+
+拉取包后校验和数据库的地址，确保拉取到的依赖包内容未经修改。
+
+**GOPRIVATE**
+
+指明私有仓库，不通过代理服务器拉取和校验，可以设置多个，通过逗号分隔。
+
+**GOBIN**
+
+设置 go install、go build 可执行文件的存放文件。默认情况该变量是空的，此时可执行文件会放在 $GOPATH/bin 中。
+
+**GO111MODULE**‌
+
+是否开启 go module 包管理。
+
+**GOOS**
+
+操作系统，如 windows、linux、darwin。
+
+**GOARCH**
+
+处理器架构，如 amd64、arm64。
+
+**GOVERSION**
+
+Go 安装版本。
+
 **GOINSECURE**
 
 用于指定特定域名使用 http 而非 https 拉取，通常在私有部署的 gitlab 只使用 http 时设置。
@@ -79,6 +113,10 @@ go mod 下载的包存放在 GOPATH/pkg/mod/ 中，例如：包的 github 地址
 ```bash
 go env -w GOINSECURE gitlab.xxx.com
 ```
+
+**GOMAXPROCS**
+
+Go 程序可以执行的最大 CPU 数量，默认为机器的 CPU 核心数量。
 
 ## 2.2 version
 

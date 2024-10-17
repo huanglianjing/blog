@@ -753,6 +753,18 @@ c.X // 直接访问成员
 
 匿名成员拥有隐式的名字，所以不能在一个结构体里定义两个相同类型的匿名成员，否则会引起冲突。
 
+**标签**
+
+结构体成员可以定义标签（tag），用于 JSON 序列化和反序列化、GORM 数据库表字段映射等作用。
+
+```go
+type People struct {
+    ID      int    `json:"id" gorm:"column:id"`
+    Name    string `json:"name" gorm:"column:name"`
+    Address string `json:"address" gorm:"column:address"`
+}
+```
+
 ## 3.5 JSON
 
 把Go数据结构转换为JSON称为marshal，生成一个字节slice。

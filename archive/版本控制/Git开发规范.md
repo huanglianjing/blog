@@ -41,8 +41,10 @@ fix: 修复缺陷
 docs: 文档改动
 style: 格式调整，不改动功能
 refactor: 重构，代码重构，但不改动功能
+perf: 改进性能
 test: 增加测试
 revert: 回滚提交
+build: 构建流程、依赖库、工具等
 chore: 构建过程或辅助工具的变动
 ```
 

@@ -6,7 +6,7 @@ github仓库地址：https://github.com/go-gorm/gorm
 
 GORM 是一个 Go 语言下的 ORM 库。ORM 全称 Object Relational Mapping（对象关系映射），用于实现面向对象编程语言里数据之间的转换，应用程序通过它可以连接关系型数据库并读写数据。GORM 支持的数据库类型包括： MySQL、PostreSQL、SQLite、SQL Server、TiDB。
 
-## 1.1 声明模型
+## 1.1 模型
 
 GORM 通过将 Go 结构体映射到数据库表来简化数据库交互，模型使用结构体定义，可以包含基本类型、指针类型、类型别名，也可以是实现了 database/sql 包中的 Scanner 和 Valuer 接口的类型。
 
@@ -44,9 +44,24 @@ type Model struct {
 }
 ```
 
-**字段标签**
+## 1.2 标签
 
-结构体成员的标签大小写不敏感，但建议使用 camelCase 风格。多个标签用 ; 分隔。
+当 GORM 需要将数据库重的表记录的对象与程序中的结构体进行字段映射时，可以设置结构体成员变量的各种标签，以定义字段的对应关系和行为。
+
+GORM 读取的标签为 `gorm:""`，具体设置放在双引号中，一个字段的标签可以定义多个属性，通过 `;` 分隔。
+
+如下为一个例子，定义的结构体中有字段是主键，还有字段有索引，还有字段不对应数据库的任何字段。
+
+```go
+type People struct {
+    ID      int    `gorm:"column:id;primary_key"`
+    Name    string `gorm:"column:name;index"`
+    Address string `gorm:"column:address;default:''"`
+    Type    int    `gorm:"-"`
+}
+```
+
+结构体成员的标签大小写不敏感，但建议使用 camelCase 风格。
 
 如下标签指定了成员对应的列名，设置只允许读。
 
@@ -56,29 +71,33 @@ Name string `gorm:"column:name;->"`
 
 如下为 GORM 支持的标签。
 
-| 标签名         | 说明                                                         |
-| -------------- | ------------------------------------------------------------ |
-| column         | 列名                                                         |
-| type           | 列数据类型                                                   |
-| serializer     | 指定将数据序列化或反序列化到数据库中的序列化器               |
-| size           | 列数据类型的大小或长度                                       |
-| primaryKey     | 将列定义为主键                                               |
-| unique         | 将列定义为唯一键                                             |
-| default        | 定义列的默认值                                               |
-| precision      | 指定列的精度                                                 |
-| scale          | 指定列大小                                                   |
-| not null       | 指定列为 NOT NULL                                            |
-| embedded       | 嵌套字段                                                     |
-| embeddedPrefix | 嵌入字段的列名前缀                                           |
-| autoCreateTime | 创建时追踪当前时间                                           |
-| autoUpdateTime | 创建/更新时追踪当前时间                                      |
-| index          | 根据参数创建索引                                             |
-| uniqueIndex    | 与 index 相同，但创建的是唯一索引                            |
-| check          | 创建检查约束，例如 check:age > 13                            |
-| <-             | 设置字段写入的权限， <-:create 只创建、<-:update 只更新、<-:false 无写入权限、<- 创建和更新权限 |
-| ->             | 设置字段读的权限，->:false 无读权限                          |
-| -              | 忽略该字段，- 表示无读写，-:migration 表示无迁移权限，-:all 表示无读写迁移权限 |
-| comment        | 迁移时为字段添加注释                                         |
+| 标签名         | 说明                                                         | 用法                                                         |
+| -------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| column         | 指定列名                                                     | gorm:"column:<column_name>"                                  |
+| type           | 指定列的数据类型                                             | gorm:"type:<data_type>"                                      |
+| serializer     | 指定将数据序列化或反序列化到数据库中的序列化器               |                                                              |
+| size           | 列数据类型的大小或长度                                       | gorm:"size:\<size\>"                                         |
+| primaryKey     | 将列定义为主键                                               | gorm:"primaryKey"                                            |
+| unique         | 将列定义为唯一键                                             | gorm:"unique"                                                |
+| default        | 定义列的默认值                                               | gorm:"default:<default_value>"                               |
+| precision      | 指定列的精度                                                 |                                                              |
+| scale          | 指定列大小                                                   |                                                              |
+| not null       | 指定列为 NOT NULL                                            | gorm:"not null"                                              |
+| embedded       | 嵌套字段                                                     |                                                              |
+| embeddedPrefix | 嵌入字段的列名前缀                                           |                                                              |
+| autoCreateTime | 创建时追踪当前时间                                           |                                                              |
+| autoUpdateTime | 创建/更新时追踪当前时间                                      |                                                              |
+| autoIncrement  | 自增字段                                                     | gorm:"autoIncrement"                                         |
+| index          | 创建索引，在多个字段创建指定名称的索引为联合索引，一般按照字段顺序指定联合索引顺序，也可以通过 priority 区分指定顺序 | gorm:"index"<br />gorm:"index:\<name\>"<br />gorm:"index:\<name\>,priority:1" |
+| uniqueIndex    | 创建唯一索引，在多个字段创建指定名称的索引为联合唯一索引     | gorm:"uniqueIndex"<br />gorm:"uniqueIndex:\<name\>"          |
+| check          | 创建检查约束，例如 check:age > 13                            |                                                              |
+| foreignKey     | 指定外键，该成员变量是以指定另一个成员变量为外键，从关联表读取的行 | gorm:"foreignKey:\<name\>"                                   |
+| references     | 指定外键，该成员变量以指定变量，从关联表读取                 | gorm:"references:\<name\>"                                   |
+| constraint     | 指定约束                                                     | gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"        |
+| <-             | 设置字段写入的权限， <-:create 只创建、<-:update 只更新、<-:false 无写入权限、<- 创建和更新权限 |                                                              |
+| ->             | 设置字段读的权限，->:false 无读权限                          |                                                              |
+| -              | 忽略该字段，- 表示无读写，-:migration 表示无迁移权限，-:all 表示无读写迁移权限 | gorm:"-"                                                     |
+| comment        | 迁移时为字段添加注释                                         | gorm:"comment:\<comment\>"                                   |
 
 **字段权限控制**
 
@@ -1131,6 +1150,60 @@ type Interface interface {
     Warn(context.Context, string, ...interface{})
     Error(context.Context, string, ...interface{})
     Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error)
+}
+```
+
+## 3.6 迁移
+
+当我们用多个结构体定义了数据库的表，可以在运行时创建表结构。
+
+```go
+db.AutoMigrate(&User{})
+db.AutoMigrate(&User{}, &Product{}, &Order{})
+db.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(&User{})
+```
+
+GORM 的 Migrator 接口提供了包括自动迁移、建表、删表、增删改列、增删改索引、视图、约束等方法。
+
+```go
+type Migrator interface {
+  // AutoMigrate
+  AutoMigrate(dst ...interface{}) error
+
+  // Database
+  CurrentDatabase() string
+  FullDataTypeOf(*schema.Field) clause.Expr
+
+  // Tables
+  CreateTable(dst ...interface{}) error
+  DropTable(dst ...interface{}) error
+  HasTable(dst interface{}) bool
+  RenameTable(oldName, newName interface{}) error
+  GetTables() (tableList []string, err error)
+
+  // Columns
+  AddColumn(dst interface{}, field string) error
+  DropColumn(dst interface{}, field string) error
+  AlterColumn(dst interface{}, field string) error
+  MigrateColumn(dst interface{}, field *schema.Field, columnType ColumnType) error
+  HasColumn(dst interface{}, field string) bool
+  RenameColumn(dst interface{}, oldName, field string) error
+  ColumnTypes(dst interface{}) ([]ColumnType, error)
+
+  // Views
+  CreateView(name string, option ViewOption) error
+  DropView(name string) error
+
+  // Constraints
+  CreateConstraint(dst interface{}, name string) error
+  DropConstraint(dst interface{}, name string) error
+  HasConstraint(dst interface{}, name string) bool
+
+  // Indexes
+  CreateIndex(dst interface{}, name string) error
+  DropIndex(dst interface{}, name string) error
+  HasIndex(dst interface{}, name string) bool
+  RenameIndex(dst interface{}, oldName, newName string) error
 }
 ```
 
