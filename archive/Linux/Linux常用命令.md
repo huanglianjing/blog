@@ -1020,9 +1020,9 @@ chmod u+x a.sh
 
 ## chown
 
-修改文件的所有者
+修改文件或文件夹的所有者
 
--R 修改文件夹
+-R 递归修改文件夹
 
 ```bash
 chown <user> <file>

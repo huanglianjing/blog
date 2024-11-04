@@ -12,27 +12,55 @@ func DoSomething(ctx context.Context, arg Arg) error {
 }
 ```
 
-通过创建一个包含过期时间的 context，传入创建的 goroutine，以控制下层 goroutine 的工作时间，防止下层协程运行时间超过指定时间。如下例子中，handle 协程在900毫秒后就会返回，而在程序运行1秒后 main 函数的 select 才会收到 context 结束的通道信号。如果创建协程时传的时间大于 context 的过期时间，整个程序都会因为上下文过期而终止。
+通过创建一个包含过期时间的 WithTimeout 的 context，传入创建的 goroutine，以控制下层 goroutine 的工作时间，防止下层协程运行时间超过指定时间。
+
+如下例子中，创建一个带有过期时间的 context 变量，并传入执行函数，执行指定逻辑的同时限定超时时间。在执行函数中，将工作逻辑代码在一个新的 goroutine 中执行，同时在执行完成时关闭通道，会在下面 select 语句中接收到信号。通过 select 语句同时监听 context 和通道的结束信号，只要获取了其中一个信号就退出执行函数。通过这种方式可以控制逻辑的超时退出。
 
 ```go
-func handle(ctx context.Context, duration time.Duration) {
+func handle(ctx context.Context) {
+	done := make(chan struct{})
+	go func() {
+		fmt.Println("start work")
+		time.Sleep(time.Second)
+		fmt.Println("finish work")
+		close(done)
+	}()
 	select {
+	case <-done:
+		fmt.Println("work done")
 	case <-ctx.Done():
-		fmt.Println("handle", ctx.Err())
-	case <-time.After(duration):
-		fmt.Println("process request with", duration)
+		fmt.Println("ctx done")
 	}
 }
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
+	handle(ctx)
+}
+```
 
-	go handle(ctx, 900*time.Millisecond)
-	select {
-	case <-ctx.Done():
-		fmt.Println("main", ctx.Err())
+也可以通过创建包含取消函数的 WithCancel 的 context，来控制一段循环处理的逻辑在接收到通道信号之后结束。在 handle 函数中执行一系列任务，同时监听每轮任务完成和 context 结束信息，当外层调用 cancel 函数取消 context 时，handle 函数内的循环就因为捕获到 context 完成的信号而退出。
+
+```go
+func handle(ctx context.Context) {
+	ticker := time.NewTicker(100 * time.Millisecond)
+	for {
+		select {
+		case <-ticker.C:
+			fmt.Println("tick")
+		case <-ctx.Done():
+			fmt.Println("ctx done")
+			return
+		}
 	}
+}
+
+func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	go handle(ctx)
+	time.Sleep(time.Second)
+	cancel()
 }
 ```
 

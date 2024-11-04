@@ -40,6 +40,17 @@ x, ok := <-ch // 接收，赋值变量且判断是否成功读取
 close(ch) // 关闭通道
 ```
 
+通道关闭可以通过 select 语句接收到。
+
+```go
+done := make(chan struct{})
+close(done)
+select {
+case <-done:
+	fmt.Println("done")
+}
+```
+
 通道默认可以读和写，而在传递到函数参数中时，可以限制通道在函数中是否可以读或写数据。
 
 ```go

@@ -23,7 +23,7 @@ var lock sync.Mutex
 
 func f() {
 	lock.Lock()
-	lock.Unlock()
+	defer lock.Unlock()
 	// do sth
 }
 ```
@@ -35,7 +35,7 @@ var lock sync.Mutex
 
 func f() {
 	if lock.TryLock() {
-		lock.Unlock()
+		defer lock.Unlock()
 		// do sth
 	}
 }
@@ -54,7 +54,12 @@ type Mutex struct {
 }
 ```
 
-state 字段有 32 位长度，可以分为四部分。最低的三位分别表示 mutexLocked、mutexWoken、mutexStarving 状态，mutexLocked 表示 Mutex 是否已上锁， mutexWoken 表示从普通模式被唤醒，mutexStarving 表示是否属于饥饿模式。后面 29 位用于记录等待互斥锁协程数量的计数器 waiter，最多可以表示 2^29 个协程正在等待该互斥锁。
+state 字段有 32 位长度，可以分为四部分。最低的三位分别表示 mutexLocked、mutexWoken、mutexStarving 三个状态，mutexLocked 表示 Mutex 是否已上锁， mutexWoken 表示从普通模式被唤醒，mutexStarving 表示是否属于饥饿模式。后面 29 位用于记录等待互斥锁协程数量的计数器 waiter，最多可以表示 2^29 个协程正在等待该互斥锁。
+
+* mutexLocked：互斥锁是否已上锁，为 1 表示已被锁定
+* mutexWoken：是否有等待的协程已被唤醒，防止多个等待的协程被同时唤醒来竞争锁
+* mutexStarving：互斥锁是否处于饥饿模式
+* waiter：有多少协程在等待获取互斥锁
 
 ![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/go/mutex_state.png)
 
@@ -89,9 +94,6 @@ Lock 方法用于给 Mutex 加锁，如果已经锁上了，将会一直阻塞�
 func (m *Mutex) Lock() {
 	// 快速通过 CAS 原子操作获得锁
 	if atomic.CompareAndSwapInt32(&m.state, 0, mutexLocked) {
-		if race.Enabled {
-			race.Acquire(unsafe.Pointer(m))
-		}
 		return
 	}
 	// 无法获取锁，通过自旋或等待来获取锁
@@ -180,10 +182,6 @@ func (m *Mutex) lockSlow() {
 			old = m.state
 		}
 	}
-
-	if race.Enabled {
-		race.Acquire(unsafe.Pointer(m))
-	}
 }
 ```
 
@@ -211,9 +209,6 @@ func (m *Mutex) TryLock() bool {
 	if !atomic.CompareAndSwapInt32(&m.state, old, old|mutexLocked) {
 		return false
 	}
-	if race.Enabled {
-		race.Acquire(unsafe.Pointer(m))
-	}
 	return true
 }
 ```
@@ -226,11 +221,6 @@ Unlock 方法用来给 Mutex 释放锁。
 
 ```go
 func (m *Mutex) Unlock() {
-	if race.Enabled {
-		_ = m.state
-		race.Release(unsafe.Pointer(m))
-	}
-
 	// 将 state 减去 mutexLocked，即减一
 	new := atomic.AddInt32(&m.state, -mutexLocked)
 	if new != 0 {
