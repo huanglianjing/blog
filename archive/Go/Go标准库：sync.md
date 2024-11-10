@@ -189,7 +189,7 @@ type Pool struct {
 // Put 将变量加到池子
 func (p *Pool) Put(x any)
 
-// Get 从池子移除任意一个变量并返回
+// Get 从池子移除任意一个变量并返回，当池子空时，如果定义了 New 方法则调用方法返回一个对象，否则返回 nil
 func (p *Pool) Get() any
 ```
 
