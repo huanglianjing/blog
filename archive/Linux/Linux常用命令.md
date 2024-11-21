@@ -320,7 +320,7 @@ reboot
 # 修改当前用户密码
 passwd
 
-# 修改指定用户密码
+# 修改指定用户密码，只有 root 能使用
 passwd <user>
 ```
 
@@ -572,7 +572,13 @@ strace <exe>
 
 进程面板
 
+-u user 只显示该用户的进程
+
 -p pid 只显示该进程，可以带多个
+
+-d second 刷新频率
+
+-n iteration 刷新次数，达到次数后退出
 
 -H 线程模式
 
@@ -644,6 +650,8 @@ pstree -p 1234
 -a 列出进程id和执行命令
 
 -c 只输出匹配的进程数量
+
+-f 显示完成命令行，而不是进程名
 
 ```bash
 pgrep <process>
@@ -1371,6 +1379,17 @@ cd -
 pwd
 ```
 
+## dirname
+
+获取文件所在目录
+
+```bash
+dirname <file>
+
+# 获取执行脚本所在目录，用于变量赋值
+$(dirname $(readlink -f "$0"))
+```
+
 ## dirs
 
 显示目录栈，通过命令切换目录并将目录加入目录栈，以及移除目录栈内容，来记住之前的目录。
@@ -1502,6 +1521,18 @@ ln <oldfile> <newfile>
 ln -s <oldfile> <newfile>
 ```
 
+## readlink
+
+查看软链接的原文件
+
+-f 输出绝对路径，并解析路径中所有符号链接
+
+-e 输出绝对路径，并解析路径中所有符号链接，如果有路径不存在则报错
+
+```bash
+readlink <file>
+```
+
 ## wc
 
 统计文件的行数、单词数、字节数
@@ -1554,7 +1585,11 @@ stat <file>
 
 -size n/+n/-n 文件大小等于/大于/小于n，指定单位
 
+-type \<type\> 按文件类型查找，可以是 f（普通文件）、d（目录）、l（符号链接）
+
 -inum \<inode\> 查询文件inode
+
+-exec \<cmd\> 对查找到的文件执行命令
 
 ```bash
 # 列出目录下所有文件

@@ -102,6 +102,38 @@ len(ch) // 获取通道当前元素个数
 | 写入通道   | 阻塞      | panic                                            | 正常写入或阻塞   |
 | 关闭通道   | panic     | panic                                            | 成功关闭         |
 
+## 1.5 无阻塞读写
+
+无论是非缓冲还是带有缓冲区的通道，在读写操作到达通道空或满时，都会阻塞住，直到有另一个协程写或者读。
+
+可以通过 select 实现非阻塞的通道读写操作。
+
+非阻塞读：
+
+```go
+func TryRead(ch chan string) (string, bool) {
+	select {
+	case str := <-ch:
+		return str, true
+	default:
+		return "", false
+	}
+}
+```
+
+非阻塞写：
+
+```go
+func TryWrite(ch chan string, str string) bool {
+	select {
+	case ch <- str:
+		return true
+	default:
+		return false
+	}
+}
+```
+
 # 2. 实现原理
 
 ## 2.1 数据结构

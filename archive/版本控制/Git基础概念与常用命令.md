@@ -1,4 +1,4 @@
-#### 1. 基础概念
+# 1. 基础概念
 
 **仓库**
 
@@ -40,11 +40,13 @@ origin表示远程仓库，每个仓库包含本地仓库和对应的远程仓�
 
 通过 git commit 可以将所有暂存的文件提交，文件再次变为未修改状态，而 git reset HEAD file 则会将暂存的文件退回到已修改状态。
 
-![git_file_stages](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/version_control/git_file_stages.png)
+![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/version_control/git_file_stages.png)
 
 从上图中可以看到仓库文件的状态流转。不属于仓库的文件是 untracked 状态，属于仓库的文件是 unmodified 状态，作出更改后变为modified状态，将这些文件添加到暂存区就变成了 staged 状态，最后通过提交更新，将暂存区的文件提交到仓库，又变成了 unmodified 状态。
 
+文件修改在不同状态之间流转、以及对应的命令如下图所示：
 
+![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/version_control/git_status_cmd.png)
 
 # 2. 配置
 
@@ -262,6 +264,7 @@ git push -u origin master
 ```bash
 $ git branch # 显示本地分支
 $ git branch -a # 显示本地和远程分支
+$ git branch --show-current # 显示当前分支名称
 $ git branch <branch> # 从当前分支创建分支
 $ git branch <branch> <commit> # 从某个提交创建分支
 $ git branch -d <branch> # 删除分支

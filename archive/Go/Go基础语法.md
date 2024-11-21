@@ -1064,8 +1064,8 @@ close(ch) // 关闭通道
 
 ```go
 ch = make(chan int)     // 无缓冲通道
-ch = make(chan int， 0) // 无缓冲通道
-ch = make(chan int， 3) // 容量为3的缓冲通道
+ch = make(chan int, 0) // 无缓冲通道
+ch = make(chan int, 3) // 容量为3的缓冲通道
 
 cap(ch) // 获取通道容量
 len(ch) // 获取通道当前元素个数
