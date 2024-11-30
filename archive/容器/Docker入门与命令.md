@@ -265,6 +265,22 @@ docker history <image>
 docker rmi <image>
 ```
 
+**镜像导出**
+
+导出镜像为本地文件。
+
+```bash
+docker save -o <image>.tar <image>
+```
+
+**加载本地镜像**
+
+将本地镜像加载到 docker 中。
+
+```bash
+docker load -i <image>.tar
+```
+
 **镜像推送**
 
 将镜像推送到镜像仓库。
@@ -460,7 +476,57 @@ docker import <file>|<url> <image>
 cat <file> | docker import - <image>
 ```
 
-# 3. 参考
+# 3. 工具
+
+## 3.1 docker-compose
+
+Docker Compose 是一个用于定义和运行多容器 Docker 应用程序的工具。它使用 YAML 文件来配置应用服务，并通过一个命令同时管理这些服务。
+
+**更新镜像**
+
+```bash
+# 所有镜像
+docker-compose pull
+
+# 指定镜像
+docker-compose pull code-server
+```
+
+**运行容器**
+
+```bash
+# 所有容器
+docker-compose up -d
+
+# 指定容器
+docker-compose up -d code-server
+```
+
+**列出已有容器**
+
+```bash
+docker-compose ps
+```
+
+**启动已经存在的容器**
+
+```bash
+docker-compose start
+```
+
+**停止容器**
+
+```bash
+docker-compose stop
+```
+
+**重启服务**
+
+```bash
+docker-compose restart
+```
+
+# 4. 参考
 
 * [《第一本Docker书》](https://book.douban.com/subject/26780404/)
 * [Docker — 从入门到实践](https://yeasy.gitbook.io/docker_practice)
