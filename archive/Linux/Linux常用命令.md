@@ -505,6 +505,14 @@ dos2unix <file>
 md5sum <file>
 ```
 
+## sha256sum
+
+计算文件 sha256
+
+```bash
+sha256sum <file>
+```
+
 # 5. 库文件
 
 ## ldd
@@ -1700,6 +1708,8 @@ ar cr liba.a a.o
 ## tar
 
 压缩工具
+
+-C path 指定解压目录
 
 ```bash
 # 压缩文件

@@ -280,6 +280,14 @@ $ git branch -u <remote>/<branch> # 设置当前分支对应的远程分支
 $ git merge <branch> 
 ```
 
+### merge-base
+
+查询两个分支共同祖先的 commit id。
+
+```
+git merge-base <branch1> <branch2>
+```
+
 ### rebase
 
 将当前分支对于基于的分支变基。
@@ -535,13 +543,12 @@ $ git tag -d <tag> # 删除标签
 
 ### show
 
-显示各种类型的对象。
+显示各种类型对象的信息。
 
 ```bash
+$ git show <commit> # 查看某个提交的信息
 $ git show <tag> # 查看某个标签的信息
 ```
-
-
 
 ## 3.7 管理
 
