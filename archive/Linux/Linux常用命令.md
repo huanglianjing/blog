@@ -48,7 +48,7 @@ ssh <user>@,ip>
 ssh <user>@<ip>:<path>
 
 # 登录远程机器直接执行命令
-ssh <use>r@<ip> <cmd>
+ssh <user>@<ip> <cmd>
 ```
 
 ## sshpass
@@ -572,6 +572,20 @@ readelf -d exe | grep 'NEEDED'
 
 ```bash
 strace <exe>
+```
+
+## nm
+
+显示目标文件中的符号表信息，可查看可执行文件、共享库、目标文件。
+
+-a 所有符号，包括调试符号
+
+-g 仅外部符号
+
+-l 显示符号所在源代码行号
+
+```bash
+nm <file>
 ```
 
 # 6. 进程
@@ -1160,6 +1174,12 @@ chmod 644 a.log
 # 给文件所有角色增加执行权限
 chmod +x a.sh
 chmod u+x a.sh
+```
+
+如果同时修改的文件过多，可能会报错 too many open files，是因为打开的文件描述符超出了限制，可以临时提高限制：
+
+```bash
+ulimit -n 65536
 ```
 
 ## chown

@@ -118,7 +118,7 @@ ALTER TABLE <表> RENAME TO <表>;
 
 ```sql
 ALTER TABLE <表> ADD COLUMN <列> <类型>;
-ALTER TABLE <表> ADD COLUMN <列> <类型> after <列>;
+ALTER TABLE <表> ADD COLUMN <列> <类型> AFTER <列>;
 ```
 
 删除列：
@@ -231,7 +231,7 @@ SELECT <列列表> FROM (<SELECT>) <子查询>;
 * *：所有列
 * \<列\> AS \<key\>：为列或表设定别名，可被引用
 * \<字符串/数字/日期常量\> AS \<key\>：常量列
-* DISTINCT \<列\>：结果去重
+* DISTINCT \<列\>：结果去重，必须写在 select 的字段中的最前面
 * 运算表达式：+、-、*、/、%，含 NULL 列计算结果也是 NULL
 * CASE 表达式：CASE WHEN <表达式> THEN <表达式> WHEN <表达式> THEN <表达式> ... [ELSE <表达式>] END
 * 函数
@@ -326,6 +326,7 @@ EXPLAIN <SQL>;
 INSERT INTO <表> VALUES (<值列表>);
 INSERT INTO <表> (<列列表>) values(<值列表>) # 指定对应列的插入值
 INSERT INTO <表> <SELECT>; # 用查询的数据插入
+INSERT INTO <表> (<列列表>) values(<值列表>) ON DUPLICATE KEY UPDATE col1=v1, col2=v2; # 主键或唯一键冲突时更新指定列
 ```
 
 更新行，该操作十分危险，要记得核对查询条件：
@@ -401,3 +402,4 @@ DROP VIEW <视图>;
 # 8. 参考
 
 * [SQL基础教程](https://book.douban.com/subject/27055712/)
+
