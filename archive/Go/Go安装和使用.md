@@ -123,7 +123,14 @@ Go 程序可以执行的最大 CPU 数量，默认为机器的 CPU 核心数量�
 显示Go版本。
 
 ```bash
+# 当前环境 go 版本
 $ go version
+
+# 查看可执行文件的 go 版本
+$ go version -v <exe>
+
+# 查看可执行文件的 go 版本、依赖库版本、构建参数
+$ go version -m <exe>
 ```
 
 ## 2.3 run

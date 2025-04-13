@@ -86,6 +86,13 @@ show status like '%timeout';
 
 max-connextions 表示允许的最大客户端连接数。
 
+prompt 设置命令提示符，如 \d 为当前数据库，\h 为服务器地址，\u 为用户名。
+
+```ini
+[mysql]
+prompt='MySQL [\d]> '
+```
+
 ## 2.2 日志
 
 innodb_flush_log_at_trx_commit 设置为 1 表示每次事务的 redo log 都持久化到磁盘，建议设置成 1，保证 MySQL 异常重启后数据不丢失。

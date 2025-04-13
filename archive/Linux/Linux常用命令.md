@@ -1205,6 +1205,8 @@ chown <group> <file>
 
 新文件权限的补码
 
+-S 以符号类型方式显示新文件权限而非补码
+
 ```bash
 # 查险现在的补码
 umask
@@ -2033,6 +2035,22 @@ cut -d '-' -f 2 a.log
 
 ```bash
 paste <files>
+```
+
+## split
+
+将文件切割成多个文件
+
+-b 指定分割文件的大小，单位可以是 b、k、m 等
+
+-l 以行数来切割
+
+```bash
+# 按指定大小切割文件
+split -b 1m <file> <prefix>
+
+# 按指定行数切割文件
+split -l 100 <file> <prefix>
 ```
 
 ## sort
