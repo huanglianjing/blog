@@ -173,10 +173,17 @@ declare <var>=<value>
 
 ## export
 
-声明全局变量，在子进程也可用
+声明环境变量，在子进程也可访问，但子进程中对该变量的修改不会影响父进程。
 
 ```bash
 export <var>=<value>
+export <var>
+
+# 列出所有环境变量
+export -p
+
+# 取消导出
+export -n <var>
 ```
 
 ## nohup
