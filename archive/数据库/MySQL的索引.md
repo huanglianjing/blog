@@ -12,12 +12,22 @@
 
 在 InnoDB 中，表都是根据主键顺序以索引的形式存放的，这种存储方式的表称为索引组织表。InnoDB 使用了 B+ 树索引模型，所以数据都是存储在 B+ 树中的，每一个索引在 InnoDB 里面对应一棵 B+ 树。
 
+B+ 树对比 B 数的区别在于，B+ 树只有叶子节点储存完整数据，B 树的叶子节点和非叶子节点都储存数据。MySQL 选择 B+ 树，因为它有更高的查询效率，非叶子节点不存储数据使得单个节点能容纳更多键，降低树高和查询磁盘IO次数，也更适合磁盘存储和节点分裂合并操作。
+
 B+ 树索引的每一个节点都是一个数据页，一个数据页默认占用 16KB 存储空间。
 
 按叶子节点保存的内容，索引分为两类：
 
 * 主键索引，又叫聚簇索引（clustered index），key 是表的主键，叶子节点保存整行数据；
 * 非主键索引，又叫二级索引（secondary index），叶子节点保存主键的值；
+
+主键索引的 B+ 树，叶子节点储存的是一行的完整数据。
+
+![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/database/b_plus_tree_index_primary_key.png)
+
+非主键索引的 B+ 树，叶子节点储存的是对应主键的值。
+
+![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/database/b_plus_tree_index_secondary_key.png)
 
 通过主键索引查询，只需要搜索这一个索引树，就可以获取数据行的所有数据。通过非主键索引，会先获得主键，然后再通过主键去主键索引查询，这个过程称为“回表”，相比会多一次查询。
 
