@@ -56,7 +56,7 @@ select object_type,object_schema,object_name,lock_type,lock_duration from perfor
 
 ## 3.3 意向锁
 
-意向锁（intention locks）指未来的某个时刻，事务可能要加共享锁或独占锁了，先提前声明一个意向。它是 InnoDB 为了支持多粒度锁机制而引入的，即表级锁和行级锁共存。
+意向锁（intention locks）指未来的某个时刻，事务可能要对表的某些行加共享锁或独占锁，提前声明一个意向，避免数据库为了判断能否加表锁而逐行检查行锁，从而大幅提升性能。它是 InnoDB 为了支持多粒度锁机制而引入的，即表级锁和行级锁共存。
 
 意向共享锁（intention shared lock, IS）表示事务有意向对表中某些行加共享锁，意向独占锁（intention exclusive lock, IX）表示事务有意向对表中某些行加独占锁。
 
@@ -111,6 +111,12 @@ insert、update、delete 语句会给记录加写锁：
 SELECT ... LOCK IN SHARE MODE; # 读锁
 SELECT ... FOR UPDATE; # 写锁
 ```
+
+select for update 针对不同的过滤条件，加锁的情况：
+
+* 主键、唯一索引的等值查询：加行锁；
+* 普通索引或范围查询：加临键锁；
+* 未命中索引：加表锁；
 
 ## 4.2 间隙锁和临键锁
 
