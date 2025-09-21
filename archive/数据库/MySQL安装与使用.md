@@ -1,5 +1,41 @@
 # 1. 安装
 
+## 1.1 在Linux安装
+
+安装 MySQL：
+
+```bash
+apt install mysql-server
+```
+
+启动服务：
+
+```bash
+systemctl start mysql
+```
+
+## 1.2 在macOS安装
+
+可以通过官网下载 MySQL 安装包安装，然后在系统设置的 MySQL 中启动服务。
+
+或者通过 brew 安装：
+
+```bash
+brew install mysql
+
+# 安装特定版本
+brew install mysql@8.0
+```
+
+启动服务：
+
+```bash
+brew services start mysql
+brew services start mysql@8.0
+```
+
+## 1.3 安装目录
+
 不同系统可以通过安装命令安装、官网下载安装包、源码编辑的方式安装 MySQL ，它们的默认安装路径如下：
 
 ```

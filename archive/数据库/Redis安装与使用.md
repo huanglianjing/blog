@@ -2,23 +2,19 @@
 
 ## 1.1 在Linux安装
 
-参考链接：https://redis.io/docs/install/install-redis/install-redis-on-linux/
-
-通过 yum 安装 Redis：
+安装 Redis：
 
 ```bash
-yum -y install redis
+apt install redis-server
 ```
 
 后台启动 Redis：
 
 ```bash
-systemctl start redis
+systemctl start redis-server
 ```
 
 ## 1.2 在macOS安装
-
-参考链接：https://redis.io/docs/install/install-redis/install-redis-on-mac-os/
 
 通过 brew 安装 Redis：
 

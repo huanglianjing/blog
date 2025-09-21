@@ -1143,4 +1143,5 @@ slaveof no one
 # 6. 参考
 
 * [《Redis开发与运维》](https://book.douban.com/subject/26971561/)
+* [《Redis深度历险：核心原理与应用实践》](https://book.douban.com/subject/30386804/)
 
