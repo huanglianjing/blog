@@ -1,12 +1,18 @@
 # 1. 简介
 
-在 MongoDB 早期版本，默认的存储引擎为 MMapV1，索引使用 B树。
+在 MongoDB 早期版本，默认的存储引擎为 MMapV1，索引使用 B树，从 MongoDB 3.0 开始引入了 WiredTiger（WT）存储引擎，并在 MongoDB 3.2 开始将其作为默认的存储引擎。
 
-从 MongoDB 3.0 开始引入了 WiredTiger（WT）存储引擎，并在 MongoDB 3.2 开始将其作为默认的存储引擎。
+功能特性：
 
-WiredTiger 具有支持 B+树、LSM树索引，支持行存储和列存储，实现了 ACID 级别事务，支持 4G 大的记录等特性。
+* 使用 B+树组织数据和索引，叶子节点使用双向链表；
+* 支持文档级锁，修改不同文档可并发进行；
+* 支持多版本并发控制 (MVCC)；
+* 使用 Buffer Pool 缓存频繁访问的数据页，采用类似 LRU 的算法淘汰最近较少访问的页；
+* 持久化机制，通过预写日志（WAL）保障原子性和持久性，通过检查点（Checkpoint）将内存脏页以一致性快照方式刷入数据文件；
+* 支持对集合和索引进行压缩，减少磁盘空间消耗；
+* 支持多文档 ACID 事务，提供读未提交、读提交、快照隔离这几种隔离级别；
 
-WiredTiger 支持事务的读未提交、读提交、快照一致性读，MongoDB 对于事务采用了快照一致性读。
+WiredTiger 默认的隔离级别为快照隔离，也是 MongoDB 对事物采用的隔离级别。
 
 # 2. 文件结构
 
@@ -47,13 +53,13 @@ WiredTiger 一些常用参数：
 
 WiredTiger 默认会对集合使用块压缩，对索引使用前缀压缩，压缩后写入磁盘，从磁盘中读取出来时再进行解压。对于 Journal 日志则采用 Snappy 压缩算法压缩。通过压缩可以减少磁盘 I/O 和磁盘占用。
 
-而在 WiredTiger 内部缓存中则是未经压缩的，可以直接读写。
+而在 WiredTiger 内存缓存中则是未经压缩的，可以直接读写。
 
 # 5. 缓存
 
 ## 5.1 读缓存
 
-WiredTiger 实现数据的二级缓存，第一层是操作系统层级的页面缓存，第二层则是存储引擎的内部缓存：
+WiredTiger 实现数据的二级缓存，第一层是操作系统层级的页面缓存，第二层则是存储引擎的内部缓存。
 
 ![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/database/wiredtiger_read_cache.jpg)
 

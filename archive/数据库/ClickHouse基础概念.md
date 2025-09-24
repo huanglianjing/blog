@@ -291,7 +291,7 @@ ClickHouse 的修改和删除是一种很重的操作，更适用于批量修改
 
 # 5. 查询
 
-ClickHouse 完全使用 SQL 作为查询语言，以 SLECT 查询语句的形式获取数据。
+ClickHouse 完全使用 SQL 作为查询语言，以 SELECT 查询语句的形式获取数据。
 
 应该只获取必要的列，尽量避免 SELECT * 查询数据，会很消耗性能。
 

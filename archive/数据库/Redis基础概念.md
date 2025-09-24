@@ -2,7 +2,7 @@
 
 ![](https://blog-1304941664.cos.ap-guangzhou.myqcloud.com/article_material/database/redis_logo.png)
 
-Redis 全程是 REmote Dictionary Server，是一个基于键值对（key - value）的 NoSQL 数据库。它将所有数据存放在内存中，所以它的读写性能非常惊人。
+Redis 全称是 REmote Dictionary Server，是一个基于键值对（key - value）的 NoSQL 数据库。它将所有数据存放在内存中，所以它的读写性能非常惊人。
 
 Redis 官网：[Redis](https://redis.io/)
 
@@ -824,7 +824,7 @@ slowlog reset
 
 Pipeline（流水线）可以将一组 Redis 命令进行组装，一次过传输给 Redis，最后将他们的执行结果按顺序返回给客户端。多条命令只需要一次发送和返回，节省了网络传输时间。
 
-原生的批量命令是原子操作，而 Pipeline 是非原子操作。可以支持多个命令一起执行。
+原生的批量命令是原子操作，而 Pipeline 是非原子操作。
 
 当封装进 Pipeline 的请求过多时，可能会增加网络阻塞和客户端等待时间，因此需要适当控制 Pipeline 的大小。
 

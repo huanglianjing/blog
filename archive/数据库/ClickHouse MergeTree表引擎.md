@@ -35,7 +35,7 @@ MergeTree 在磁盘的物理存储结构：
 
 ```
 table_name      # 表目录
-├── partition_1 # 分区目录
+├── 20250101_1_1_0 # 分区目录
 │   ├── checksums.txt        # 校验文件，保存其他文件的size大小和哈希值
 │   ├── columns.txt          # 列字段信息文件
 │   ├── count.txt            # 计数文件，记录当前分区下数据总行数
@@ -47,8 +47,8 @@ table_name      # 表目录
 │   ├── minmax_[Column].idx  # 记录当前分区下分区字段对应原始数据的最小和最大值
 │   ├── skp_idx_[Column].idx # 二级索引，二进制存储
 │   └── skp_idx_[Column].mrk # 二级索引标记文件，二进制存储
-├── partition_2
-└── partition_n
+├── 20250101_2_2_0
+└── 20250102_3_3_0
 ```
 
 # 3. 数据分区

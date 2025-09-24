@@ -145,7 +145,7 @@ MongoDB 的基本数据单元是文档（Document），相当于关系型数据�
 
 其中的键是字符串类型，区分大小写，文档中不能包含重复的键。
 
-值可以是字符串、整数等类型。
+值可以是布尔、数值、字符串、数组、内嵌文档等类型。
 
 ## 3.2 集合
 
@@ -519,7 +519,7 @@ db.blog.post.findOne(criteria,{"comment":{"$slice":[100,5]}}) # 指定偏移量�
 ```json
 {
   "name" :{
-    "first":"Donalp",
+    "first":"Donald",
     "last":"Trump"
   },
   "age": 70
