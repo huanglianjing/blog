@@ -282,7 +282,7 @@ MongoDB 对于插入操作会先执行检查：
 
 insertOne 插入单个文档：
 
-```json
+```bash
 db.movie.insertOne({"title":"Star War"})
 ```
 
@@ -314,7 +314,7 @@ db.movie.replaceOne({"name":"joe"}, d1)
 
 updateOne 更新一个文档，通过更新运算符来完成不同的更新操作，不过 _id 是不能改变的：
 
-```json
+```bash
 # $set 增加或修改键
 db.movie.updateOne({"title":"Star War"},
   {"$set":{"year":1989}})
@@ -346,14 +346,14 @@ db.movie.updateOne({"title":"Star War"},
 
 updateMany 更新多个文档，用法和 updateOne 相同：
 
-```json
+```bash
 db.movie.updateMany({"title":"Star War"},
   {"$set":{"year":1989}})
 ```
 
 upsert 更新方式为插入更新，当文档不存在时插入，存在时更新。
 
-```json
+```bash
 db.movie.updateOne({"title":"Star War"},
   {"$inc":{"view":100}},
   {"upsert": true})
@@ -361,7 +361,7 @@ db.movie.updateOne({"title":"Star War"},
 
 save 函数用于在文档不存在时插入，存在则更新。
 
-```json
+```bash
 var x = db.movie.findOne()
 x.like = 10
 db.movie.save(x)
@@ -375,7 +375,7 @@ db.movie.save(x)
 
 deleteOne 删除一个文档：
 
-```json
+```bash
 db.movie.deleteOne({"title":"Star War","year":1983})
 
 # 不指定条件，删除一个文档
@@ -384,7 +384,7 @@ db.movie.deleteOne({})
 
 deleteMany 删除多个文档：
 
-```json
+```bash
 db.movie.deleteMany({"year":1984})
 
 # 不指定条件，删除集合所有文档
@@ -704,7 +704,7 @@ db.movie.dropIndex("year_1_title_1")
 
 GeoJSON 格式可以表示点、线和多边形。
 
-```bash
+```json
 # 点由精度和纬度组成
 {
   "name":"City1",
