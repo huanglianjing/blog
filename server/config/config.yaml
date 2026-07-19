@@ -1,0 +1,5 @@
+server:
+  port: 6000
+
+database:
+  path: db/blog.db

@@ -1,0 +1,24 @@
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+  /* 全站为浅色设计，固定为 light，避免系统深色模式下表单控件 / 滚动条配色不协调 */
+  color-scheme: light;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  /* 兜底：防止个别内容意外撑宽导致整页可横向拖动 */
+  overflow-x: hidden;
+}
