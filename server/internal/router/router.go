@@ -14,19 +14,21 @@ func New() *gin.Engine {
 	categoryCtrl := controller.NewCategoryController()
 	tagCtrl := controller.NewTagController()
 
-	article := engine.Group("/article")
+	api := engine.Group("/api")
+
+	article := api.Group("/article")
 	{
 		article.GET("/list", articleCtrl.List)
 		article.GET("/detail", articleCtrl.Detail)
 	}
 
-	category := engine.Group("/category")
+	category := api.Group("/category")
 	{
 		category.GET("/overview", categoryCtrl.Overview)
 		category.GET("/list", categoryCtrl.List)
 	}
 
-	tag := engine.Group("/tag")
+	tag := api.Group("/tag")
 	{
 		tag.GET("/overview", tagCtrl.Overview)
 		tag.GET("/list", tagCtrl.List)

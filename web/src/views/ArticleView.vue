@@ -12,7 +12,7 @@ async function fetchArticles(p) {
   loading.value = true
   error.value = ''
   try {
-    const resp = await fetch(`/article/list?page=${p}`)
+    const resp = await fetch(`/api/article/list?page=${p}`)
     const data = await resp.json()
     if (data.code !== 0) {
       throw new Error(data.msg || '请求失败')

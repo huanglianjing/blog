@@ -2,11 +2,26 @@
 
 本仓库为个人博客网站的前后端代码仓库
 
+# 本地运行
+
+```bash
+# 1. 编译后端程序和转化文章
+make dev
+
+# 2. 运行后端服务
+cd blog_dev; ./blog_server
+
+# 3. 
+cd web && npm install && npm run dev
+
+# 4. 浏览器打开网址 http://localhost:5173/
+```
+
 # 博客部署
 
 ```bash
 # 1. 将前后端编译并打包至 blog.tar.gz
-make
+make release
 
 # 2. 将 blog.tar.gz 传到服务器上
 
@@ -14,6 +29,7 @@ make
 tar --warning=no-unknown-keyword -zxf blog.tar.gz
 
 # 4. 启动服务器
+cd blog
 nohup ./blog_server -c config/config.yaml > blog_server.log 2>&1 &
 ```
 
@@ -47,8 +63,8 @@ server {
     root /root/blog/dist;
     index index.html;
 
-    # 后端 API：与 vite.config.js 里代理的路径保持一致
-    location ~ ^/(article/list|article/detail|category/overview|category/list|tag/overview|tag/list) {
+    # 后端 API：与 vite.config.js 里代理的路径保持一致，统一 /api 前缀
+    location /api/ {
         proxy_pass http://127.0.0.1:6000;
         proxy_set_header Host              $host;
         proxy_set_header X-Real-IP         $remote_addr;

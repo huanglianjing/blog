@@ -65,13 +65,14 @@ npm run build               # 生产构建到 web/dist
 ## 接口约定
 
 - 统一响应结构 `{"code":0,"msg":"","data":{...}}`，用 [server/internal/common/response.go](server/internal/common/response.go) 的 `common.OK` / `common.Fail`。`code == 0` 为成功。
+- 所有接口统一以 `/api` 前缀注册（见 [server/internal/router/router.go](server/internal/router/router.go)）。
 - 现有接口：
-  - `GET /article/list?page=` — 文章分页列表（page 从 0 开始）
-  - `GET /article/detail?title=` — 文章详情（含 html 正文）
-  - `GET /category/overview` — 各分类及文章数（按文章数降序）
-  - `GET /category/list?name=&page=` — 某分类下的文章分页
-  - `GET /tag/overview` — 各标签及文章数（按文章数降序）
-  - `GET /tag/list?name=&page=` — 某标签下的文章分页
+  - `GET /api/article/list?page=` — 文章分页列表（page 从 0 开始）
+  - `GET /api/article/detail?title=` — 文章详情（含 html 正文）
+  - `GET /api/category/overview` — 各分类及文章数（按文章数降序）
+  - `GET /api/category/list?name=&page=` — 某分类下的文章分页
+  - `GET /api/tag/overview` — 各标签及文章数（按文章数降序）
+  - `GET /api/tag/list?name=&page=` — 某标签下的文章分页
 - 分页每页固定 `service.PageSize`（10 条），列表按日期倒序。
 - 前端 dev 环境靠 [web/vite.config.js](web/vite.config.js) 的 proxy 把接口转发到后端；**新增接口路径时必须同步在此登记**，否则会被前端 SPA 路由拦截。
 

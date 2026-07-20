@@ -16,7 +16,7 @@ async function fetchArticles(name, p) {
   error.value = ''
   try {
     const resp = await fetch(
-      `/tag/list?name=${encodeURIComponent(name)}&page=${p}`,
+      `/api/tag/list?name=${encodeURIComponent(name)}&page=${p}`,
     )
     const data = await resp.json()
     if (data.code !== 0) {

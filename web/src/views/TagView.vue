@@ -9,7 +9,7 @@ async function fetchTags() {
   loading.value = true
   error.value = ''
   try {
-    const resp = await fetch('/tag/overview')
+    const resp = await fetch('/api/tag/overview')
     const data = await resp.json()
     if (data.code !== 0) {
       throw new Error(data.msg || '请求失败')

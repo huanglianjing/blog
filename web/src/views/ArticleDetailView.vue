@@ -23,7 +23,7 @@ async function fetchDetail(title) {
   activeHeadingId.value = ''
   headingElements = []
   try {
-    const resp = await fetch(`/article/detail?title=${encodeURIComponent(title)}`)
+    const resp = await fetch(`/api/article/detail?title=${encodeURIComponent(title)}`)
     const data = await resp.json()
     if (data.code !== 0) {
       throw new Error(data.msg || '请求失败')

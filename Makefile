@@ -5,10 +5,10 @@ GOARCH ?= amd64
 # sqlite 驱动为纯 Go 实现（modernc.org/sqlite），关闭 CGO 以生成静态二进制、支持交叉编译。
 GOBUILD := CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build
 
-.PHONY: blog clean
+.PHONY: release dev clean
 
-# 默认目标：交叉编译后端二进制 + 构建前端 dist，打包成 blog.tar.gz
-blog:
+# 构建生产环境
+release:
 	rm -rf blog blog.tar.gz
 	mkdir -p blog/config
 	# 后端：交叉编译二进制到 blog/（默认 linux/amd64）
@@ -21,6 +21,16 @@ blog:
 	# 压缩整个 blog/ 目录
 	tar zcf blog.tar.gz blog
 
+# 构建开发环境
+dev:
+	mkdir -p blog_dev
+	mkdir -p blog_dev/db
+	mkdir -p blog_dev/config
+	cd server && go build -o ../blog_dev/blog_server ./cmd/blog_server
+	cd server && go build -o ../blog_dev/article_converter ./cmd/article_converter
+	./blog_dev/article_converter -src ../article -db ./blog_dev/db/blog.db -out ./blog_dev/article_html
+	cp ./server/config/config.yaml ./blog_dev/config/config.yaml
+
 # 清理构建产物
 clean:
-	rm -rf blog blog.tar.gz
+	rm -rf blog blog.tar.gz blog_dev

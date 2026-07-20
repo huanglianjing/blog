@@ -9,7 +9,7 @@ async function fetchCategories() {
   loading.value = true
   error.value = ''
   try {
-    const resp = await fetch('/category/overview')
+    const resp = await fetch('/api/category/overview')
     const data = await resp.json()
     if (data.code !== 0) {
       throw new Error(data.msg || '请求失败')
