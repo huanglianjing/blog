@@ -48,15 +48,14 @@ func GetTagByName(name string) (*Tag, error) {
 	return &tag, nil
 }
 
-// ListTagsWithCount 关联 article_tag 表统计各标签的文章数，按文章数降序返回。
-// 没有文章的标签不会出现在结果中。
+// ListTagsWithCount 关联 article_tag 表统计各标签的文章数。
+// 没有文章的标签不会出现在结果中。排序由 service 层按名称规则处理。
 func ListTagsWithCount() ([]TagCount, error) {
 	result := make([]TagCount, 0)
 	err := DB.Model(&Tag{}).
 		Select("tag.name AS name, COUNT(article_tag.article_id) AS count").
 		Joins("JOIN article_tag ON article_tag.tag_id = tag.id").
 		Group("tag.id").
-		Order("count DESC, tag.name ASC").
 		Scan(&result).Error
 	if err != nil {
 		return nil, err

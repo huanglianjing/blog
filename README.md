@@ -9,10 +9,13 @@
 make dev
 
 # 2. 运行后端服务
-cd blog_dev; ./blog_server
+cd blog_dev
+./blog_server
 
 # 3. 
-cd web && npm install && npm run dev
+cd web
+npm install
+npm run dev
 
 # 4. 浏览器打开网址 http://localhost:5173/
 ```

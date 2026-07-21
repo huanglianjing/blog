@@ -1,6 +1,8 @@
 <script setup>
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import hljs from 'highlight.js/lib/common'
+import 'highlight.js/styles/github.css'
 
 const route = useRoute()
 
@@ -71,7 +73,7 @@ function buildToc() {
   }
 }
 
-// 为正文中的每个代码块添加语言标签和复制按钮。
+// 为正文中的每个代码块添加语法高亮、行号、语言标签和复制按钮。
 function enhanceCodeBlocks() {
   if (!bodyRef.value) return
   const blocks = bodyRef.value.querySelectorAll('pre')
@@ -85,6 +87,31 @@ function enhanceCodeBlocks() {
     if (code) {
       const cls = [...code.classList].find((c) => c.startsWith('language-'))
       if (cls) lang = cls.slice('language-'.length)
+    }
+
+    // 语法高亮：指定语言且被 hljs 支持时按该语言高亮，否则自动识别。
+    if (code) {
+      const original = code.textContent
+      try {
+        const result =
+          lang && hljs.getLanguage(lang)
+            ? hljs.highlight(original, { language: lang })
+            : hljs.highlightAuto(original)
+        code.innerHTML = result.value
+        code.classList.add('hljs')
+        // 自动识别出的语言用于工具栏标签展示。
+        if (!lang && result.language) lang = result.language
+      } catch {
+        // 高亮失败时保留原始文本，不影响展示。
+      }
+
+      // 行号列：代码不换行，物理行即逻辑行，用独立 gutter 保证对齐。
+      const lineCount = original.replace(/\n$/, '').split('\n').length
+      const gutter = document.createElement('span')
+      gutter.className = 'code-gutter'
+      gutter.setAttribute('aria-hidden', 'true')
+      gutter.textContent = Array.from({ length: lineCount }, (_, i) => i + 1).join('\n')
+      pre.insertBefore(gutter, code)
     }
 
     // 用一个容器包裹 pre，工具栏绝对定位在右上角。
@@ -117,7 +144,8 @@ async function handleCopyClick(e) {
   const pre = btn.closest('.code-block')?.querySelector('pre')
   if (!pre) return
 
-  const text = pre.textContent
+  // 只取 code 的文本，排除行号列（.code-gutter）。
+  const text = (pre.querySelector('code') ?? pre).textContent
   try {
     await navigator.clipboard.writeText(text)
   } catch {
@@ -485,6 +513,38 @@ watch(
 .body :deep(code) {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.9em;
+}
+
+/* hljs 高亮后的代码块：去掉 hljs 主题自带的内边距/背景，沿用本站样式 */
+.body :deep(pre code.hljs) {
+  display: block;
+  padding: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+/* 代码块内部用 flex 布局：左侧行号列 + 右侧代码 */
+.body :deep(.code-block pre) {
+  display: flex;
+}
+
+/* 行号列：不换行、不可选中，随代码等高对齐 */
+.body :deep(.code-gutter) {
+  flex: 0 0 auto;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  border-right: 1px solid #e2e5e9;
+  color: #b0b6be;
+  text-align: right;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
+  white-space: pre;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.body :deep(.code-block pre code) {
+  flex: 1 1 auto;
 }
 
 /* 代码块容器：工具栏 + pre，工具栏在右上角展示语言和复制按钮 */

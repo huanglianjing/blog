@@ -19,7 +19,7 @@ func NewTagController() *TagController {
 	return &TagController{svc: service.NewTagService()}
 }
 
-// Overview 处理 GET /tag/overview，返回各标签及其文章数（按文章数降序）。
+// Overview 处理 GET /tag/overview，返回各标签及其文章数（按标签名排序：数字→字母→汉字）。
 func (c *TagController) Overview(ctx *gin.Context) {
 	result, err := c.svc.Overview()
 	if err != nil {

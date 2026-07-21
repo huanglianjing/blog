@@ -1,6 +1,9 @@
 package service
 
 import (
+	"sort"
+
+	"github.com/huanglianjing/blog/server/internal/common"
 	"github.com/huanglianjing/blog/server/internal/model"
 )
 
@@ -19,12 +22,20 @@ type TagOverviewResult struct {
 	List []model.TagCount `json:"list"`
 }
 
-// Overview 返回所有标签及其文章数，按文章数降序排列。
+// Overview 返回所有标签及其文章数，按标签名排序：
+// 数字 -> 字母 -> 汉字，字母不区分大小写，汉字按拼音升序。
 func (s *TagService) Overview() (*TagOverviewResult, error) {
 	list, err := model.ListTagsWithCount()
 	if err != nil {
 		return nil, err
 	}
+	keys := make(map[string]string, len(list))
+	for _, t := range list {
+		keys[t.Name] = common.NameSortKey(t.Name)
+	}
+	sort.SliceStable(list, func(i, j int) bool {
+		return keys[list[i].Name] < keys[list[j].Name]
+	})
 	return &TagOverviewResult{List: list}, nil
 }
 

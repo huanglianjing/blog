@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.12.0
 	github.com/glebarez/sqlite v1.11.0
 	github.com/goccy/go-yaml v1.19.2
+	github.com/mozillazg/go-pinyin v0.21.0
 	github.com/yuin/goldmark v1.8.4
 	golang.org/x/net v0.51.0
 	gorm.io/gorm v1.31.2

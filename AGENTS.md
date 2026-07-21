@@ -71,7 +71,7 @@ npm run build               # 生产构建到 web/dist
   - `GET /api/article/detail?title=` — 文章详情（含 html 正文）
   - `GET /api/category/overview` — 各分类及文章数（按文章数降序）
   - `GET /api/category/list?name=&page=` — 某分类下的文章分页
-  - `GET /api/tag/overview` — 各标签及文章数（按文章数降序）
+  - `GET /api/tag/overview` — 各标签及文章数（按标签名排序：数字→字母→汉字，字母不分大小写，汉字按拼音）
   - `GET /api/tag/list?name=&page=` — 某标签下的文章分页
 - 分页每页固定 `service.PageSize`（10 条），列表按日期倒序。
 - 前端 dev 环境靠 [web/vite.config.js](web/vite.config.js) 的 proxy 把接口转发到后端；**新增接口路径时必须同步在此登记**，否则会被前端 SPA 路由拦截。
