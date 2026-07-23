@@ -26,15 +26,55 @@ npm run dev
 # 1. 将前后端编译并打包至 blog.tar.gz
 make release
 
-# 2. 将 blog.tar.gz 传到服务器上
+# 2. 将 blog.tar.gz 传到服务器 /root 目录
 
 # 3. 将 blog.tar.gz 解压
 tar --warning=no-unknown-keyword -zxf blog.tar.gz
 
-# 4. 启动服务器
-cd blog
-nohup ./blog_server -c config/config.yaml > blog_server.log 2>&1 &
+# 4. 重启服务
+systemctl restart blog_server
 ```
+
+## systemd 服务
+
+后端以 systemd 服务运行，具备开机自启、崩溃自动重启、日志统一管理等能力。
+
+新建服务单元文件 `/etc/systemd/system/blog_server.service`：
+
+```ini
+[Unit]
+Description=Blog backend server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/root/blog
+ExecStart=/root/blog/blog_server -c config/config.yaml
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+```
+
+初次启用服务：
+
+```bash
+systemctl daemon-reload      # 重新加载单元文件
+systemctl enable blog_server # 设置开机自启
+systemctl start blog_server  # 启动服务
+systemctl status blog_server # 查看运行状态
+```
+
+日常运维：
+
+```bash
+journalctl -u blog -f # 实时查看日志
+```
+
+## Nginx 配置
 
 Nginx 配置放在 /etc/nginx/conf.d/blog.conf
 
@@ -105,3 +145,14 @@ tar --warning=no-unknown-keyword -zxf article.tar.gz
 cd blog
 ./article_converter -src ../article -db db/blog.db -out article_html
 ```
+
+# 更新 SSL 证书
+
+以下为腾讯云平台申请和使用的 SSL 证书。
+
+1. 打开 [SSL 证书](https://console.cloud.tencent.com/ssl)，点击申请免费证书
+2. 进入 [DNSPod 控制台](https://console.cloud.tencent.com/cns/detail/huanglianjing.com/records)，添加一条记录，粘贴对应的记录值
+3. 回到 SSL 证书页面，下载最新的证书，选择 Nginx 类型
+4. 将 crt 文件和 key 文件上传到服务器的 `/etc/nginx/` 目录下
+5. 重启 Nginx `nginx -s reload`
+6. 在浏览器打开网站，检查证书的有效期
