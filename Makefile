@@ -24,13 +24,13 @@ release:
 # 构建开发环境
 dev:
 	mkdir -p blog_dev
-	mkdir -p blog_dev/db
 	mkdir -p blog_dev/config
+	mkdir -p data
 	cd server && go build -o ../blog_dev/blog_server ./cmd/blog_server
 	cd server && go build -o ../blog_dev/article_converter ./cmd/article_converter
-	./blog_dev/article_converter -src ../article -db ./blog_dev/db/blog.db -out ./blog_dev/article_html
+	./blog_dev/article_converter -src ../article -db data/db/blog.db -out data/article_html
 	cp ./server/config/config.yaml ./blog_dev/config/config.yaml
 
 # 清理构建产物
 clean:
-	rm -rf blog blog.tar.gz blog_dev
+	rm -rf blog blog.tar.gz blog_dev data
