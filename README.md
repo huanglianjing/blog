@@ -140,10 +140,10 @@ tar --exclude=article/.git -zcf article.tar.gz article
 # 2. 将 article.tar.gz 传到服务器上
 
 # 3. 将 article.tar.gz 解压
+rm -r article
 tar --warning=no-unknown-keyword -zxf article.tar.gz
 
 # 4. 将 markdown 转为 html，同时写入数据库
-cd blog
 ./blog/article_converter -src article -db data/db/blog.db -out data/article_html
 ```
 

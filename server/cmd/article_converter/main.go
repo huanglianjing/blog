@@ -120,6 +120,17 @@ func loadMeta(path string) ([]metaCategory, error) {
 	if err := yaml.Unmarshal(data, &metas); err != nil {
 		return nil, fmt.Errorf("parse meta %q: %w", path, err)
 	}
+	// 清洗名称中的不可见字符（如零宽空格），避免同名标签因此被拆成两个、破坏去重与排序。
+	for i := range metas {
+		metas[i].Category = common.CleanName(metas[i].Category)
+		for j := range metas[i].Files {
+			f := &metas[i].Files[j]
+			f.Title = common.CleanName(f.Title)
+			for k := range f.Tags {
+				f.Tags[k] = common.CleanName(f.Tags[k])
+			}
+		}
+	}
 	return metas, nil
 }
 
