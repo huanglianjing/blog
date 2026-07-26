@@ -32,7 +32,7 @@ make release
 rm -r blog
 tar --warning=no-unknown-keyword -zxf blog.tar.gz
 
-# 4. 重启服务
+# 4. 如果改动了后端，重启服务
 systemctl restart blog_server
 ```
 

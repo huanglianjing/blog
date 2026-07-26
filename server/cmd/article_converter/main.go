@@ -1,6 +1,7 @@
 // Command article_converter 扫描博客源目录，将 blog_meta.yaml 中登记
 // 且 markdown 文件真实存在的文章转换为 html，按「分类/文章.html」的结构
-// 输出到目标目录，同时把分类、标签、文章信息全量写入 sqlite（清理旧数据）。
+// 输出到目标目录（并清理目录内本次未生成的残留 html），同时把分类、标签、
+// 文章信息全量写入 sqlite（清理旧数据）。
 //
 // 用法:
 //
@@ -100,14 +101,81 @@ func run(srcDir, outDir, dbPath string) error {
 		}
 	}
 
-	// 4. 全量写入数据库（事务内清理旧数据）。
+	// 4. 清理输出目录中本次未生成的旧 html（文章改名、删除或换分类后的残留）。
+	keep := make(map[string]bool, len(b.articles))
+	for _, a := range b.articles {
+		keep[a.Path] = true
+	}
+	removed, err := cleanStaleHTML(outDir, keep)
+	if err != nil {
+		return fmt.Errorf("clean stale html: %w", err)
+	}
+
+	// 5. 全量写入数据库（事务内清理旧数据）。
 	if err := model.SyncBlogData(b.categories, b.tags, b.articles, b.relations); err != nil {
 		return fmt.Errorf("sync db: %w", err)
 	}
 
-	log.Printf("完成: 转换 %d 篇, 跳过 %d 篇; 分类 %d, 标签 %d",
-		converted, skipped, len(b.categories), len(b.tags))
+	log.Printf("完成: 转换 %d 篇, 跳过 %d 篇, 清理残留 %d 个; 分类 %d, 标签 %d",
+		converted, skipped, removed, len(b.categories), len(b.tags))
 	return nil
+}
+
+// cleanStaleHTML 删除输出目录中本次未生成的 html 文件，并移除因此变空的子目录。
+// keep 为本次生成的 html 绝对路径集合，非 html 文件一律保留。返回删除的文件数。
+func cleanStaleHTML(outDir string, keep map[string]bool) (int, error) {
+	absOut, err := filepath.Abs(outDir)
+	if err != nil {
+		return 0, err
+	}
+	if _, err := os.Stat(absOut); os.IsNotExist(err) {
+		return 0, nil
+	}
+
+	removed := 0
+	// walk 返回该目录处理完后是否已空，供上层决定是否删除它。
+	var walk func(dir string) (bool, error)
+	walk = func(dir string) (bool, error) {
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			return false, err
+		}
+		remaining := 0
+		for _, entry := range entries {
+			path := filepath.Join(dir, entry.Name())
+			if entry.IsDir() {
+				empty, err := walk(path)
+				if err != nil {
+					return false, err
+				}
+				if !empty {
+					remaining++
+					continue
+				}
+				if err := os.Remove(path); err != nil {
+					return false, err
+				}
+				log.Printf("删除空目录: %s", path)
+				continue
+			}
+			if filepath.Ext(entry.Name()) != ".html" || keep[path] {
+				remaining++
+				continue
+			}
+			if err := os.Remove(path); err != nil {
+				return false, err
+			}
+			log.Printf("删除残留 html: %s", path)
+			removed++
+		}
+		return remaining == 0, nil
+	}
+
+	// 输出目录本身即使为空也保留。
+	if _, err := walk(absOut); err != nil {
+		return removed, err
+	}
+	return removed, nil
 }
 
 // loadMeta 读取并解析 blog_meta.yaml。
