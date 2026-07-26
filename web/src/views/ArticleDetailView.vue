@@ -17,6 +17,17 @@ const showBackTop = ref(false)
 let headingElements = []
 let scrollFrame = 0
 
+// 复制按钮的两个图标：默认双层方框，复制成功后切换为对勾（由 .copied 控制显隐）。
+const COPY_ICON_SVG = `
+<svg class="code-copy-icon icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <rect x="8" y="8" width="14" height="14" rx="2" />
+  <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+</svg>`
+const CHECK_ICON_SVG = `
+<svg class="code-copy-icon icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <path d="M20 6 9 17l-5-5" />
+</svg>`
+
 async function fetchDetail(title) {
   loading.value = true
   error.value = ''
@@ -128,7 +139,9 @@ function enhanceCodeBlocks() {
     const btn = document.createElement('button')
     btn.type = 'button'
     btn.className = 'code-copy'
-    btn.textContent = '复制'
+    btn.title = '复制'
+    btn.setAttribute('aria-label', '复制代码')
+    btn.innerHTML = COPY_ICON_SVG + CHECK_ICON_SVG
 
     bar.append(label, btn)
 
@@ -164,10 +177,12 @@ async function handleCopyClick(e) {
     document.body.removeChild(ta)
   }
 
-  btn.textContent = '已复制'
+  btn.title = '已复制'
+  btn.setAttribute('aria-label', '已复制')
   btn.classList.add('copied')
   window.setTimeout(() => {
-    btn.textContent = '复制'
+    btn.title = '复制'
+    btn.setAttribute('aria-label', '复制代码')
     btn.classList.remove('copied')
   }, 1500)
 }
@@ -580,25 +595,48 @@ watch(
 }
 
 .body :deep(.code-copy) {
-  padding: 0.15rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
   color: #666;
   background: transparent;
-  border: 1px solid #d0d7de;
+  border: 1px solid transparent;
   border-radius: 4px;
-  font-size: 0.75rem;
   cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
 }
 
+.body :deep(.code-copy-icon) {
+  width: 0.875rem;
+  height: 0.875rem;
+  display: block;
+}
+
+.body :deep(.code-copy .icon-check) {
+  display: none;
+}
+
+.body :deep(.code-copy.copied .icon-copy) {
+  display: none;
+}
+
+.body :deep(.code-copy.copied .icon-check) {
+  display: block;
+}
+
 .body :deep(.code-copy:hover) {
   color: #000;
-  border-color: #999;
+  border-color: #d0d7de;
   background: #fff;
 }
 
 .body :deep(.code-copy.copied) {
   color: #2e7d32;
-  border-color: #2e7d32;
+  border-color: transparent;
+  background: transparent;
 }
 
 .body :deep(img) {
