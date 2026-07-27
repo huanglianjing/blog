@@ -40,20 +40,21 @@ func MarkdownToHTML(source []byte) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
-// MarkdownFileToHTMLFile 读取 srcPath 的 markdown 文件，转换后写入 dstPath。
-func MarkdownFileToHTMLFile(srcPath, dstPath string) error {
+// MarkdownFileToHTMLFile 读取 srcPath 的 markdown 文件，转换后写入 dstPath，
+// 并返回转换出的 html 内容，供调用方复用（如提取搜索用的正文纯文本）。
+func MarkdownFileToHTMLFile(srcPath, dstPath string) ([]byte, error) {
 	source, err := os.ReadFile(srcPath)
 	if err != nil {
-		return fmt.Errorf("read markdown file %q: %w", srcPath, err)
+		return nil, fmt.Errorf("read markdown file %q: %w", srcPath, err)
 	}
 
 	out, err := MarkdownToHTML(source)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	if err := os.WriteFile(dstPath, out, 0644); err != nil {
-		return fmt.Errorf("write html file %q: %w", dstPath, err)
+		return nil, fmt.Errorf("write html file %q: %w", dstPath, err)
 	}
-	return nil
+	return out, nil
 }

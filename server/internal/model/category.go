@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"gorm.io/gorm"
+
+	"github.com/huanglianjing/blog/server/internal/common"
 )
 
 // Category 分类表
@@ -55,6 +57,23 @@ func ListCategoriesWithCount() ([]CategoryCount, error) {
 	err := DB.Model(&Article{}).
 		Select("category.name AS name, COUNT(article.id) AS count").
 		Joins("JOIN category ON category.id = article.category_id").
+		Group("category.id").
+		Order("count DESC, category.name ASC").
+		Scan(&result).Error
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// SearchCategoriesWithCount 按分类名子串匹配返回分类及其文章数，
+// 排序与分类概览一致（文章数降序）。没有文章的分类不会出现在结果中。
+func SearchCategoriesWithCount(keyword string) ([]CategoryCount, error) {
+	result := make([]CategoryCount, 0)
+	err := DB.Model(&Article{}).
+		Select("category.name AS name, COUNT(article.id) AS count").
+		Joins("JOIN category ON category.id = article.category_id").
+		Where(`category.name LIKE ? ESCAPE '\'`, common.LikePattern(keyword)).
 		Group("category.id").
 		Order("count DESC, category.name ASC").
 		Scan(&result).Error

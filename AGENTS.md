@@ -37,6 +37,8 @@
 
 改动文章内容后需重新运行 `article_converter` 才会生效。
 
+搜索用的正文纯文本存在 `article.content` 列，也由 `article_converter` 写入（用 `common.HTMLToPlainText`，与摘要不同，它保留标题和代码块文字）。该列体积大且不返回给前端，**不需要正文的文章查询都要 `Omit("content")`**。旧数据库升级后必须重跑一次 converter，否则正文搜索恒为空——`blog_server` 启动时会检测并打印警告。
+
 ## 构建与运行
 
 所有 Go 命令在 `server/` 目录下执行（module 根在此）。sqlite 驱动为纯 Go 实现（modernc.org/sqlite），构建时 `CGO_ENABLED=0`，支持交叉编译与静态二进制。
@@ -73,7 +75,10 @@ npm run build               # 生产构建到 web/dist
   - `GET /api/category/list?name=&page=` — 某分类下的文章分页
   - `GET /api/tag/overview` — 各标签及文章数（按标签名排序：数字→字母→汉字，字母不分大小写，汉字按拼音）
   - `GET /api/tag/list?name=&page=` — 某标签下的文章分页
+  - `GET /api/search/overview?keyword=` — 搜索概览，分类 / 标签 / 标题 / 正文四类各返回前 `service.OverviewSize`（5）条与命中总数
+  - `GET /api/search/list?keyword=&type=&page=` — 某一类的完整结果，`type` 为 `category`/`tag`/`title`/`content`；前两者一次返回全部，后两者分页
 - 分页每页固定 `service.PageSize`（10 条），列表按日期倒序。
+- 搜索为**子串匹配**：SQLite 的 `LIKE` 默认对 ASCII 大小写不敏感、对中文精确匹配，正好满足需求，不要额外套 `lower()`。关键词一律经 `common.LikePattern` 包装（内部做 `\ % _` 转义），SQL 需写 `ESCAPE '\'`。
 - 前端 dev 环境靠 [web/vite.config.js](web/vite.config.js) 的 proxy 把接口转发到后端；**新增接口路径时必须同步在此登记**，否则会被前端 SPA 路由拦截。
 
 ## 约定与风格
@@ -83,6 +88,7 @@ npm run build               # 生产构建到 web/dist
 - service 层查询列表时用 `enrichArticles` 统一填充分类名、标签、摘要等关联字段，新的文章列表接口应复用它。
 - 「未找到」在 model 层返回 `(nil, nil)`，由上层转成对应的业务错误码，不要直接返回 gorm 的 ErrRecordNotFound。
 - 前端每个路由对应一个 `views/*.vue`；列表页共用 `Pagination` 组件（数字分页，`page` 从 0 开始，`@change` 回传目标页）。
+- 关键词高亮走 `HighlightText` 组件在前端切分渲染，**不要**让后端拼 `<mark>` 再 `v-html`：markdown 转换开了 `html.WithUnsafe()`，文章正文里可能有脚本，那样等于 XSS。
 - 前端整体为浅色设计、已做移动端适配（viewport、流式布局、表格横向滚动、长内容断行）；改样式时注意别破坏窄屏表现。
 
 ## 验证改动

@@ -28,7 +28,7 @@ func ListArticleTagsByArticleIDs(articleIDs []int64) ([]ArticleTag, error) {
 // 通过 article_tag 关联表连接 article 表。
 func ListArticlesByTag(tagID int64, offset, limit int) ([]Article, error) {
 	articles := make([]Article, 0)
-	err := DB.Model(&Article{}).
+	err := DB.Model(&Article{}).Omit("content").
 		Joins("JOIN article_tag ON article_tag.article_id = article.id").
 		Where("article_tag.tag_id = ?", tagID).
 		Order("article.date DESC, article.id DESC").

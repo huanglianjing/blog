@@ -86,7 +86,8 @@ func run(srcDir, outDir, dbPath string) error {
 			if err := os.MkdirAll(filepath.Dir(dstPath), 0755); err != nil {
 				return fmt.Errorf("create out dir: %w", err)
 			}
-			if err := common.MarkdownFileToHTMLFile(srcPath, dstPath); err != nil {
+			htmlContent, err := common.MarkdownFileToHTMLFile(srcPath, dstPath)
+			if err != nil {
 				return fmt.Errorf("convert %q: %w", srcPath, err)
 			}
 
@@ -96,7 +97,8 @@ func run(srcDir, outDir, dbPath string) error {
 				return fmt.Errorf("abs path %q: %w", dstPath, err)
 			}
 
-			b.addArticle(mf, categoryID, absPath)
+			// 正文纯文本随文章一起写库，供搜索接口做子串匹配。
+			b.addArticle(mf, categoryID, absPath, common.HTMLToPlainText(htmlContent))
 			converted++
 		}
 	}
@@ -243,8 +245,9 @@ func (b *builder) tagID(name string) int64 {
 	return id
 }
 
-// addArticle 记录一篇文章及其标签关联。path 是 html 文件的绝对路径。
-func (b *builder) addArticle(mf metaFile, categoryID int64, path string) {
+// addArticle 记录一篇文章及其标签关联。
+// path 是 html 文件的绝对路径，content 是供搜索用的正文纯文本。
+func (b *builder) addArticle(mf metaFile, categoryID int64, path, content string) {
 	b.nextArticle++
 	articleID := b.nextArticle
 	b.articles = append(b.articles, model.Article{
@@ -253,6 +256,7 @@ func (b *builder) addArticle(mf metaFile, categoryID int64, path string) {
 		Date:       mf.Date,
 		Path:       path,
 		CategoryID: categoryID,
+		Content:    content,
 	})
 
 	// 同一篇文章内标签去重，避免关联表唯一索引冲突。

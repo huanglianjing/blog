@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"gorm.io/gorm"
+
+	"github.com/huanglianjing/blog/server/internal/common"
 )
 
 // Tag 标签表
@@ -55,6 +57,22 @@ func ListTagsWithCount() ([]TagCount, error) {
 	err := DB.Model(&Tag{}).
 		Select("tag.name AS name, COUNT(article_tag.article_id) AS count").
 		Joins("JOIN article_tag ON article_tag.tag_id = tag.id").
+		Group("tag.id").
+		Scan(&result).Error
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+// SearchTagsWithCount 按标签名子串匹配返回标签及其文章数。
+// 没有文章的标签不会出现在结果中。排序由 service 层按名称规则处理。
+func SearchTagsWithCount(keyword string) ([]TagCount, error) {
+	result := make([]TagCount, 0)
+	err := DB.Model(&Tag{}).
+		Select("tag.name AS name, COUNT(article_tag.article_id) AS count").
+		Joins("JOIN article_tag ON article_tag.tag_id = tag.id").
+		Where(`tag.name LIKE ? ESCAPE '\'`, common.LikePattern(keyword)).
 		Group("tag.id").
 		Scan(&result).Error
 	if err != nil {

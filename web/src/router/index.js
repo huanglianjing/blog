@@ -6,6 +6,8 @@ import CategoryView from '../views/CategoryView.vue'
 import CategoryDetailView from '../views/CategoryDetailView.vue'
 import TagView from '../views/TagView.vue'
 import TagDetailView from '../views/TagDetailView.vue'
+import SearchView from '../views/SearchView.vue'
+import SearchTypeView from '../views/SearchTypeView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
 
 const routes = [
@@ -16,6 +18,8 @@ const routes = [
   { path: '/category/:name', name: 'category-detail', component: CategoryDetailView },
   { path: '/tag', name: 'tag', component: TagView },
   { path: '/tag/:name', name: 'tag-detail', component: TagDetailView },
+  { path: '/search', name: 'search', component: SearchView },
+  { path: '/search/:type', name: 'search-type', component: SearchTypeView },
   { path: '/:pathMatch(.*)*', name: 'notfound', component: NotFoundView },
 ]
 

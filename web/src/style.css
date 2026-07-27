@@ -22,3 +22,11 @@ body {
   /* 兜底：防止个别内容意外撑宽导致整页可横向拖动 */
   overflow-x: hidden;
 }
+
+/* 搜索结果中的命中关键词高亮 */
+mark {
+  padding: 0 0.1em;
+  color: inherit;
+  background: #fff3b0;
+  border-radius: 2px;
+}
