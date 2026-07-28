@@ -20,8 +20,10 @@ async function onIconClick() {
   inputRef.value?.focus()
 }
 
+// 收起时清空输入，下次展开不残留上一次的关键词。
 function close() {
   open.value = false
+  keyword.value = ''
 }
 
 function submit() {
@@ -51,13 +53,15 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
         <RouterLink class="nav-link" to="/category">分类</RouterLink>
         <RouterLink class="nav-link" to="/tag">标签</RouterLink>
         <div ref="searchRef" class="search" :class="{ open }">
+          <!-- 输入框常驻 DOM（不用 v-show），否则展开/收起没有过渡动画 -->
           <input
-            v-show="open"
             ref="inputRef"
             v-model="keyword"
             class="search-input"
             type="text"
             placeholder="搜索"
+            :tabindex="open ? 0 : -1"
+            :aria-hidden="open ? 'false' : 'true'"
             @keyup.enter="submit"
             @keyup.esc="close"
           />
@@ -131,19 +135,45 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
 }
 
 .search {
+  position: relative; /* 输入框以图标为基准向左浮出 */
   display: flex;
   align-items: center;
-  gap: 0.4rem;
 }
 
+/*
+ * 输入框绝对定位在图标左侧，浮在「文章 / 分类 / 标签」之上（白色背景遮挡），
+ * 不参与 flex 布局，因此展开时不会把导航链接往左顶。
+ * 收起态宽度为 0 且透明，配合 transition 形成展开 / 收起动画。
+ */
 .search-input {
-  width: 10rem;
-  padding: 0.3rem 0.6rem;
+  position: absolute;
+  top: 50%;
+  right: calc(100% + 0.4rem);
+  z-index: 2;
+  transform: translateY(-50%);
+  width: 0;
+  padding: 0.3rem 0;
   font-size: 0.9rem;
   color: #333;
-  border: 1px solid #ddd;
+  background: #ffffff;
+  border: 1px solid transparent;
   border-radius: 4px;
   outline: none;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    width 0.25s ease,
+    padding 0.25s ease,
+    opacity 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.search.open .search-input {
+  width: 10rem;
+  padding: 0.3rem 0.6rem;
+  border-color: #ddd;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .search-input:focus {
@@ -184,19 +214,9 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
     font-size: 0.9rem;
   }
 
-  /* 窄屏展开时输入框覆盖整条顶栏，避免挤压导航链接导致换行错位 */
-  .search.open {
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    gap: 0.5rem;
-    padding: 0 0.75rem;
-    background: #ffffff;
-  }
-
+  /* 窄屏收窄展开宽度，避免浮出的输入框顶到站点名 */
   .search.open .search-input {
-    flex: 1;
-    width: auto;
+    width: 8rem;
   }
 }
 </style>
