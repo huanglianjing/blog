@@ -11,16 +11,22 @@
   box-sizing: border-box;
 }
 
+/*
+ * 滚动统一交给 html（浏览器默认的文档滚动），不要把 overflow 挂在 body 上：
+ * 那样 body 会变成滚动容器，sticky 顶栏、scroll-margin-top 锚点、window.scrollY 都得特殊处理。
+ * scrollbar-gutter 预留滚动条槽位，使内容不足一屏（如首页）与超出一屏的页面
+ * 可用宽度一致，居中的顶栏不会左右跳动。
+ */
+html {
+  /* 兜底：防止个别内容意外撑宽导致整页可横向拖动 */
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
 html,
 body,
 #app {
   width: 100%;
-  height: 100%;
-}
-
-body {
-  /* 兜底：防止个别内容意外撑宽导致整页可横向拖动 */
-  overflow-x: hidden;
 }
 
 /* 搜索结果中的命中关键词高亮 */
