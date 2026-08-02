@@ -35,21 +35,21 @@ defineProps({
   align-items: baseline;
   padding: 0.35rem 0.75rem;
   font-size: 0.95rem;
-  color: #333;
-  background: #f0f0f0;
+  color: var(--text);
+  background: var(--bg-chip);
   border-radius: 4px;
   text-decoration: none;
   transition: color 0.2s ease, background 0.2s ease;
 }
 
 .name-link:hover {
-  color: #000;
-  background: #e4e4e4;
+  color: var(--text-strong);
+  background: var(--bg-chip-hover);
 }
 
 .count {
   margin-left: 0.3rem;
-  color: #999;
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 </style>

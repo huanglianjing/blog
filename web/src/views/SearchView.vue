@@ -92,7 +92,7 @@ watch(keyword, fetchOverview, { immediate: true })
 .page {
   flex: 1;
   width: 100%;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 .content {
@@ -103,23 +103,23 @@ watch(keyword, fetchOverview, { immediate: true })
 
 .search-for {
   margin: 0 0 1.5rem;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.95rem;
 }
 
 .keyword {
-  color: #333;
+  color: var(--text);
   font-weight: 600;
 }
 
 .hint {
-  color: #808080;
+  color: var(--text-hint);
   text-align: center;
   padding: 2rem 0;
 }
 
 .hint.error {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .group {
@@ -133,25 +133,25 @@ watch(keyword, fetchOverview, { immediate: true })
   gap: 1rem;
   margin-bottom: 0.9rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .group-title {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text);
 }
 
 .more {
   flex: none;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .more:hover {
-  color: #000;
+  color: var(--text-strong);
 }
 </style>

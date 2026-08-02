@@ -1,6 +1,7 @@
 <script setup>
 import { ref, nextTick, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { theme, toggleTheme } from '../theme'
 
 const router = useRouter()
 
@@ -18,6 +19,13 @@ async function onIconClick() {
   open.value = true
   await nextTick()
   inputRef.value?.focus()
+}
+
+// 以按钮中心作为新主题扩散的圆心。取按钮几何中心而非鼠标落点，
+// 键盘回车触发时 event 里没有有效坐标，也能从同一处扩散。
+function onThemeClick(e) {
+  const r = e.currentTarget.getBoundingClientRect()
+  toggleTheme({ x: r.left + r.width / 2, y: r.top + r.height / 2 })
 }
 
 // 收起时清空输入，下次展开不残留上一次的关键词。
@@ -52,6 +60,31 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
         <RouterLink class="nav-link" to="/article">文章</RouterLink>
         <RouterLink class="nav-link" to="/category">分类</RouterLink>
         <RouterLink class="nav-link" to="/tag">标签</RouterLink>
+        <!-- 主题切换：浅色下显示月亮（点击转深色），深色下显示太阳 -->
+        <button
+          class="theme-btn"
+          type="button"
+          :aria-label="theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'"
+          :title="theme === 'dark' ? '切换到浅色模式' : '切换到深色模式'"
+          @click="onThemeClick"
+        >
+          <svg
+            v-if="theme === 'dark'"
+            viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          >
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+          </svg>
+          <svg
+            v-else
+            viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"
+          >
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+          </svg>
+        </button>
         <div ref="searchRef" class="search" :class="{ open }">
           <!-- 输入框常驻 DOM（不用 v-show），否则展开/收起没有过渡动画 -->
           <input
@@ -85,8 +118,8 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
   position: sticky;
   top: 0;
   z-index: 10;
-  background: #ffffff;
-  border-bottom: 1px solid #f0f0f0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .topbar-inner {
@@ -104,12 +137,12 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
   font-size: 1.25rem;
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: #333333;
+  color: var(--text);
   text-decoration: none;
 }
 
 .brand:hover {
-  color: #000000;
+  color: var(--text-strong);
 }
 
 .nav-links {
@@ -120,18 +153,34 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
 
 .nav-link {
   font-size: 0.95rem;
-  color: #666666;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .nav-link:hover {
-  color: #000000;
+  color: var(--text-strong);
 }
 
 .nav-link.router-link-active {
-  color: #000000;
+  color: var(--text-strong);
   font-weight: 600;
+}
+
+/* 主题切换按钮：与搜索图标同规格的纯图标按钮 */
+.theme-btn {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.theme-btn:hover {
+  color: var(--text-strong);
 }
 
 .search {
@@ -141,7 +190,8 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
 }
 
 /*
- * 输入框绝对定位在图标左侧，浮在「文章 / 分类 / 标签」之上（白色背景遮挡），
+ * 输入框绝对定位在图标左侧，浮在「文章 / 分类 / 标签」与主题按钮之上
+ * （靠自身与顶栏同色的背景遮挡），
  * 不参与 flex 布局，因此展开时不会把导航链接往左顶。
  * 收起态宽度为 0 且透明，配合 transition 形成展开 / 收起动画。
  */
@@ -154,8 +204,8 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
   width: 0;
   padding: 0.3rem 0;
   font-size: 0.9rem;
-  color: #333;
-  background: #ffffff;
+  color: var(--text);
+  background: var(--bg);
   border: 1px solid transparent;
   border-radius: 4px;
   outline: none;
@@ -169,15 +219,16 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
 }
 
 .search.open .search-input {
-  width: 10rem;
+  /* 左边缘越过「文章」再多两个字宽，把整组导航链接都盖住 */
+  width: 14.5rem;
   padding: 0.3rem 0.6rem;
-  border-color: #ddd;
+  border-color: var(--border-strong);
   opacity: 1;
   pointer-events: auto;
 }
 
 .search-input:focus {
-  border-color: #999;
+  border-color: var(--border-hover);
 }
 
 .search-btn {
@@ -186,13 +237,13 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
   padding: 0;
   border: none;
   background: none;
-  color: #666;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
 .search-btn:hover {
-  color: #000;
+  color: var(--text-strong);
 }
 
 /* 窄屏收紧间距，避免超小屏导航拥挤 */
@@ -214,9 +265,12 @@ onUnmounted(() => document.removeEventListener('click', onDocumentClick))
     font-size: 0.9rem;
   }
 
-  /* 窄屏收窄展开宽度，避免浮出的输入框顶到站点名 */
+  /*
+   * 窄屏导航 gap 收紧到 1rem、字号也更小，盖住「文章」多两个字只需 12rem；
+   * 320px 下这已是上限，再宽就会顶到站点名。
+   */
   .search.open .search-input {
-    width: 8rem;
+    width: 12rem;
   }
 }
 </style>

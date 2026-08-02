@@ -84,35 +84,35 @@ function go(value) {
 .page-btn {
   min-width: 2rem;
   padding: 0.35rem 0.6rem;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-strong);
   border-radius: 4px;
-  background: #fff;
-  color: #333;
+  background: var(--bg-elevated);
+  color: var(--text);
   font-variant-numeric: tabular-nums;
   cursor: pointer;
   transition: border-color 0.2s ease, color 0.2s ease;
 }
 
 .page-btn:hover:not(:disabled):not(.active) {
-  border-color: #999;
-  color: #000;
+  border-color: var(--border-hover);
+  color: var(--text-strong);
 }
 
 .page-btn.active {
-  border-color: #333;
-  background: #333;
-  color: #fff;
+  border-color: var(--btn-active-bg);
+  background: var(--btn-active-bg);
+  color: var(--btn-active-text);
   cursor: default;
 }
 
 .page-btn:disabled {
-  color: #bbb;
+  color: var(--text-disabled);
   cursor: not-allowed;
 }
 
 .ellipsis {
   padding: 0 0.25rem;
-  color: #999;
+  color: var(--text-muted);
   user-select: none;
 }
 </style>

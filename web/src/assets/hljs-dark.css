@@ -1,0 +1,102 @@
+/*
+ * 代码高亮的深色配色，来源：highlight.js/styles/github-dark.css。
+ *
+ * 不能直接 import 官方的 github-dark.css：它与已引入的 github.css（浅色）用的是
+ * 同一批裸 .hljs-* 选择器，同时引入会互相覆盖、无法按主题区分。因此这里把它的
+ * 着色规则逐条抄过来，选择器统一加 html[data-theme='dark'] 前缀，特异性高于
+ * 浅色主题的单类选择器，深色模式下可靠覆盖。
+ *
+ * 升级 highlight.js 后若官方主题配色有变动，需同步更新本文件。
+ */
+
+html[data-theme='dark'] .hljs {
+  color: #c9d1d9;
+  background: transparent; /* 代码块底色由 --bg-code 控制，不用主题自带的 #0d1117 */
+}
+
+html[data-theme='dark'] .hljs-doctag,
+html[data-theme='dark'] .hljs-keyword,
+html[data-theme='dark'] .hljs-meta .hljs-keyword,
+html[data-theme='dark'] .hljs-template-tag,
+html[data-theme='dark'] .hljs-template-variable,
+html[data-theme='dark'] .hljs-type,
+html[data-theme='dark'] .hljs-variable.language_ {
+  color: #ff7b72;
+}
+
+html[data-theme='dark'] .hljs-title,
+html[data-theme='dark'] .hljs-title.class_,
+html[data-theme='dark'] .hljs-title.class_.inherited__,
+html[data-theme='dark'] .hljs-title.function_ {
+  color: #d2a8ff;
+}
+
+html[data-theme='dark'] .hljs-attr,
+html[data-theme='dark'] .hljs-attribute,
+html[data-theme='dark'] .hljs-literal,
+html[data-theme='dark'] .hljs-meta,
+html[data-theme='dark'] .hljs-number,
+html[data-theme='dark'] .hljs-operator,
+html[data-theme='dark'] .hljs-variable,
+html[data-theme='dark'] .hljs-selector-attr,
+html[data-theme='dark'] .hljs-selector-class,
+html[data-theme='dark'] .hljs-selector-id {
+  color: #79c0ff;
+}
+
+html[data-theme='dark'] .hljs-regexp,
+html[data-theme='dark'] .hljs-string,
+html[data-theme='dark'] .hljs-meta .hljs-string {
+  color: #a5d6ff;
+}
+
+html[data-theme='dark'] .hljs-built_in,
+html[data-theme='dark'] .hljs-symbol {
+  color: #ffa657;
+}
+
+html[data-theme='dark'] .hljs-comment,
+html[data-theme='dark'] .hljs-code,
+html[data-theme='dark'] .hljs-formula {
+  color: #8b949e;
+}
+
+html[data-theme='dark'] .hljs-name,
+html[data-theme='dark'] .hljs-quote,
+html[data-theme='dark'] .hljs-selector-tag,
+html[data-theme='dark'] .hljs-selector-pseudo {
+  color: #7ee787;
+}
+
+html[data-theme='dark'] .hljs-subst {
+  color: #c9d1d9;
+}
+
+html[data-theme='dark'] .hljs-section {
+  color: #1f6feb;
+  font-weight: bold;
+}
+
+html[data-theme='dark'] .hljs-bullet {
+  color: #f2cc60;
+}
+
+html[data-theme='dark'] .hljs-emphasis {
+  color: #c9d1d9;
+  font-style: italic;
+}
+
+html[data-theme='dark'] .hljs-strong {
+  color: #c9d1d9;
+  font-weight: bold;
+}
+
+html[data-theme='dark'] .hljs-addition {
+  color: #aff5b4;
+  background-color: #033a16;
+}
+
+html[data-theme='dark'] .hljs-deletion {
+  color: #ffdcd7;
+  background-color: #67060c;
+}

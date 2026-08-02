@@ -7,6 +7,15 @@
     <title>Moondo</title>
   </head>
   <body>
+    <!-- 在样式生效前定好主题，避免深色模式下刷新时闪一下白底。默认 light。 -->
+    <script>
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('theme') === 'dark' ? 'dark' : 'light'
+      } catch (e) {
+        document.documentElement.dataset.theme = 'light'
+      }
+    </script>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
   </body>

@@ -39,22 +39,22 @@ import TopBar from './components/TopBar.vue'
   justify-content: center;
   gap: 0.25rem 1.25rem;
   padding: 0.75rem 1rem;
-  background: #ffffff;
+  background: var(--bg);
   font-size: 0.75rem;
-  color: #999999;
+  color: var(--text-muted);
 }
 
 .beian-link {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  color: #999999;
+  color: var(--text-muted);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .beian-link:hover {
-  color: #666666;
+  color: var(--text-secondary);
 }
 
 </style>

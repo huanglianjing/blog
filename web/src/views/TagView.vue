@@ -51,7 +51,7 @@ onMounted(fetchTags)
 .page {
   flex: 1;
   width: 100%;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 .content {
@@ -61,13 +61,13 @@ onMounted(fetchTags)
 }
 
 .hint {
-  color: #808080;
+  color: var(--text-hint);
   text-align: center;
   padding: 2rem 0;
 }
 
 .hint.error {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .tag-list {
@@ -81,21 +81,21 @@ onMounted(fetchTags)
   align-items: baseline;
   padding: 0.35rem 0.75rem;
   font-size: 0.95rem;
-  color: #333;
-  background: #f0f0f0;
+  color: var(--text);
+  background: var(--bg-chip);
   border-radius: 4px;
   text-decoration: none;
   transition: color 0.2s ease, background 0.2s ease;
 }
 
 .tag-link:hover {
-  color: #000;
-  background: #e4e4e4;
+  color: var(--text-strong);
+  background: var(--bg-chip-hover);
 }
 
 .count {
   margin-left: 0.3rem;
-  color: #999;
+  color: var(--text-muted);
   font-size: 0.85rem;
 }
 </style>

@@ -98,7 +98,7 @@ watch([keyword, type], () => fetchList(0), { immediate: true })
 .page {
   flex: 1;
   width: 100%;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 .content {
@@ -113,39 +113,39 @@ watch([keyword, type], () => fetchList(0), { immediate: true })
 }
 
 .back {
-  color: #666;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .back:hover {
-  color: #000;
+  color: var(--text-strong);
 }
 
 .group-head {
   margin-bottom: 0.9rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .group-title {
   margin: 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .keyword {
-  color: #333;
+  color: var(--text);
 }
 
 .hint {
-  color: #808080;
+  color: var(--text-hint);
   text-align: center;
   padding: 2rem 0;
 }
 
 .hint.error {
-  color: #c0392b;
+  color: var(--error);
 }
 </style>

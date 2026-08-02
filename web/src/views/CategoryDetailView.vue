@@ -96,7 +96,7 @@ watch(
 .page {
   flex: 1;
   width: 100%;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 .content {
@@ -108,20 +108,20 @@ watch(
 .category-title {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #222;
+  color: var(--text-title);
   margin: 0 0 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .hint {
-  color: #808080;
+  color: var(--text-hint);
   text-align: center;
   padding: 2rem 0;
 }
 
 .hint.error {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .article-list {
@@ -132,20 +132,20 @@ watch(
 
 .article-item {
   padding: 1.2rem 0.25rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .article-link {
   display: inline-block;
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .article-link:hover {
-  color: #000;
+  color: var(--text-strong);
 }
 
 .article-meta {
@@ -158,36 +158,36 @@ watch(
 }
 
 .article-meta .date {
-  color: #999;
+  color: var(--text-muted);
 }
 
 .article-meta .category {
-  color: #fff;
-  background: #666;
+  color: var(--category-text);
+  background: var(--category-bg);
   padding: 0.1rem 0.5rem;
   border-radius: 3px;
   text-decoration: none;
 }
 
 .article-meta .category:hover {
-  background: #444;
+  background: var(--category-bg-hover);
 }
 
 .article-meta .tag {
-  color: #555;
-  background: #f0f0f0;
+  color: var(--text-chip);
+  background: var(--bg-chip);
   padding: 0.1rem 0.5rem;
   border-radius: 3px;
   text-decoration: none;
 }
 
 .article-meta .tag:hover {
-  background: #e4e4e4;
+  background: var(--bg-chip-hover);
 }
 
 .article-summary {
   margin: 0.6rem 0 0;
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.6;
   /* 最多展示四行，超出省略 */

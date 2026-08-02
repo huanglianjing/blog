@@ -51,7 +51,7 @@ onMounted(fetchCategories)
 .page {
   flex: 1;
   width: 100%;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 .content {
@@ -61,13 +61,13 @@ onMounted(fetchCategories)
 }
 
 .hint {
-  color: #808080;
+  color: var(--text-hint);
   text-align: center;
   padding: 2rem 0;
 }
 
 .hint.error {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .category-list {
@@ -78,23 +78,23 @@ onMounted(fetchCategories)
 
 .category-item {
   padding: 0.9rem 0.25rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .category-link {
   font-size: 1.05rem;
-  color: #333;
+  color: var(--text);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 .category-link:hover {
-  color: #000;
+  color: var(--text-strong);
 }
 
 .count {
   margin-left: 0.35rem;
-  color: #999;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 </style>

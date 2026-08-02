@@ -1,8 +1,137 @@
+/*
+ * 主题配色：light 为默认，dark 通过 <html data-theme="dark"> 覆盖。
+ * 变量按用途命名（不按颜色值），各组件样式只引用变量，不再写颜色字面量。
+ * data-theme 由 index.html 的内联脚本在首屏渲染前写入，避免深色下闪白。
+ */
 :root {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
-  /* 全站为浅色设计，固定为 light，避免系统深色模式下表单控件 / 滚动条配色不协调 */
+  /* 随主题切换，使表单控件 / 滚动条配色跟随明暗 */
   color-scheme: light;
+
+  --bg: #ffffff;
+  --bg-code: #f6f8fa;
+  --bg-chip: #f0f0f0;
+  --bg-chip-hover: #e4e4e4;
+  --bg-elevated: #ffffff;
+
+  --text: #333333;
+  --text-strong: #000000;
+  /* 目录当前章节等需要强调、但不到 --text-strong 那么重的文字 */
+  --text-emphasis: #111111;
+  --text-title: #222222;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --text-disabled: #bbbbbb;
+  /* 标签 chip 内的文字，比正文略浅 */
+  --text-chip: #555555;
+  /* 「加载中 / 暂无内容」等提示文字，以及首页、404 的占位大字 */
+  --text-hint: #808080;
+
+  --border: #eeeeee;
+  /* 顶栏下边框，比列表分隔线更淡一档 */
+  --border-subtle: #f0f0f0;
+  --border-strong: #dddddd;
+  --border-hover: #999999;
+
+  --error: #c0392b;
+  --mark-bg: #fff3b0;
+
+  --category-bg: #666666;
+  --category-bg-hover: #444444;
+  --category-text: #ffffff;
+
+  --btn-active-bg: #333333;
+  --btn-active-text: #ffffff;
+
+  --gutter-text: #b0b6be;
+  --gutter-border: #e2e5e9;
+  --code-copy-hover-bg: #ffffff;
+  --code-copy-hover-border: #d0d7de;
+  --copied: #2e7d32;
+
+  --shadow: rgba(0, 0, 0, 0.12);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #1b1f24;
+  --bg-code: #0d1117;
+  --bg-chip: #2a3038;
+  --bg-chip-hover: #343b45;
+  --bg-elevated: #22272e;
+
+  --text: #d5dae0;
+  --text-strong: #ffffff;
+  --text-emphasis: #f0f3f6;
+  --text-title: #e6eaef;
+  --text-secondary: #9aa4b0;
+  --text-muted: #7d8794;
+  --text-disabled: #5c6673;
+  --text-chip: #c3cad3;
+  --text-hint: #8b95a1;
+
+  --border: #2a3038;
+  --border-subtle: #262c33;
+  --border-strong: #3a424c;
+  --border-hover: #5c6673;
+
+  --error: #ff7b72;
+  --mark-bg: #5c4d00;
+
+  --category-bg: #3d4653;
+  --category-bg-hover: #4a5563;
+  --category-text: #e6eaef;
+
+  --btn-active-bg: #d5dae0;
+  --btn-active-text: #1b1f24;
+
+  --gutter-text: #6e7781;
+  --gutter-border: #2a3038;
+  --code-copy-hover-bg: #2a3038;
+  --code-copy-hover-border: #3a424c;
+  --copied: #7ee787;
+
+  --shadow: rgba(0, 0, 0, 0.5);
+}
+
+/*
+ * 切换主题的降级动画（浏览器不支持 View Transition 或用户要求减弱动效时）：
+ * 整页颜色渐变。只在切换的瞬间由 theme.js 挂上这个 class（250ms 后移除），
+ * 不做成常驻规则，否则会给所有元素的 hover 意外加上过渡。
+ */
+html.theme-switching * {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease !important;
+}
+
+/*
+ * 主题切换的圆形扩散：新主题以按钮为圆心铺开覆盖旧主题。
+ * 圆形本身由 theme.js 用 Web Animations API 给 ::view-transition-new(root) 加 clip-path，
+ * 这里只负责关掉浏览器默认的交叉淡入淡出——否则圆形边缘会被淡出效果冲淡。
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  /* 两张快照颜色不同，默认的 blend 会在重叠处出现浑浊的过渡色 */
+  mix-blend-mode: normal;
+}
+
+/* 新主题快照盖在旧主题之上，才能靠 clip-path 把它「擦」出来 */
+::view-transition-new(root) {
+  z-index: 1;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+/* 扩散期间不要让元素自己再做颜色过渡：与快照叠加会显得慢一拍 */
+html.theme-expanding * {
+  transition: none !important;
 }
 
 * {
@@ -21,6 +150,8 @@ html {
   /* 兜底：防止个别内容意外撑宽导致整页可横向拖动 */
   overflow-x: hidden;
   scrollbar-gutter: stable;
+  /* 过度滚动（橡皮筋效果）时不露出浏览器默认白底 */
+  background: var(--bg);
 }
 
 html,
@@ -33,6 +164,6 @@ body,
 mark {
   padding: 0 0.1em;
   color: inherit;
-  background: #fff3b0;
+  background: var(--mark-bg);
   border-radius: 2px;
 }

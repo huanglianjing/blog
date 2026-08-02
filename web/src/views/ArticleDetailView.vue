@@ -2,7 +2,9 @@
 import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import hljs from 'highlight.js/lib/common'
+// 浅色为基线主题，深色主题的选择器带 html[data-theme='dark'] 前缀覆盖其上。
 import 'highlight.js/styles/github.css'
+import '../assets/hljs-dark.css'
 
 const route = useRoute()
 
@@ -314,7 +316,7 @@ watch(
 .page {
   flex: 1;
   width: 100%;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 /* 回到顶部按钮：固定在右下角 */
@@ -329,18 +331,18 @@ watch(
   width: 42px;
   height: 42px;
   padding: 0;
-  color: #666;
-  background: #fff;
-  border: 1px solid #ddd;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
   border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px var(--shadow);
   cursor: pointer;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .back-top:hover {
-  color: #000;
-  border-color: #999;
+  color: var(--text-strong);
+  border-color: var(--border-hover);
 }
 
 .fade-enter-active,
@@ -386,7 +388,7 @@ watch(
 .toc-title {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text);
   margin: 0 0 0.75rem;
 }
 
@@ -394,7 +396,7 @@ watch(
   list-style: none;
   margin: 0;
   padding: 0;
-  border-left: 1px solid #eee;
+  border-left: 1px solid var(--border);
 }
 
 .toc-item a {
@@ -402,7 +404,7 @@ watch(
   padding: 0.25rem 0 0.25rem 0.75rem;
   font-size: 0.85rem;
   line-height: 1.4;
-  color: #666;
+  color: var(--text-secondary);
   text-decoration: none;
   border-left: 2px solid transparent;
   margin-left: -1px;
@@ -413,14 +415,14 @@ watch(
 }
 
 .toc-item a:hover {
-  color: #000;
-  border-left-color: #666;
+  color: var(--text-strong);
+  border-left-color: var(--text-secondary);
 }
 
 .toc-item a.active {
-  color: #111;
+  color: var(--text-emphasis);
   font-weight: 600;
-  border-left-color: #333;
+  border-left-color: var(--text);
 }
 
 /* 按标题级别缩进 */
@@ -439,19 +441,19 @@ watch(
 }
 
 .hint {
-  color: #808080;
+  color: var(--text-hint);
   text-align: center;
   padding: 2rem 0;
 }
 
 .hint.error {
-  color: #c0392b;
+  color: var(--error);
 }
 
 .title {
   font-size: 1.8rem;
   font-weight: 700;
-  color: #222;
+  color: var(--text-title);
   margin: 0 0 0.75rem;
 }
 
@@ -462,41 +464,41 @@ watch(
   gap: 0.5rem;
   padding-bottom: 1rem;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
   font-size: 0.85rem;
 }
 
 .date {
-  color: #999;
+  color: var(--text-muted);
 }
 
 .category {
-  color: #fff;
-  background: #666;
+  color: var(--category-text);
+  background: var(--category-bg);
   padding: 0.1rem 0.5rem;
   border-radius: 3px;
   text-decoration: none;
 }
 
 .category:hover {
-  background: #444;
+  background: var(--category-bg-hover);
 }
 
 .tag {
-  color: #555;
-  background: #f0f0f0;
+  color: var(--text-chip);
+  background: var(--bg-chip);
   padding: 0.1rem 0.5rem;
   border-radius: 3px;
   text-decoration: none;
 }
 
 .tag:hover {
-  background: #e4e4e4;
+  background: var(--bg-chip-hover);
 }
 
 /* 正文样式：v-html 内容不受 scoped 约束，用 :deep() 命中 */
 .body {
-  color: #333;
+  color: var(--text);
   line-height: 1.75;
   /* 长链接 / 长单词允许断行，避免撑破视口 */
   overflow-wrap: break-word;
@@ -519,7 +521,7 @@ watch(
 }
 
 .body :deep(pre) {
-  background: #f6f8fa;
+  background: var(--bg-code);
   padding: 1rem;
   border-radius: 6px;
   overflow-x: auto;
@@ -548,8 +550,8 @@ watch(
   flex: 0 0 auto;
   padding-right: 1rem;
   margin-right: 1rem;
-  border-right: 1px solid #e2e5e9;
-  color: #b0b6be;
+  border-right: 1px solid var(--gutter-border);
+  color: var(--gutter-text);
   text-align: right;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.9em;
@@ -588,7 +590,7 @@ watch(
 }
 
 .body :deep(.code-lang) {
-  color: #999;
+  color: var(--text-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -601,7 +603,7 @@ watch(
   width: 1.5rem;
   height: 1.5rem;
   padding: 0;
-  color: #666;
+  color: var(--text-secondary);
   background: transparent;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -628,13 +630,13 @@ watch(
 }
 
 .body :deep(.code-copy:hover) {
-  color: #000;
-  border-color: #d0d7de;
-  background: #fff;
+  color: var(--text-strong);
+  border-color: var(--code-copy-hover-border);
+  background: var(--code-copy-hover-bg);
 }
 
 .body :deep(.code-copy.copied) {
-  color: #2e7d32;
+  color: var(--copied);
   border-color: transparent;
   background: transparent;
 }
@@ -653,7 +655,7 @@ watch(
 
 .body :deep(th),
 .body :deep(td) {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-strong);
   padding: 0.4rem 0.6rem;
   white-space: nowrap;
 }

@@ -13,14 +13,14 @@
   justify-content: center;
   width: 100%;
   flex: 1;
-  background: #ffffff;
+  background: var(--bg);
 }
 
 .code {
   font-size: clamp(3rem, 15vw, 8rem);
   font-weight: 800;
   letter-spacing: 0.05em;
-  color: #808080;
+  color: var(--text-hint);
   user-select: none;
 }
 </style>
