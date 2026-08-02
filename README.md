@@ -29,7 +29,7 @@ make release
 # 2. 将 blog.tar.gz 传到服务器 /root 目录
 
 # 3. 将 blog.tar.gz 解压
-rm -r blog
+rm -rf blog/
 tar --warning=no-unknown-keyword -zxf blog.tar.gz
 
 # 4. 如果改动了后端，重启服务
@@ -140,7 +140,7 @@ tar --exclude=article/.git -zcf article.tar.gz article
 # 2. 将 article.tar.gz 传到服务器上
 
 # 3. 将 article.tar.gz 解压
-rm -r article
+rm -rf article/
 tar --warning=no-unknown-keyword -zxf article.tar.gz
 
 # 4. 将 markdown 转为 html，同时写入数据库
