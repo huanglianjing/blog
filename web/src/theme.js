@@ -62,11 +62,22 @@ export function toggleTheme(origin) {
 
   transition.ready
     .then(() => {
-      const { x, y } = origin
+      // clip-path 的坐标以快照盒子为基准，而它不一定等于视口尺寸（缩放、滚动条、
+      // 高分屏下都可能有差异）。所以圆心与半径全部用百分比表达：无论盒子多大，
+      // 圆心都落在按钮所在的相对位置上。
+      const w = innerWidth
+      const h = innerHeight
+      const fx = (origin.x / w) * 100
+      const fy = (origin.y / h) * 100
+
       // 圆要盖满整个视口，半径取到最远角的距离。
-      const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+      // circle() 的百分比半径基准是 sqrt(w²+h²)/sqrt(2)，换算后与 px 半径等效。
+      const px = Math.hypot(Math.max(origin.x, w - origin.x), Math.max(origin.y, h - origin.y))
+      const radius = (px / (Math.hypot(w, h) / Math.SQRT2)) * 100
+
+      const at = `at ${fx}% ${fy}%`
       root.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+        { clipPath: [`circle(0% ${at})`, `circle(${radius}% ${at})`] },
         {
           duration: EXPAND_MS,
           easing: 'ease-in-out',

@@ -120,6 +120,16 @@ html.theme-switching * {
   mix-blend-mode: normal;
 }
 
+/*
+ * 必须关掉 group 的默认动画：它会给快照插值 width / height / transform，
+ * 而 clip-path 的坐标是相对快照盒子的——一旦盒子被 transform 挪动或缩放，
+ * 圆心就跟着偏移（高分屏 / 大视口下两张快照尺寸易不一致，偏移尤其明显，
+ * 表现为圆心跑到顶栏中间偏左而不是按钮处）。
+ */
+::view-transition-group(root) {
+  animation: none;
+}
+
 /* 新主题快照盖在旧主题之上，才能靠 clip-path 把它「擦」出来 */
 ::view-transition-new(root) {
   z-index: 1;
