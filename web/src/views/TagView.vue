@@ -105,7 +105,7 @@ onMounted(fetchTags)
 }
 
 .tag-link.level-1 {
-  font-size: 1.4rem;
+  font-size: 1.3rem;
 }
 
 .tag-link.level-2 {
@@ -113,11 +113,11 @@ onMounted(fetchTags)
 }
 
 .tag-link.level-3 {
-  font-size: 1.7rem;
+  font-size: 1.8rem;
 }
 
 .tag-link.level-4 {
-  font-size: 2.1rem;
+  font-size: 2rem;
 }
 
 .tag-link:hover {

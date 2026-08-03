@@ -23,8 +23,8 @@ type DatabaseConfig struct {
 	Path string `yaml:"path"`
 }
 
-// Load 读取并解析 path 指向的 yaml 配置文件。
-func Load(path string) (*Config, error) {
+// LoadConfig 读取并解析 path 指向的 yaml 配置文件。
+func LoadConfig(path string) (*Config, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read config %q: %w", path, err)

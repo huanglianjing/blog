@@ -14,7 +14,7 @@ func main() {
 	cfgPath := flag.String("c", "config/config.yaml", "配置文件路径")
 	flag.Parse()
 
-	cfg, err := common.Load(*cfgPath)
+	cfg, err := common.LoadConfig(*cfgPath)
 	if err != nil {
 		log.Fatalf("load config: %v", err)
 	}
