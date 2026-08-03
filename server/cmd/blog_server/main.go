@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/huanglianjing/blog/server/internal/config"
+	"github.com/huanglianjing/blog/server/internal/common"
 	"github.com/huanglianjing/blog/server/internal/model"
 	"github.com/huanglianjing/blog/server/internal/router"
 )
@@ -14,7 +14,7 @@ func main() {
 	cfgPath := flag.String("c", "config/config.yaml", "配置文件路径")
 	flag.Parse()
 
-	cfg, err := config.Load(*cfgPath)
+	cfg, err := common.Load(*cfgPath)
 	if err != nil {
 		log.Fatalf("load config: %v", err)
 	}
