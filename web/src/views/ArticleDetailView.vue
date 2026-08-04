@@ -520,6 +520,32 @@ watch(
   margin: 0.75rem 0;
 }
 
+/*
+ * 列表：全局 reset 的 `* { padding: 0 }` 清掉了 ul / ol 的默认 padding-left，
+ * 若不补回来，嵌套列表每一层缩进都是 0，第二层看起来和第一层完全一样。
+ * 用 padding-left（而非 margin-left）使项目符号也随之缩进。
+ */
+.body :deep(ul),
+.body :deep(ol) {
+  margin: 0.75rem 0;
+  padding-left: 1.75rem;
+}
+
+/* 嵌套列表紧贴父项，不再重复上下外边距 */
+.body :deep(li > ul),
+.body :deep(li > ol) {
+  margin: 0.25rem 0;
+}
+
+.body :deep(li) {
+  margin: 0.25rem 0;
+}
+
+/* 列表项内的段落（松散列表）不额外拉开行距 */
+.body :deep(li > p) {
+  margin: 0.25rem 0;
+}
+
 .body :deep(pre) {
   background: var(--bg-code);
   padding: 1rem;
