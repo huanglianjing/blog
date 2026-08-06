@@ -1,4 +1,4 @@
-// Command article_converter 扫描博客源目录，将 blog_meta.yaml 中登记
+// Command article_converter 扫描博客源目录，将各分类子目录下 meta.yaml 中登记
 // 且 markdown 文件真实存在的文章转换为 html，按「分类/文章.html」的结构
 // 输出到目标目录（并清理目录内本次未生成的残留 html），同时把分类、标签、
 // 文章信息全量写入 sqlite（清理旧数据）。
@@ -14,6 +14,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/goccy/go-yaml"
 
@@ -21,13 +22,14 @@ import (
 	"github.com/huanglianjing/blog/server/internal/model"
 )
 
-// metaCategory 对应 blog_meta.yaml 中的一个分类条目。
+// metaCategory 是一个分类（源目录下的一级子目录）及其登记的文章。
+// 分类名取子目录名，文章列表来自该子目录下的 meta.yaml。
 type metaCategory struct {
-	Category string     `yaml:"category"`
-	Files    []metaFile `yaml:"files"`
+	Category string
+	Files    []metaFile
 }
 
-// metaFile 对应一篇文章的元信息。
+// metaFile 对应 meta.yaml 中一篇文章的元信息。
 type metaFile struct {
 	Title string   `yaml:"title"`
 	Date  string   `yaml:"date"`
@@ -36,7 +38,7 @@ type metaFile struct {
 
 func main() {
 	var (
-		srcDir = flag.String("src", "", "博客源目录（内含 blog_meta.yaml 和各分类子目录）")
+		srcDir = flag.String("src", "", "博客源目录（内含各分类子目录，每个子目录含 meta.yaml）")
 		outDir = flag.String("out", "", "html 输出目录")
 		dbPath = flag.String("db", "", "sqlite 数据库文件路径")
 	)
@@ -54,8 +56,8 @@ func main() {
 }
 
 func run(srcDir, outDir, dbPath string) error {
-	// 1. 读取并解析 blog_meta.yaml。
-	metas, err := loadMeta(filepath.Join(srcDir, "blog_meta.yaml"))
+	// 1. 扫描各分类子目录，读取其中的 meta.yaml。
+	metas, err := loadMeta(srcDir)
 	if err != nil {
 		return err
 	}
@@ -180,28 +182,62 @@ func cleanStaleHTML(outDir string, keep map[string]bool) (int, error) {
 	return removed, nil
 }
 
-// loadMeta 读取并解析 blog_meta.yaml。
-func loadMeta(path string) ([]metaCategory, error) {
-	data, err := os.ReadFile(path)
+// loadMeta 扫描源目录下的一级子目录，每个子目录即一个分类，
+// 文章列表来自该子目录下的 meta.yaml（文件不存在的目录跳过并打日志）。
+// 分类按目录名升序返回，保证多次运行结果一致。
+func loadMeta(srcDir string) ([]metaCategory, error) {
+	entries, err := os.ReadDir(srcDir)
 	if err != nil {
-		return nil, fmt.Errorf("read meta %q: %w", path, err)
+		return nil, fmt.Errorf("read src dir %q: %w", srcDir, err)
 	}
+
 	var metas []metaCategory
-	if err := yaml.Unmarshal(data, &metas); err != nil {
-		return nil, fmt.Errorf("parse meta %q: %w", path, err)
-	}
-	// 清洗名称中的不可见字符（如零宽空格），避免同名标签因此被拆成两个、破坏去重与排序。
-	for i := range metas {
-		metas[i].Category = common.CleanName(metas[i].Category)
-		for j := range metas[i].Files {
-			f := &metas[i].Files[j]
-			f.Title = common.CleanName(f.Title)
-			for k := range f.Tags {
-				f.Tags[k] = common.CleanName(f.Tags[k])
-			}
+	for _, entry := range entries {
+		// 只看一级子目录，忽略隐藏目录（如 .git）。
+		if !entry.IsDir() || strings.HasPrefix(entry.Name(), ".") {
+			continue
 		}
+		metaPath := filepath.Join(srcDir, entry.Name(), "meta.yaml")
+		files, err := loadCategoryMeta(metaPath)
+		if err != nil {
+			if os.IsNotExist(err) {
+				log.Printf("跳过（缺少 meta.yaml）: %s", metaPath)
+				continue
+			}
+			return nil, err
+		}
+		metas = append(metas, metaCategory{
+			// 清洗名称中的不可见字符（如零宽空格），避免同名分类因此被拆成两个、破坏去重与排序。
+			Category: common.CleanName(entry.Name()),
+			Files:    files,
+		})
 	}
 	return metas, nil
+}
+
+// loadCategoryMeta 读取并解析一个分类目录下的 meta.yaml，内容为文章元信息数组。
+// 文件不存在时返回的错误满足 os.IsNotExist，交由调用方决定是否跳过。
+func loadCategoryMeta(path string) ([]metaFile, error) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, err
+		}
+		return nil, fmt.Errorf("read meta %q: %w", path, err)
+	}
+	var files []metaFile
+	if err := yaml.Unmarshal(data, &files); err != nil {
+		return nil, fmt.Errorf("parse meta %q: %w", path, err)
+	}
+	// 清洗标题和标签中的不可见字符，避免同名标签被拆成两个。
+	for i := range files {
+		f := &files[i]
+		f.Title = common.CleanName(f.Title)
+		for j := range f.Tags {
+			f.Tags[j] = common.CleanName(f.Tags[j])
+		}
+	}
+	return files, nil
 }
 
 // builder 负责把 meta 数据组装成待写库的各表记录，并统一分配 id、去重。
