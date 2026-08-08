@@ -28,7 +28,8 @@ dev:
 	mkdir -p data
 	cd server && go build -o ../blog_dev/blog_server ./cmd/blog_server
 	cd server && go build -o ../blog_dev/article_converter ./cmd/article_converter
-	./blog_dev/article_converter -src ../article -db data/db/blog.db -out data/article_html
+	./blog_dev/article_converter -src ../article -db data/db/blog.db -out data/article_html \
+		-sitemap data/sitemap.xml -c ./server/config/config.yaml
 	cp ./server/config/config.yaml ./blog_dev/config/config.yaml
 
 # 清理构建产物

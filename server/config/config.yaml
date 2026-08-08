@@ -3,3 +3,6 @@ server:
 
 database:
   path: ../data/db/blog.db
+
+site:
+  base_url: https://huanglianjing.com

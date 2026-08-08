@@ -116,6 +116,11 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
+    # sitemap.xml 由 article_converter 生成在 dist 之外，单独指向该文件
+    location = /sitemap.xml {
+        alias /root/data/sitemap.xml;
+    }
+
     # 前端 SPA：其余路径回退到 index.html
     location / {
         try_files $uri $uri/ /index.html;
@@ -143,8 +148,8 @@ tar --exclude=article/.git -zcf article.tar.gz article
 rm -rf article/
 tar --warning=no-unknown-keyword -zxf article.tar.gz
 
-# 4. 将 markdown 转为 html，同时写入数据库
-./blog/article_converter -src article -db data/db/blog.db -out data/article_html
+# 4. 将 markdown 转为 html，写入数据库，同时更新 sitemap.xml
+./blog/article_converter -src article -db data/db/blog.db -out data/article_html -sitemap data/sitemap.xml -c blog/config/config.yaml
 ```
 
 # 更新 SSL 证书

@@ -11,6 +11,7 @@ import (
 type Config struct {
 	Server   ServerConfig   `yaml:"server"`
 	Database DatabaseConfig `yaml:"database"`
+	Site     SiteConfig     `yaml:"site"`
 }
 
 // ServerConfig 是 HTTP 服务相关配置。
@@ -21,6 +22,11 @@ type ServerConfig struct {
 // DatabaseConfig 是数据库相关配置。
 type DatabaseConfig struct {
 	Path string `yaml:"path"`
+}
+
+// SiteConfig 是站点自身信息，目前只用于生成 sitemap.xml。
+type SiteConfig struct {
+	BaseURL string `yaml:"base_url"` // 站点根地址
 }
 
 // LoadConfig 读取并解析 path 指向的 yaml 配置文件。

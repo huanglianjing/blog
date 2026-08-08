@@ -3,9 +3,13 @@
 // 输出到目标目录（并清理目录内本次未生成的残留 html），同时把分类、标签、
 // 文章信息全量写入 sqlite（清理旧数据）。
 //
+// 另可顺带生成 sitemap.xml（给搜索引擎收录用），需同时指定输出路径与配置文件
+// （站点根地址取配置的 site.base_url）。
+//
 // 用法:
 //
 //	article_converter -src <源目录> -out <html输出目录> -db <sqlite文件>
+//	    [-sitemap <sitemap.xml 输出路径> -c <配置文件>]
 package main
 
 import (
@@ -38,24 +42,43 @@ type metaFile struct {
 
 func main() {
 	var (
-		srcDir = flag.String("src", "", "博客源目录（内含各分类子目录，每个子目录含 meta.yaml）")
-		outDir = flag.String("out", "", "html 输出目录")
-		dbPath = flag.String("db", "", "sqlite 数据库文件路径")
+		srcDir      = flag.String("src", "", "博客源目录（内含各分类子目录，每个子目录含 meta.yaml）")
+		outDir      = flag.String("out", "", "html 输出目录")
+		dbPath      = flag.String("db", "", "sqlite 数据库文件路径")
+		sitemapPath = flag.String("sitemap", "", "sitemap.xml 输出路径（可选，需同时指定 -c）")
+		cfgPath     = flag.String("c", "", "配置文件路径（生成 sitemap 时用其 site.base_url）")
 	)
 	flag.Parse()
 
 	if *srcDir == "" || *outDir == "" || *dbPath == "" {
-		fmt.Fprintln(os.Stderr, "用法: article_converter -src <源目录> -out <html输出目录> -db <sqlite文件>")
+		fmt.Fprintln(os.Stderr, "用法: article_converter -src <源目录> -out <html输出目录> -db <sqlite文件> [-sitemap <输出路径> -c <配置文件>]")
 		flag.PrintDefaults()
 		os.Exit(2)
 	}
+	if *sitemapPath != "" && *cfgPath == "" {
+		fmt.Fprintln(os.Stderr, "生成 sitemap 需要用 -c 指定配置文件（取其 site.base_url）")
+		os.Exit(2)
+	}
 
-	if err := run(*srcDir, *outDir, *dbPath); err != nil {
+	// sitemap 的站点根地址来自配置文件，未指定 -sitemap 时不需要读配置。
+	var baseURL string
+	if *sitemapPath != "" {
+		cfg, err := common.LoadConfig(*cfgPath)
+		if err != nil {
+			log.Fatalf("load config: %v", err)
+		}
+		if strings.TrimSpace(cfg.Site.BaseURL) == "" {
+			log.Fatalf("配置文件 %s 缺少 site.base_url，无法生成 sitemap", *cfgPath)
+		}
+		baseURL = cfg.Site.BaseURL
+	}
+
+	if err := run(*srcDir, *outDir, *dbPath, *sitemapPath, baseURL); err != nil {
 		log.Fatalf("转换失败: %v", err)
 	}
 }
 
-func run(srcDir, outDir, dbPath string) error {
+func run(srcDir, outDir, dbPath, sitemapPath, baseURL string) error {
 	// 1. 扫描各分类子目录，读取其中的 meta.yaml。
 	metas, err := loadMeta(srcDir)
 	if err != nil {
@@ -138,7 +161,15 @@ func run(srcDir, outDir, dbPath string) error {
 		return fmt.Errorf("sync db: %w", err)
 	}
 
-	// 6. 汇总两类 meta 与 md 文件的不一致，方便一次性修正。
+	// 6. 生成 sitemap.xml（仅在指定了输出路径时）。
+	if sitemapPath != "" {
+		if err := writeSitemap(sitemapPath, baseURL, b); err != nil {
+			return err
+		}
+		log.Printf("生成 sitemap: %s", sitemapPath)
+	}
+
+	// 7. 汇总两类 meta 与 md 文件的不一致，方便一次性修正。
 	// 这部分是给人看的报告，用 fmt 直接输出，不带 log 的时间前缀。
 	if len(missing) > 0 {
 		fmt.Printf("meta.yaml 有登记但找不到 md 文件（%d 篇，已跳过）:\n", len(missing))
@@ -159,6 +190,7 @@ func run(srcDir, outDir, dbPath string) error {
 }
 
 // listMarkdownTitles 返回一个分类目录下所有 md 文件的标题（去掉 .md 后缀）。
+// 忽略隐藏文件（如 macOS 的 ._xxx.md），否则会被误报成「未登记的文章」。
 // 标题同样做不可见字符清洗，才能与 meta.yaml 中的标题对齐比较。
 func listMarkdownTitles(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)
@@ -167,10 +199,10 @@ func listMarkdownTitles(dir string) ([]string, error) {
 	}
 	var titles []string
 	for _, entry := range entries {
-		if entry.IsDir() || !strings.EqualFold(filepath.Ext(entry.Name()), ".md") {
+		name := entry.Name()
+		if entry.IsDir() || strings.HasPrefix(name, ".") || !strings.EqualFold(filepath.Ext(name), ".md") {
 			continue
 		}
-		name := entry.Name()
 		titles = append(titles, common.CleanName(strings.TrimSuffix(name, filepath.Ext(name))))
 	}
 	return titles, nil
@@ -178,6 +210,8 @@ func listMarkdownTitles(dir string) ([]string, error) {
 
 // cleanStaleHTML 删除输出目录中本次未生成的 html 文件，并移除因此变空的子目录。
 // keep 为本次生成的 html 绝对路径集合，非 html 文件一律保留。返回删除的文件数。
+// 隐藏文件与隐藏目录一律跳过、不递归也不删除，并计入「非空」，
+// 使含隐藏文件的目录不会被当成空目录删掉。
 func cleanStaleHTML(outDir string, keep map[string]bool) (int, error) {
 	absOut, err := filepath.Abs(outDir)
 	if err != nil {
@@ -198,6 +232,11 @@ func cleanStaleHTML(outDir string, keep map[string]bool) (int, error) {
 		remaining := 0
 		for _, entry := range entries {
 			path := filepath.Join(dir, entry.Name())
+			// 隐藏文件 / 目录不碰，但要计入非空，避免把它们所在的目录删掉。
+			if strings.HasPrefix(entry.Name(), ".") {
+				remaining++
+				continue
+			}
 			if entry.IsDir() {
 				empty, err := walk(path)
 				if err != nil {

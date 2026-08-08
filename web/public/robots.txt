@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+# 搜索结果页无固定内容，且参数组合无限，不需要收录。
+Disallow: /search
+
+Sitemap: https://huanglianjing.com/sitemap.xml
