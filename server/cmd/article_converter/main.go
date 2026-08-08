@@ -69,16 +69,27 @@ func run(srcDir, outDir, dbPath string) error {
 
 	// 3. 遍历 meta，转换存在的 markdown，收集要写库的数据。
 	b := newBuilder()
-	converted, skipped := 0, 0
+	converted := 0
+	var (
+		missing  []string // meta.yaml 有登记但 md 文件不存在
+		unlisted []string // md 文件存在但 meta.yaml 未登记
+	)
 	for _, mc := range metas {
 		categoryID := b.categoryID(mc.Category)
 
+		// 该分类目录下实际存在的 md 文件，用于反查未登记的文章。
+		mdTitles, err := listMarkdownTitles(filepath.Join(srcDir, mc.Category))
+		if err != nil {
+			return err
+		}
+		listed := make(map[string]bool, len(mc.Files))
+
 		for _, mf := range mc.Files {
+			listed[mf.Title] = true
 			srcPath := filepath.Join(srcDir, mc.Category, mf.Title+".md")
 			if _, statErr := os.Stat(srcPath); statErr != nil {
 				// meta 有记录但 md 文件不存在，跳过。
-				log.Printf("跳过（缺少 md 文件）: %s", srcPath)
-				skipped++
+				missing = append(missing, filepath.Join(mc.Category, mf.Title+".md"))
 				continue
 			}
 
@@ -103,6 +114,13 @@ func run(srcDir, outDir, dbPath string) error {
 			b.addArticle(mf, categoryID, absPath, common.HTMLToPlainText(htmlContent))
 			converted++
 		}
+
+		// 目录里有 md 文件但 meta.yaml 未登记，不会被转换，需要提醒补登记。
+		for _, title := range mdTitles {
+			if !listed[title] {
+				unlisted = append(unlisted, filepath.Join(mc.Category, title+".md"))
+			}
+		}
 	}
 
 	// 4. 清理输出目录中本次未生成的旧 html（文章改名、删除或换分类后的残留）。
@@ -120,9 +138,42 @@ func run(srcDir, outDir, dbPath string) error {
 		return fmt.Errorf("sync db: %w", err)
 	}
 
-	log.Printf("完成: 转换 %d 篇, 跳过 %d 篇, 清理残留 %d 个; 分类 %d, 标签 %d",
-		converted, skipped, removed, len(b.categories), len(b.tags))
+	// 6. 汇总两类 meta 与 md 文件的不一致，方便一次性修正。
+	// 这部分是给人看的报告，用 fmt 直接输出，不带 log 的时间前缀。
+	if len(missing) > 0 {
+		fmt.Printf("meta.yaml 有登记但找不到 md 文件（%d 篇，已跳过）:\n", len(missing))
+		for _, p := range missing {
+			fmt.Printf("  - %s\n", p)
+		}
+	}
+	if len(unlisted) > 0 {
+		fmt.Printf("md 文件未登记在 meta.yaml（%d 篇，未转换）:\n", len(unlisted))
+		for _, p := range unlisted {
+			fmt.Printf("  - %s\n", p)
+		}
+	}
+
+	fmt.Printf("完成: 转换 %d 篇, 缺少 md %d 篇, 未登记 md %d 篇, 清理残留 %d 个; 分类 %d, 标签 %d\n",
+		converted, len(missing), len(unlisted), removed, len(b.categories), len(b.tags))
 	return nil
+}
+
+// listMarkdownTitles 返回一个分类目录下所有 md 文件的标题（去掉 .md 后缀）。
+// 标题同样做不可见字符清洗，才能与 meta.yaml 中的标题对齐比较。
+func listMarkdownTitles(dir string) ([]string, error) {
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, fmt.Errorf("read category dir %q: %w", dir, err)
+	}
+	var titles []string
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.EqualFold(filepath.Ext(entry.Name()), ".md") {
+			continue
+		}
+		name := entry.Name()
+		titles = append(titles, common.CleanName(strings.TrimSuffix(name, filepath.Ext(name))))
+	}
+	return titles, nil
 }
 
 // cleanStaleHTML 删除输出目录中本次未生成的 html 文件，并移除因此变空的子目录。

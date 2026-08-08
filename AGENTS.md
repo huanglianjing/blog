@@ -32,10 +32,12 @@
 内容不是运行时从 markdown 渲染的，而是**离线预生成**：
 
 1. 源目录下每个一级子目录是一个**分类**（分类名即目录名），目录内含各篇文章的 `.md` 文件和一个 `meta.yaml`（登记本分类下文章的标题、日期、标签，内容为数组，无 `category` / `files` 外层结构）。隐藏目录（如 `.git`）和没有 `meta.yaml` 的目录会跳过。
-2. `article_converter -src <源目录> -out <html输出目录> -db <sqlite文件>` 扫描各分类目录读取 meta，对**真实存在**的 md 文件用 goldmark 转成 html 写入 `<out>/分类/标题.html`（meta 有记录但 md 缺失的会跳过并打日志），同时把分类 / 标签 / 文章 / 文章-标签关联**全量重建**写入 SQLite（事务内先清空各表再写入，见 [server/internal/model/sync.go](server/internal/model/sync.go)）。
+2. `article_converter -src <源目录> -out <html输出目录> -db <sqlite文件>` 扫描各分类目录读取 meta，对**真实存在**的 md 文件用 goldmark 转成 html 写入 `<out>/分类/标题.html`，同时把分类 / 标签 / 文章 / 文章-标签关联**全量重建**写入 SQLite（事务内先清空各表再写入，见 [server/internal/model/sync.go](server/internal/model/sync.go)）。运行结束会汇总两类 meta 与 md 的不一致（meta 有登记但 md 缺失、md 存在但 meta 未登记）。
 3. `blog_server` 提供 JSON 接口：文章元信息来自 SQLite，文章正文在请求时从 `article` 表记录的 html **绝对路径**读取。列表页摘要由 [server/internal/common/preview.go](server/internal/common/preview.go) 从 html 提取纯文本（跳过标题、图片、表格、代码块等）。
 
 改动文章内容后需重新运行 `article_converter` 才会生效。
+
+**草稿约定**：还没写完的文章，文件名以 `+` 开头（如 `+SQLite架构原理.md`），并且不登记到 `meta.yaml`。所以「md 文件未登记在 meta.yaml」的报告里出现 `+` 开头的文件是**正常的**，那是草稿，不需要去补登记。
 
 搜索用的正文纯文本存在 `article.content` 列，也由 `article_converter` 写入（用 `common.HTMLToPlainText`，与摘要不同，它保留标题和代码块文字）。该列体积大且不返回给前端，**不需要正文的文章查询都要 `Omit("content")`**。旧数据库升级后必须重跑一次 converter，否则正文搜索恒为空——`blog_server` 启动时会检测并打印警告。
 
