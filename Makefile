@@ -16,7 +16,7 @@ release:
 	cd server && $(GOBUILD) -o ../blog/article_converter ./cmd/article_converter
 	cp ./server/config/config.yaml ./blog/config/config.yaml
 	# 前端：构建 dist 并放入 blog/
-	cd web && npm install && npm run build
+	cd web && npm install --no-audit --no-fund && npm run build
 	cp -r ./web/dist ./blog/dist
 	# 压缩整个 blog/ 目录
 	tar zcf blog.tar.gz blog
