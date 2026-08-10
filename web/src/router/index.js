@@ -23,35 +23,72 @@ const SEARCH_TYPE_LABELS = {
 
 // 各页面网页标题：meta.title 为字符串或由 route 计算的函数，
 // 统一在 afterEach 里写入 document.title。
+//
+// meta.crumbs 为顶栏面包屑，是站点名之后的层级，由 route 计算出
+// `[{ text, to? }]`：带 to 的渲染成链接，末级一般不带。首页没有面包屑。
 const routes = [
   { path: '/', name: 'home', component: HomeView, meta: { title: SITE_NAME } },
-  { path: '/article', name: 'article', component: ArticleView, meta: { title: '文章' } },
+  {
+    path: '/article',
+    name: 'article',
+    component: ArticleView,
+    meta: {
+      title: '文章',
+      crumbs: () => [{ text: '文章' }],
+    },
+  },
   {
     path: '/article/:title',
     name: 'article-detail',
     component: ArticleDetailView,
     // 文章页标题就是文章标题（路由参数已由 vue-router 解码）。
-    meta: { title: (route) => route.params.title },
+    meta: {
+      title: (route) => route.params.title,
+      crumbs: (route) => [{ text: route.params.title }],
+    },
   },
-  { path: '/category', name: 'category', component: CategoryView, meta: { title: '分类' } },
+  {
+    path: '/category',
+    name: 'category',
+    component: CategoryView,
+    meta: { title: '分类', crumbs: () => [{ text: '分类' }] },
+  },
   {
     path: '/category/:name',
     name: 'category-detail',
     component: CategoryDetailView,
-    meta: { title: (route) => `分类 - ${route.params.name}` },
+    meta: {
+      title: (route) => `分类 - ${route.params.name}`,
+      crumbs: (route) => [{ text: '分类', to: '/category' }, { text: route.params.name }],
+    },
   },
-  { path: '/tag', name: 'tag', component: TagView, meta: { title: '标签' } },
+  {
+    path: '/tag',
+    name: 'tag',
+    component: TagView,
+    meta: { title: '标签', crumbs: () => [{ text: '标签' }] },
+  },
   {
     path: '/tag/:name',
     name: 'tag-detail',
     component: TagDetailView,
-    meta: { title: (route) => `标签 - ${route.params.name}` },
+    meta: {
+      title: (route) => `标签 - ${route.params.name}`,
+      crumbs: (route) => [{ text: '标签', to: '/tag' }, { text: route.params.name }],
+    },
   },
   {
     path: '/search',
     name: 'search',
     component: SearchView,
-    meta: { title: (route) => (route.query.q ? `搜索 - ${route.query.q}` : '搜索') },
+    meta: {
+      title: (route) => (route.query.q ? `搜索 - ${route.query.q}` : '搜索'),
+      crumbs: (route) => {
+        const crumbs = [{ text: '搜索' }]
+        if (route.query.q) crumbs.push({ text: route.query.q })
+        return crumbs
+      },
+    },
   },
   {
     path: '/search/:type',
@@ -65,13 +102,26 @@ const routes = [
         if (label) parts.push(label)
         return parts.join(' - ')
       },
+      crumbs: (route) => {
+        const crumbs = [{ text: '搜索' }]
+        // 关键词一级回到该关键词的全部结果页。
+        if (route.query.q) {
+          crumbs.push({
+            text: route.query.q,
+            to: { name: 'search', query: { q: route.query.q } },
+          })
+        }
+        const label = SEARCH_TYPE_LABELS[route.params.type]
+        if (label) crumbs.push({ text: label })
+        return crumbs
+      },
     },
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'notfound',
     component: NotFoundView,
-    meta: { title: '404' },
+    meta: { title: '404', crumbs: () => [{ text: '404' }] },
   },
 ]
 
