@@ -1,6 +1,8 @@
 <script setup>
 import HighlightText from './HighlightText.vue'
 
+// 文章列表：文章页、分类 / 标签详情页、搜索结果与首页最近文章共用。
+// keyword 只有搜索结果用得上，其余场景留空即不高亮。
 defineProps({
   articles: { type: Array, required: true },
   keyword: { type: String, default: '' },

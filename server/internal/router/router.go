@@ -20,6 +20,7 @@ func New() *gin.Engine {
 	article := api.Group("/article")
 	{
 		article.GET("/list", articleCtrl.List)
+		article.GET("/recent", articleCtrl.Recent)
 		article.GET("/detail", articleCtrl.Detail)
 	}
 

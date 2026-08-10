@@ -3,7 +3,7 @@ import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import Pagination from '../components/Pagination.vue'
 import SearchNameList from '../components/SearchNameList.vue'
-import SearchArticleList from '../components/SearchArticleList.vue'
+import ArticleList from '../components/ArticleList.vue'
 
 const TYPE_LABELS = {
   category: '分类',
@@ -80,7 +80,7 @@ watch([keyword, type], () => fetchList(0), { immediate: true })
             :type="type"
           />
           <template v-else>
-            <SearchArticleList :articles="list" :keyword="keyword" />
+            <ArticleList :articles="list" :keyword="keyword" />
             <Pagination
               :page="page"
               :total-pages="totalPages"

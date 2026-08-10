@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import SearchNameList from '../components/SearchNameList.vue'
-import SearchArticleList from '../components/SearchArticleList.vue'
+import ArticleList from '../components/ArticleList.vue'
 
 // 概览每类最多展示的条数，与后端 service.OverviewSize 一致。
 const OVERVIEW_SIZE = 5
@@ -81,7 +81,7 @@ watch(keyword, fetchOverview, { immediate: true })
             :keyword="keyword"
             :type="g.type"
           />
-          <SearchArticleList v-else :articles="g.data.list" :keyword="keyword" />
+          <ArticleList v-else :articles="g.data.list" :keyword="keyword" />
         </section>
       </template>
     </div>

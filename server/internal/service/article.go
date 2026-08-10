@@ -18,6 +18,9 @@ func NewArticleService() *ArticleService {
 // PageSize 是文章列表每页固定的记录数。
 const PageSize = 10
 
+// RecentSize 是首页最近文章模块展示的记录数。
+const RecentSize = 5
+
 // ArticleListResult 是 List 接口的返回结构。
 type ArticleListResult struct {
 	List       []model.Article `json:"list"`
@@ -45,6 +48,24 @@ func (s *ArticleService) List(page int) (*ArticleListResult, error) {
 		return nil, err
 	}
 	return &ArticleListResult{List: articles, TotalPages: totalPages}, nil
+}
+
+// ArticleRecentResult 是 Recent 接口的返回结构。
+type ArticleRecentResult struct {
+	List []model.Article `json:"list"`
+}
+
+// Recent 返回最近的 RecentSize 篇文章（日期倒序），文章字段与列表接口一致。
+// 首页用它展示最近文章，不需要分页信息。
+func (s *ArticleService) Recent() (*ArticleRecentResult, error) {
+	articles, err := model.ListArticles(0, RecentSize)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.enrichArticles(articles); err != nil {
+		return nil, err
+	}
+	return &ArticleRecentResult{List: articles}, nil
 }
 
 // enrichArticles 就地填充文章的日期、分类名、标签与预览等关联字段。

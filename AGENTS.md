@@ -20,7 +20,7 @@
 ├── web/                 // 前端（Vue 3 + Vite）
 │   └── src/
 │       ├── views/       // 页面级组件（每个路由一个）
-│       ├── components/  // 复用组件（TopBar、Pagination）
+│       ├── components/  // 复用组件（TopBar、Pagination、ArticleList）
 │       ├── router/      // vue-router 配置
 │       └── style.css    // 全局样式
 ├── Makefile             // 交叉编译 + 前端构建 + 打包发布
@@ -78,6 +78,7 @@ npm run build               # 生产构建到 web/dist
 - 所有接口统一以 `/api` 前缀注册（见 [server/internal/router/router.go](server/internal/router/router.go)）。
 - 现有接口：
   - `GET /api/article/list?page=` — 文章分页列表（page 从 0 开始）
+  - `GET /api/article/recent` — 最近 `service.RecentSize`（5）篇文章，无参数无分页，首页用
   - `GET /api/article/detail?title=` — 文章详情（含 html 正文）
   - `GET /api/category/overview` — 各分类及文章数（按文章数降序）
   - `GET /api/category/list?name=&page=` — 某分类下的文章分页
@@ -96,6 +97,7 @@ npm run build               # 生产构建到 web/dist
 - service 层查询列表时用 `enrichArticles` 统一填充分类名、标签、摘要等关联字段，新的文章列表接口应复用它。
 - 「未找到」在 model 层返回 `(nil, nil)`，由上层转成对应的业务错误码，不要直接返回 gorm 的 ErrRecordNotFound。
 - 前端每个路由对应一个 `views/*.vue`；列表页共用 `Pagination` 组件（数字分页，`page` 从 0 开始，`@change` 回传目标页）。
+- 文章列表的渲染统一走 `components/ArticleList.vue`（标题、日期、分类、标签、摘要），首页、文章页、分类 / 标签详情页、搜索结果页都用它；新增展示文章列表的页面复用该组件，不要再复制一遍模板和样式。`keyword` 只有搜索场景传，用于高亮。
 - 关键词高亮走 `HighlightText` 组件在前端切分渲染，**不要**让后端拼 `<mark>` 再 `v-html`：markdown 转换开了 `html.WithUnsafe()`，文章正文里可能有脚本，那样等于 XSS。
 - 前端整体为浅色设计、已做移动端适配（viewport、流式布局、表格横向滚动、长内容断行）；改样式时注意别破坏窄屏表现。
 

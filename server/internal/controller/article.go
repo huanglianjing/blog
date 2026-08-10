@@ -35,6 +35,16 @@ func (c *ArticleController) List(ctx *gin.Context) {
 	common.OK(ctx, result)
 }
 
+// Recent 处理 GET /article/recent，返回最近的若干篇文章（首页用），无参数。
+func (c *ArticleController) Recent(ctx *gin.Context) {
+	result, err := c.svc.Recent()
+	if err != nil {
+		common.Fail(ctx, 1, err.Error())
+		return
+	}
+	common.OK(ctx, result)
+}
+
 // Detail 处理 GET /article/detail，按标题返回文章详情。
 // 查询参数 title 为文章标题。
 func (c *ArticleController) Detail(ctx *gin.Context) {
