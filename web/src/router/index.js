@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import ArticleView from '../views/ArticleView.vue'
-import ArticleDetailView from '../views/ArticleDetailView.vue'
 import CategoryView from '../views/CategoryView.vue'
 import CategoryDetailView from '../views/CategoryDetailView.vue'
 import TagView from '../views/TagView.vue'
@@ -9,6 +8,9 @@ import TagDetailView from '../views/TagDetailView.vue'
 import SearchView from '../views/SearchView.vue'
 import SearchTypeView from '../views/SearchTypeView.vue'
 import NotFoundView from '../views/NotFoundView.vue'
+
+// 文章详情页静态引入了 highlight.js（约 170KB），首屏用不到，故懒加载单独成 chunk。
+const ArticleDetailView = () => import('../views/ArticleDetailView.vue')
 
 // 站点名，用作首页标题与兜底标题。
 const SITE_NAME = 'Moondo'

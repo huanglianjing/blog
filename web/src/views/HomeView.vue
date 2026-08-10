@@ -33,6 +33,7 @@ onMounted(fetchRecent)
       <section class="block">
         <div class="block-head">
           <h2 class="block-title">最近文章</h2>
+          <RouterLink class="more" to="/article">更多</RouterLink>
         </div>
 
         <p v-if="loading" class="hint">加载中…</p>
@@ -40,10 +41,6 @@ onMounted(fetchRecent)
         <p v-else-if="articles.length === 0" class="hint">暂无文章</p>
 
         <ArticleList v-else :articles="articles" />
-
-        <div class="block-foot">
-          <RouterLink class="more" to="/article">更多文章</RouterLink>
-        </div>
       </section>
     </div>
   </main>
@@ -62,7 +59,12 @@ onMounted(fetchRecent)
   padding: 2rem 1.5rem;
 }
 
+/* 标题与「更多」同一行，两端对齐 */
 .block-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
   margin-bottom: 0.9rem;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid var(--border);
@@ -85,14 +87,8 @@ onMounted(fetchRecent)
   color: var(--error);
 }
 
-/* 「更多文章」单独一行，右对齐 */
-.block-foot {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
 .more {
+  flex: none;
   font-size: 0.9rem;
   color: var(--text-secondary);
   text-decoration: none;

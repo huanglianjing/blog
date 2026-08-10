@@ -5,6 +5,8 @@ import hljs from 'highlight.js/lib/common'
 // 浅色为基线主题，深色主题的选择器带 html[data-theme='dark'] 前缀覆盖其上。
 import 'highlight.js/styles/github.css'
 import '../assets/hljs-dark.css'
+import { renderMermaid } from '../mermaid'
+import { theme } from '../theme'
 
 const route = useRoute()
 
@@ -49,6 +51,8 @@ async function fetchDetail(title) {
     await nextTick()
     buildToc()
     enhanceCodeBlocks()
+    // mermaid 块不走代码块增强，单独渲染成图（异步加载，失败时保留代码块）
+    renderMermaid(bodyRef.value)
   } catch (e) {
     error.value = e.message || '加载失败'
   } finally {
@@ -93,6 +97,8 @@ function enhanceCodeBlocks() {
   blocks.forEach((pre) => {
     // 避免重复包裹（例如同一文章多次调用）。
     if (pre.parentElement?.classList.contains('code-block')) return
+    // mermaid 块由 renderMermaid 替换成 svg，不需要高亮 / 行号 / 复制按钮。
+    if (pre.querySelector('code.language-mermaid')) return
 
     const code = pre.querySelector('code')
     // 从 code 的 class="language-xxx" 中解析语言名。
@@ -242,6 +248,9 @@ watch(
   },
   { immediate: true },
 )
+
+// mermaid 的配色是渲染时烧进 svg 的，主题切换后必须用原始源码重画一遍。
+watch(theme, () => renderMermaid(bodyRef.value))
 </script>
 
 <template>
@@ -669,6 +678,18 @@ watch(
 
 .body :deep(img) {
   max-width: 100%;
+}
+
+/* mermaid 图表：居中展示，窄屏时可横向滚动（svg 有固定的最小宽度） */
+.body :deep(.mermaid-block) {
+  margin: 1.25rem 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
+.body :deep(.mermaid-block svg) {
+  max-width: 100%;
+  height: auto;
 }
 
 /* 表格外层可横向滚动，避免宽表格撑破页面 */
