@@ -1,102 +1,122 @@
 /*
- * 代码高亮的深色配色，来源：highlight.js/styles/github-dark.css。
+ * 代码高亮的深色配色，来源：highlight.js/styles/vs2015.css（Visual Studio 2015 深色）。
+ * 浅色基线是官方的 vs.css，在 ArticleDetailView.vue 中引入。
  *
- * 不能直接 import 官方的 github-dark.css：它与已引入的 github.css（浅色）用的是
- * 同一批裸 .hljs-* 选择器，同时引入会互相覆盖、无法按主题区分。因此这里把它的
- * 着色规则逐条抄过来，选择器统一加 html[data-theme='dark'] 前缀，特异性高于
- * 浅色主题的单类选择器，深色模式下可靠覆盖。
+ * 不能直接 import 官方的 vs2015.css：它与 vs.css（浅色）用的是同一批裸 .hljs-* 选择器，
+ * 同时引入会互相覆盖、无法按主题区分。因此这里把它的着色规则逐条抄过来，选择器统一加
+ * html[data-theme='dark'] 前缀，特异性高于浅色主题的单类选择器，深色模式下可靠覆盖。
+ *
+ * 与官方 vs2015.css 的三处刻意差异：
+ *  1. .hljs 的 background 置为 transparent，代码块底色由 --bg-code 控制（不用主题自带的 #1e1e1e）。
+ *  2. addition / deletion 官方只设 background-color 不设 color，而浅色 vs.css 给它们设了
+ *     深红 / 青蓝前景色，直接照抄会让浅色前景泄漏到深色模式（暗红字压在深绿底上），
+ *     故这里显式补上前景色。
+ *  3. 不抄官方 addition / deletion 的 display:inline-block; width:100%（整行铺满高亮）：
+ *     浅色 vs.css 没有这条，抄过来会让明暗两种模式的 diff 块布局不一致，且站点代码块是
+ *     flex 布局，width:100% 可能引起意外的横向溢出。
  *
  * 升级 highlight.js 后若官方主题配色有变动，需同步更新本文件。
  */
 
 html[data-theme='dark'] .hljs {
-  color: #c9d1d9;
-  background: transparent; /* 代码块底色由 --bg-code 控制，不用主题自带的 #0d1117 */
+  color: #dcdcdc;
+  background: transparent; /* 代码块底色由 --bg-code 控制，不用主题自带的 #1e1e1e */
 }
 
-html[data-theme='dark'] .hljs-doctag,
 html[data-theme='dark'] .hljs-keyword,
-html[data-theme='dark'] .hljs-meta .hljs-keyword,
-html[data-theme='dark'] .hljs-template-tag,
-html[data-theme='dark'] .hljs-template-variable,
-html[data-theme='dark'] .hljs-type,
-html[data-theme='dark'] .hljs-variable.language_ {
-  color: #ff7b72;
-}
-
-html[data-theme='dark'] .hljs-title,
-html[data-theme='dark'] .hljs-title.class_,
-html[data-theme='dark'] .hljs-title.class_.inherited__,
-html[data-theme='dark'] .hljs-title.function_ {
-  color: #d2a8ff;
-}
-
-html[data-theme='dark'] .hljs-attr,
-html[data-theme='dark'] .hljs-attribute,
 html[data-theme='dark'] .hljs-literal,
-html[data-theme='dark'] .hljs-meta,
-html[data-theme='dark'] .hljs-number,
-html[data-theme='dark'] .hljs-operator,
-html[data-theme='dark'] .hljs-variable,
-html[data-theme='dark'] .hljs-selector-attr,
-html[data-theme='dark'] .hljs-selector-class,
-html[data-theme='dark'] .hljs-selector-id {
-  color: #79c0ff;
+html[data-theme='dark'] .hljs-symbol,
+html[data-theme='dark'] .hljs-name {
+  color: #569cd6;
 }
 
-html[data-theme='dark'] .hljs-regexp,
-html[data-theme='dark'] .hljs-string,
-html[data-theme='dark'] .hljs-meta .hljs-string {
-  color: #a5d6ff;
+html[data-theme='dark'] .hljs-link {
+  color: #569cd6;
+  text-decoration: underline;
 }
 
 html[data-theme='dark'] .hljs-built_in,
-html[data-theme='dark'] .hljs-symbol {
-  color: #ffa657;
+html[data-theme='dark'] .hljs-type {
+  color: #4ec9b0;
+}
+
+html[data-theme='dark'] .hljs-number,
+html[data-theme='dark'] .hljs-class {
+  color: #b8d7a3;
+}
+
+html[data-theme='dark'] .hljs-string,
+html[data-theme='dark'] .hljs-meta .hljs-string {
+  color: #d69d85;
+}
+
+html[data-theme='dark'] .hljs-regexp,
+html[data-theme='dark'] .hljs-template-tag {
+  color: #9a5334;
+}
+
+html[data-theme='dark'] .hljs-subst,
+html[data-theme='dark'] .hljs-function,
+html[data-theme='dark'] .hljs-title,
+html[data-theme='dark'] .hljs-params,
+html[data-theme='dark'] .hljs-formula {
+  color: #dcdcdc;
 }
 
 html[data-theme='dark'] .hljs-comment,
-html[data-theme='dark'] .hljs-code,
-html[data-theme='dark'] .hljs-formula {
-  color: #8b949e;
+html[data-theme='dark'] .hljs-quote {
+  color: #57a64a;
+  font-style: italic;
 }
 
-html[data-theme='dark'] .hljs-name,
-html[data-theme='dark'] .hljs-quote,
-html[data-theme='dark'] .hljs-selector-tag,
-html[data-theme='dark'] .hljs-selector-pseudo {
-  color: #7ee787;
+html[data-theme='dark'] .hljs-doctag {
+  color: #608b4e;
 }
 
-html[data-theme='dark'] .hljs-subst {
-  color: #c9d1d9;
+html[data-theme='dark'] .hljs-meta,
+html[data-theme='dark'] .hljs-meta .hljs-keyword,
+html[data-theme='dark'] .hljs-tag {
+  color: #9b9b9b;
+}
+
+html[data-theme='dark'] .hljs-variable,
+html[data-theme='dark'] .hljs-template-variable {
+  color: #bd63c5;
+}
+
+html[data-theme='dark'] .hljs-attr,
+html[data-theme='dark'] .hljs-attribute {
+  color: #9cdcfe;
 }
 
 html[data-theme='dark'] .hljs-section {
-  color: #1f6feb;
-  font-weight: bold;
-}
-
-html[data-theme='dark'] .hljs-bullet {
-  color: #f2cc60;
+  color: gold;
 }
 
 html[data-theme='dark'] .hljs-emphasis {
-  color: #c9d1d9;
   font-style: italic;
 }
 
 html[data-theme='dark'] .hljs-strong {
-  color: #c9d1d9;
   font-weight: bold;
 }
 
+html[data-theme='dark'] .hljs-bullet,
+html[data-theme='dark'] .hljs-selector-tag,
+html[data-theme='dark'] .hljs-selector-id,
+html[data-theme='dark'] .hljs-selector-class,
+html[data-theme='dark'] .hljs-selector-attr,
+html[data-theme='dark'] .hljs-selector-pseudo {
+  color: #d7ba7d;
+}
+
+/* 官方只给 diff 块设底色，前景色补成正文色，避免继承浅色 vs.css 的深红 / 青蓝 */
 html[data-theme='dark'] .hljs-addition {
-  color: #aff5b4;
-  background-color: #033a16;
+  color: #dcdcdc;
+  background-color: #144212;
 }
 
 html[data-theme='dark'] .hljs-deletion {
-  color: #ffdcd7;
-  background-color: #67060c;
+  color: #dcdcdc;
+  background-color: #660000;
 }

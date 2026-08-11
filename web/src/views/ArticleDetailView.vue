@@ -3,7 +3,7 @@ import { nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import hljs from 'highlight.js/lib/common'
 // 浅色为基线主题，深色主题的选择器带 html[data-theme='dark'] 前缀覆盖其上。
-import 'highlight.js/styles/github.css'
+import 'highlight.js/styles/vs.css'
 import '../assets/hljs-dark.css'
 import { renderMermaid } from '../mermaid'
 import { theme } from '../theme'
@@ -560,6 +560,7 @@ watch(theme, () => renderMermaid(bodyRef.value))
   padding: 1rem;
   border-radius: 6px;
   overflow-x: auto;
+  tab-size: 4;
 }
 
 .body :deep(code) {
