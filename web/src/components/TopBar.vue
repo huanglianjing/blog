@@ -197,13 +197,11 @@ onUnmounted(() => {
         <!--
           面包屑：站点名之后的各级，末级为当前页不带链接。
           逐字打出，中间态对读屏软件隐藏，另给一段完整文本（.sr-only）供其朗读。
+
+          这里不加 v-if：元素在与不在会改变 .brand-area 的高度（见样式里的说明），
+          切换路由时站点名就会跟着上下抖。空内容时它宽 0，常驻不占位。
         -->
-        <span
-          v-if="segments.length || typing"
-          class="crumbs"
-          :class="{ typing }"
-          aria-hidden="true"
-        >
+        <span class="crumbs" :class="{ typing }" aria-hidden="true">
           <template v-for="seg in segments" :key="seg.group">
             <span v-if="seg.sep" class="sep">{{ seg.text }}</span>
             <RouterLink v-else-if="seg.to" class="crumb" :to="seg.to">{{ seg.text }}</RouterLink>
@@ -311,13 +309,38 @@ onUnmounted(() => {
   color: var(--text-strong);
 }
 
+/*
+ * 面包屑的垂直几何必须与「显示了哪些字符」无关，否则打字动画每删 / 补一个字，
+ * 站点名与面包屑就会上下抖一下（约 0.5～1.5px）。有两处会引起抖动：
+ *
+ * 1. 行高用 normal 时，行盒高度取决于实际用到的字体：只有 `/` 时走 system-ui，
+ *    出现汉字时回退到 PingFang SC，行盒从 17px 变 20px。故此处写死行高。
+ * 2. 各级 .crumb 为了省略号带 overflow: hidden，因而是滚动容器，
+ *    基线由盒子下边缘合成而非文字基线（见 css-align）。若这里按 baseline 对齐，
+ *    基线组会随「当前有没有 .crumb 字符」在文字基线与盒底之间来回跳。
+ *    改为 center：各 item 行高一致、盒高一致，居中即等于对齐，与内容无关。
+ */
 .crumbs {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.5rem;
   min-width: 0;
   font-size: 0.9rem;
+  line-height: 1.4;
   white-space: nowrap;
+}
+
+/*
+ * 零宽字符撑出一条恒定的文字基线：.crumbs 作为 .brand-area 的 flex item
+ * 要参与基线对齐（与站点名对齐），而它的基线取自第一个子项——
+ * 内容为空时那就是光标（居中、无基线），基线又变了。
+ * 有了它，无论内容多少，基线都由这个子项决定。它自身宽 0，
+ * 负 margin 抵掉它引入的那一个 gap，所以水平位置分毫不变。
+ */
+.crumbs::before {
+  content: '\200b';
+  flex: none;
+  margin-right: -0.5rem;
 }
 
 .sep {
@@ -358,12 +381,11 @@ a.crumb:hover {
 /*
  * 打字光标：只在动画期间出现，不常驻闪烁（顶栏一直闪很烦）。
  * 用 ::after 而非独立元素，省掉一个随动画增删的节点。
- * 它是 .crumbs 的 flex item，故用 align-self 居中（空盒子没有可用的 baseline）。
+ * 它是 .crumbs 的 flex item，靠容器的 align-items: center 居中。
  */
 .crumbs.typing::after {
   content: '';
   flex: none;
-  align-self: center;
   width: 1px;
   height: 1.05em;
   /* 光标也是 flex item，会吃到 gap；抵消掉 gap 只留 2px，贴住最后一个字符 */
