@@ -108,20 +108,18 @@ function enhanceCodeBlocks() {
       if (cls) lang = cls.slice('language-'.length)
     }
 
-    // 语法高亮：指定语言且被 hljs 支持时按该语言高亮，否则自动识别。
+    // 语法高亮：只按 markdown 中明确标注的语言高亮。
     if (code) {
       const original = code.textContent
-      try {
-        const result =
-          lang && hljs.getLanguage(lang)
-            ? hljs.highlight(original, { language: lang })
-            : hljs.highlightAuto(original)
-        code.innerHTML = result.value
+      if (lang && hljs.getLanguage(lang)) {
+        try {
+          code.innerHTML = hljs.highlight(original, { language: lang }).value
+          code.classList.add('hljs')
+        } catch {
+          // 高亮失败时保留原始文本，不影响展示。
+        }
+      } else {
         code.classList.add('hljs')
-        // 自动识别出的语言用于工具栏标签展示。
-        if (!lang && result.language) lang = result.language
-      } catch {
-        // 高亮失败时保留原始文本，不影响展示。
       }
 
       // 行号列：代码不换行，物理行即逻辑行，用独立 gutter 保证对齐。
