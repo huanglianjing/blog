@@ -165,5 +165,10 @@ func (s *ArticleService) articleTagsMap(articleIDs []int64) (map[int64][]string,
 		}
 		result[r.ArticleID] = append(result[r.ArticleID], name)
 	}
+
+	// 每篇文章的标签按名称排序，规则与标签页面一致。
+	for id := range result {
+		common.SortNames(result[id])
+	}
 	return result, nil
 }

@@ -34,6 +34,10 @@
   --border-strong: #dddddd;
   --border-hover: #999999;
 
+  /* 正文链接（含自动识别出的裸链接） */
+  --link: #0969da;
+  --link-hover: #0550ae;
+
   --error: #c0392b;
   --mark-bg: #fff3b0;
 
@@ -76,6 +80,9 @@
   --border-subtle: #262c33;
   --border-strong: #3a424c;
   --border-hover: #5c6673;
+
+  --link: #4493f8;
+  --link-hover: #6cb6ff;
 
   --error: #ff7b72;
   --mark-bg: #5c4d00;

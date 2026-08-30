@@ -528,6 +528,26 @@ watch(theme, () => renderMermaid(bodyRef.value))
 }
 
 /*
+ * 正文链接：平时只用颜色区分、hover 才出下划线，
+ * 否则长文里自动识别出的裸链接会让整段布满下划线。
+ * 断行交给 .body 上的 overflow-wrap / word-break，长 URL 不会撑破窄屏。
+ */
+.body :deep(a) {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.body :deep(a:hover) {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* 图片链接（[![](图)](地址)）不需要文字色与下划线 */
+.body :deep(a:has(> img)) {
+  text-decoration: none;
+}
+
+/*
  * 列表：全局 reset 的 `* { padding: 0 }` 清掉了 ul / ol 的默认 padding-left，
  * 若不补回来，嵌套列表每一层缩进都是 0，第二层看起来和第一层完全一样。
  * 用 padding-left（而非 margin-left）使项目符号也随之缩进。

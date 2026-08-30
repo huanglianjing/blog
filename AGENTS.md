@@ -39,6 +39,10 @@
 
 **草稿约定**：还没写完的文章，文件名以 `+` 开头（如 `+SQLite架构原理.md`），并且不登记到 `meta.yaml`。所以「md 文件未登记在 meta.yaml」的报告里出现 `+` 开头的文件是**正常的**，那是草稿，不需要去补登记。
 
+**裸链接自动识别**：正文里没写成 `[]()` 的链接也会渲染成可点击的 `a`。除 GFM linkify 本身覆盖的（URL 前是半角空格或行首），[server/internal/common/linkify.go](server/internal/common/linkify.go) 的 AST transformer 还补上了中文与全角标点紧贴 URL 的写法（`见https://a.com`、`（https://a.com）`）；行内代码、代码块、已有链接内部一律不动。两个有意为之的边界：不识别 `example.com` 这类既无协议也无 `www.` 的裸域名（与 `config.io`、句中的 `etc.com` 无法区分）；URL 里的 `_` / `*` 成对出现时会先被 emphasis 解析掉，这时**放弃**识别而不是生成截断的错误 href，需要链接就显式写 `[]()` 或在 URL 前留一个半角空格。外链（`http` / `https` / `ftp` 开头）由 renderer 统一补 `target="_blank" rel="noopener noreferrer"`。
+
+> 这个缺口**不要**试着用 inline parser 去补：goldmark 只在 ASCII 标点、空白和行首处派发 inline parser（`util.IsPunct` 查表对 >= 0x80 的字节恒为 false），中文字符处根本不会调用，改 `Trigger()` 也没用——只能等 inline 解析完再遍历 AST。
+
 **sitemap.xml** 同样是离线产物：给 converter 传 `-sitemap <输出路径> -c <配置文件>` 就会顺带生成（省略则不生成），站点根地址取配置的 `site.base_url`。收录首页、`/article`、`/category`、`/tag` 四个入口页与每篇文章 / 每个分类 / 每个标签的详情页；列表页翻页不改 URL、搜索页无固定内容，故都不收录。路径编码用 [server/internal/common/sitemap.go](server/internal/common/sitemap.go) 的 `common.EncodeURIComponent`，与前端 `router-link` 里的 `encodeURIComponent` 严格一致（**不要**换成 `url.PathEscape`，它保留 `$&+,:;=@`，会让同一页面出现两种 URL）。`robots.txt` 是前端静态文件 [web/public/robots.txt](web/public/robots.txt)，随 dist 部署；换域名要同时改配置和它里面的 Sitemap 地址。
 
 搜索用的正文纯文本存在 `article.content` 列，也由 `article_converter` 写入（用 `common.HTMLToPlainText`，与摘要不同，它保留标题和代码块文字）。该列体积大且不返回给前端，**不需要正文的文章查询都要 `Omit("content")`**。旧数据库升级后必须重跑一次 converter，否则正文搜索恒为空——`blog_server` 启动时会检测并打印警告。

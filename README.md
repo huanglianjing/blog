@@ -90,24 +90,18 @@ server {
     listen 443 ssl http2;
     server_name huanglianjing.com;
 
-    # Let's Encrypt 证书路径
     ssl_certificate     /etc/nginx/huanglianjing.com_bundle.crt;
     ssl_certificate_key /etc/nginx/huanglianjing.com.key;
-
-    # SSL 安全参数（推荐）
     ssl_protocols       TLSv1.2 TLSv1.3;
     ssl_ciphers         HIGH:!aNULL:!MD5;
     ssl_prefer_server_ciphers on;
     ssl_session_cache   shared:SSL:10m;
     ssl_session_timeout 1d;
-
-    # HSTS：强制浏览器后续只用 HTTPS（确认站点稳定跑 HTTPS 后再开启）
     add_header Strict-Transport-Security "max-age=31536000" always;
 
     root /root/blog/dist;
     index index.html;
 
-    # 后端 API：与 vite.config.js 里代理的路径保持一致，统一 /api 前缀
     location /api/ {
         proxy_pass http://127.0.0.1:6000;
         proxy_set_header Host              $host;
@@ -115,13 +109,9 @@ server {
         proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-
-    # sitemap.xml 由 article_converter 生成在 dist 之外，单独指向该文件
     location = /sitemap.xml {
         alias /root/data/sitemap.xml;
     }
-
-    # 前端 SPA：其余路径回退到 index.html
     location / {
         try_files $uri $uri/ /index.html;
     }

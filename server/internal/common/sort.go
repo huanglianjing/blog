@@ -1,6 +1,7 @@
 package common
 
 import (
+	"sort"
 	"strings"
 	"unicode"
 
@@ -51,4 +52,16 @@ func NameSortKey(name string) string {
 		b.WriteByte(0)
 	}
 	return b.String()
+}
+
+// SortNames 按 NameSortKey 的规则就地排序名称列表，
+// 与标签页面、分类页面的名称排序规则一致。
+func SortNames(names []string) {
+	keys := make(map[string]string, len(names))
+	for _, n := range names {
+		keys[n] = NameSortKey(n)
+	}
+	sort.SliceStable(names, func(i, j int) bool {
+		return keys[names[i]] < keys[names[j]]
+	})
 }
