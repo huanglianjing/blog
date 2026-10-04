@@ -5,19 +5,14 @@
 # 本地运行
 
 ```bash
-# 1. 编译后端程序和转化文章
+# 1. 编译后端程序、转化文章，并在后台启动前后端服务（已在运行则跳过）
+#    日志分别在 blog_dev/blog_server.log、blog_dev/vite.log
 make dev
 
-# 2. 运行后端服务
-cd blog_dev
-./blog_server
+# 2. 浏览器打开网址 http://localhost:5173/
 
-# 3. 
-cd web
-npm install
-npm run dev
-
-# 4. 浏览器打开网址 http://localhost:5173/
+# 3. 停止后台的前后端服务并清理构建产物
+make clean
 ```
 
 # 博客部署
@@ -140,6 +135,7 @@ tar --warning=no-unknown-keyword -zxf article.tar.gz
 
 # 4. 将 markdown 转为 html，写入数据库，同时更新 sitemap.xml
 ./blog/article_converter -src article -db data/db/blog.db -out data/article_html -sitemap data/sitemap.xml -c blog/config/config.yaml
+
 ```
 
 # 更新 SSL 证书

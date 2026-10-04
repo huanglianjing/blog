@@ -4,7 +4,7 @@
  */
 
 /*
- * 动画速度全部由下面四个常量控制，改它们即可整体调快 / 调慢。
+ * 动画速度由下面四个常量和删除阶段的倍率控制。
  *
  * 删除与打字各自的总时长预算（ms）。按预算分摊到每个字符，而不是固定每字延时：
  * 文章名可能有三四十个字符，固定每字延时会让顶栏打到一秒多以后还没停。
@@ -55,9 +55,11 @@ export function commonPrefixLength(a, b) {
 
 // 把总预算分摊到 count 个字符上，夹在上下限之间。count 为 0 时不会被用到。
 export function stepDelay(count, erasing) {
-  if (count <= 0) return MIN_STEP
+  if (count <= 0) return erasing ? MIN_STEP / 1.5 : MIN_STEP
   const budget = erasing ? ERASE_BUDGET : TYPE_BUDGET
-  return Math.min(MAX_STEP, Math.max(MIN_STEP, Math.round(budget / count)))
+  const delay = Math.min(MAX_STEP, Math.max(MIN_STEP, Math.round(budget / count)))
+  // 删除阶段提速到原来的 1.5 倍；输入阶段沿用原来的延时。
+  return erasing ? delay / 1.5 : delay
 }
 
 /** 面包屑的无障碍文本，供读屏软件读取（动画中间态不适合朗读）。 */

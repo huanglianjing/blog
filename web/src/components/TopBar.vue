@@ -138,16 +138,31 @@ const open = ref(false)
 const keyword = ref('')
 const searchRef = ref(null)
 const inputRef = ref(null)
+const searchButtonRef = ref(null)
+
+// 点击按钮和快捷键共用展开、聚焦逻辑。
+async function focusSearch() {
+  open.value = true
+  await nextTick()
+  inputRef.value?.focus()
+}
 
 // 图标既是展开入口，展开后再点又是提交按钮。
-async function onIconClick() {
+function onIconClick() {
   if (open.value) {
     submit()
     return
   }
-  open.value = true
-  await nextTick()
-  inputRef.value?.focus()
+  focusSearch()
+}
+
+// 输入文字或使用组合键时保留原有按键行为，避免截走输入框中的斜杠。
+function onSearchShortcut(e) {
+  if (e.key !== '/' || e.defaultPrevented || e.isComposing || e.repeat || e.ctrlKey || e.metaKey || e.altKey) return
+  const target = e.target
+  if (target instanceof HTMLElement && (target.isContentEditable || target.closest('input, textarea, select'))) return
+  e.preventDefault()
+  focusSearch()
 }
 
 // 以按钮中心作为新主题扩散的圆心。取按钮几何中心而非鼠标落点，
@@ -159,8 +174,15 @@ function onThemeClick(e) {
 
 // 收起时清空输入，下次展开不残留上一次的关键词。
 function close() {
+  // 输入框收起后仍留在 DOM 中，需主动移走焦点。
+  inputRef.value?.blur()
   open.value = false
   keyword.value = ''
+}
+
+function onSearchEscape() {
+  close()
+  searchButtonRef.value?.focus({ preventScroll: true })
 }
 
 function submit() {
@@ -179,12 +201,14 @@ function onDocumentClick(e) {
 
 onMounted(() => {
   document.addEventListener('click', onDocumentClick)
+  document.addEventListener('keydown', onSearchShortcut)
   // 首屏不做动画：一进站就看着标题一个个打出来太吵，也会拖慢首屏观感。
   settle()
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', onDocumentClick)
+  document.removeEventListener('keydown', onSearchShortcut)
   stopTimer()
 })
 </script>
@@ -247,12 +271,22 @@ onUnmounted(() => {
             class="search-input"
             type="text"
             placeholder="搜索"
+            aria-label="搜索关键词"
+            aria-describedby="search-shortcut-tip"
             :tabindex="open ? 0 : -1"
             :aria-hidden="open ? 'false' : 'true'"
             @keyup.enter="submit"
-            @keyup.esc="close"
+            @keyup.esc="onSearchEscape"
           />
-          <button class="search-btn" type="button" aria-label="搜索" @click="onIconClick">
+          <button
+            ref="searchButtonRef"
+            class="search-btn"
+            type="button"
+            aria-label="搜索"
+            aria-keyshortcuts="/"
+            aria-describedby="search-shortcut-tip"
+            @click="onIconClick"
+          >
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
               <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" />
               <line
@@ -261,6 +295,7 @@ onUnmounted(() => {
               />
             </svg>
           </button>
+          <span id="search-shortcut-tip" class="search-tip" role="tooltip">按 <kbd>/</kbd> 搜索</span>
         </div>
       </div>
     </nav>
@@ -517,6 +552,36 @@ a.crumb:hover {
 
 .search-btn:hover {
   color: var(--text-strong);
+}
+
+/* 收起时悬停一秒后显示提示；移开鼠标或展开搜索框时立即隐藏。 */
+.search-tip {
+  position: absolute;
+  top: calc(100% + 0.75rem);
+  right: 0;
+  z-index: 3;
+  padding: 0.4rem 0.6rem;
+  color: var(--text);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px var(--shadow);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.search:not(.open):hover .search-tip {
+  visibility: visible;
+  transition: visibility 0s 1s;
+}
+
+.search-tip kbd {
+  padding: 0 0.25rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font-family: inherit;
 }
 
 /* 窄屏收紧间距，避免超小屏导航拥挤 */

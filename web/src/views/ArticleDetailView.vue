@@ -138,9 +138,12 @@ function enhanceCodeBlocks() {
     const bar = document.createElement('div')
     bar.className = 'code-bar'
 
-    const label = document.createElement('span')
-    label.className = 'code-lang'
-    label.textContent = lang || 'text'
+    if (lang) {
+      const label = document.createElement('span')
+      label.className = 'code-lang'
+      label.textContent = lang
+      bar.appendChild(label)
+    }
 
     const btn = document.createElement('button')
     btn.type = 'button'
@@ -149,7 +152,7 @@ function enhanceCodeBlocks() {
     btn.setAttribute('aria-label', '复制代码')
     btn.innerHTML = COPY_ICON_SVG + CHECK_ICON_SVG
 
-    bar.append(label, btn)
+    bar.appendChild(btn)
 
     pre.parentNode.insertBefore(wrapper, pre)
     wrapper.append(bar, pre)
@@ -654,6 +657,7 @@ watch(theme, () => renderMermaid(bodyRef.value))
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  margin-left: auto;
   width: 1.5rem;
   height: 1.5rem;
   padding: 0;
@@ -724,5 +728,10 @@ watch(theme, () => renderMermaid(bodyRef.value))
   border: 1px solid var(--border-strong);
   padding: 0.4rem 0.6rem;
   white-space: nowrap;
+}
+
+/* Markdown 表格首行为表头，用浅灰底色区分。 */
+.body :deep(thead th) {
+  background: var(--bg-table-header);
 }
 </style>
