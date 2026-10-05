@@ -589,6 +589,15 @@ watch(theme, () => renderMermaid(bodyRef.value))
   font-size: 0.9em;
 }
 
+/* 行内代码：灰底描边圆角，与代码块区分（pre 内的 code 由 pre 提供背景） */
+.body :deep(:not(pre) > code) {
+  background: var(--bg-inline-code);
+  border: 1px solid var(--border-inline-code);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+
 /* hljs 高亮后的代码块：去掉 hljs 主题自带的内边距/背景，沿用本站样式 */
 .body :deep(pre code.hljs) {
   display: block;

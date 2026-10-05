@@ -11,6 +11,9 @@
 
   --bg: #ffffff;
   --bg-code: #f6f8fa;
+  /* 行内代码：比代码块底色更深一档，配一圈描边，在正文里更醒目 */
+  --bg-inline-code: #eff1f3;
+  --border-inline-code: #d5dbe1;
   --bg-table-header: #f5f5f5;
   --bg-chip: #f0f0f0;
   --bg-chip-hover: #e4e4e4;
@@ -63,6 +66,8 @@
 
   --bg: #25292f;
   --bg-code: #1c2025;
+  --bg-inline-code: #353b44;
+  --border-inline-code: #4d5560;
   --bg-table-header: #313740;
   --bg-chip: #313740;
   --bg-chip-hover: #3b424c;
