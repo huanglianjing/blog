@@ -142,9 +142,9 @@ tar --warning=no-unknown-keyword -zxf article.tar.gz
 
 以下为腾讯云平台申请和使用的 SSL 证书。
 
-1. 打开 [SSL 证书](https://console.cloud.tencent.com/ssl)，点击申请免费证书
+1. 打开 [SSL 证书](https://console.cloud.tencent.com/ssl)，点击申请免费证书（如果勾选了 `自动DNS验证` 则无需操作第二步）
 2. 进入 [DNSPod 控制台](https://console.cloud.tencent.com/cns/detail/huanglianjing.com/records)，添加一条记录，粘贴对应的记录值
-3. 回到 SSL 证书页面，下载最新的证书，选择 Nginx 类型
+3. 回到 SSL 证书，在最新一条证书记录点击下载，选择 Nginx 类型
 4. 将 crt 文件和 key 文件上传到服务器的 `/etc/nginx/` 目录下
-5. 重启 Nginx `nginx -s reload`
+5. 重启 Nginx： `nginx -s reload`
 6. 在浏览器打开网站，检查证书的有效期
