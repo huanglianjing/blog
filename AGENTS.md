@@ -103,6 +103,7 @@ npm run build               # 生产构建到 web/dist
 - 前端每个路由对应一个 `views/*.vue`；列表页共用 `Pagination` 组件（数字分页，`page` 从 0 开始，`@change` 回传目标页）。
 - 文章列表的渲染统一走 `components/ArticleList.vue`（标题、日期、分类、标签、摘要），首页、文章页、分类 / 标签详情页、搜索结果页都用它；新增展示文章列表的页面复用该组件，不要再复制一遍模板和样式。`keyword` 只有搜索场景传，用于高亮。
 - 关键词高亮走 `HighlightText` 组件在前端切分渲染，**不要**让后端拼 `<mark>` 再 `v-html`：markdown 转换开了 `html.WithUnsafe()`，文章正文里可能有脚本，那样等于 XSS。
+- 404 页从 `web/src/assets/404/` 随机挑一张配图展示（svg / png / jpg / jpeg / gif / webp / avif，增删后需重新构建）。SVG 以源码内联，颜色应写成 `var(--text-hint, #808080)` 这类主题变量（带回退值）才能跟随深浅色；SVG 内的 class、id、`@keyframes` 名必须加文件专属前缀，避免污染页面样式。目录为空时退回纯文字 404。
 - 前端整体为浅色设计、已做移动端适配（viewport、流式布局、表格横向滚动、长内容断行）；改样式时注意别破坏窄屏表现。
 
 ## 验证改动
