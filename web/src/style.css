@@ -21,6 +21,12 @@
 
   --text: #333333;
   --text-strong: #000000;
+  /*
+   * 顶栏站点名常态 / 悬停色。亮色下若沿用 --text（#333）→ 黑，深灰到黑几乎看不出变化，
+   * 故常态调浅一些，让悬停变深足够明显（暗色下 --text → 白本身就够明显）。
+   */
+  --brand-text: #666666;
+  --brand-text-hover: #000000;
   /* 目录当前章节等需要强调、但不到 --text-strong 那么重的文字 */
   --text-emphasis: #111111;
   --text-title: #222222;
@@ -75,6 +81,8 @@
 
   --text: #d5dae0;
   --text-strong: #ffffff;
+  --brand-text: #d5dae0;
+  --brand-text-hover: #ffffff;
   --text-emphasis: #f0f3f6;
   --text-title: #e6eaef;
   --text-secondary: #9aa4b0;

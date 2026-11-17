@@ -67,7 +67,7 @@ systemctl status blog_server # 查看运行状态
 日常运维：
 
 ```bash
-journalctl -u blog -f # 实时查看日志
+journalctl -u blog_server -f # 实时查看日志
 ```
 
 ## Nginx 配置

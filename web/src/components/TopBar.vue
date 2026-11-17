@@ -218,7 +218,7 @@ onUnmounted(() => {
   <header class="topbar">
     <nav class="topbar-inner">
       <div class="brand-area">
-        <RouterLink class="brand" to="/">Moondo</RouterLink>
+        <RouterLink class="brand" to="/">MOONDO</RouterLink>
         <!--
           面包屑：站点名之后的各级，末级为当前页不带链接。
           逐字打出，中间态对读屏软件隐藏，另给一段完整文本（.sr-only）供其朗读。
@@ -236,9 +236,9 @@ onUnmounted(() => {
         <span v-if="a11yText" class="sr-only">面包屑：{{ a11yText }}</span>
       </div>
       <div class="nav-links">
-        <RouterLink class="nav-link" to="/article">文章</RouterLink>
-        <RouterLink class="nav-link" to="/category">分类</RouterLink>
-        <RouterLink class="nav-link" to="/tag">标签</RouterLink>
+        <RouterLink class="nav-link" to="/article"><span class="nav-text">文章</span></RouterLink>
+        <RouterLink class="nav-link" to="/category"><span class="nav-text">分类</span></RouterLink>
+        <RouterLink class="nav-link" to="/tag"><span class="nav-text">标签</span></RouterLink>
         <!-- 主题切换：浅色下显示月亮（点击转深色），深色下显示太阳，切换时两者变形过渡 -->
         <button
           class="theme-btn"
@@ -311,23 +311,42 @@ onUnmounted(() => {
 /* 站点名 + 面包屑：整体可压缩，过长时由面包屑末级省略，站点名不被挤掉 */
 .brand-area {
   display: flex;
+  align-self: stretch; /* 撑满顶栏高度，站点名的点击区才能顶到上下边 */
   align-items: baseline;
   gap: 0.5rem;
   min-width: 0;
   overflow: hidden;
 }
 
+/*
+ * 点击区撑满顶栏高度：行高直接取顶栏高度，文字落在行盒正中，
+ * 而基线仍是文字基线，面包屑照旧与它基线对齐（不能改成 flex 居中，那样就没有文字基线了）。
+ * 悬停只变色，不放大不加粗。
+ */
 .brand {
   flex: none;
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 56px; /* 与 .topbar-inner 的 height 一致 */
   letter-spacing: 0.05em;
-  color: var(--text);
+  color: var(--brand-text);
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
-.brand:hover {
-  color: var(--text-strong);
+/* 已在首页时点它没有效果，不给悬停反馈 */
+.brand:not(.router-link-exact-active):hover {
+  color: var(--brand-text-hover);
+}
+
+/*
+ * 已在首页时不呈现为可点：指针保持箭头、文字不可选中。
+ * 不用 pointer-events: none：那样鼠标事件会落到下层，反而能从这里拖选文字，
+ * 也没法把链接拖到新标签页。点击本身无需拦截——导航到当前路由时 vue-router 什么也不做。
+ */
+.brand.router-link-exact-active {
+  cursor: default;
+  user-select: none;
 }
 
 /*
@@ -346,7 +365,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
-  font-size: 0.9rem;
+  font-size: 1rem;
   line-height: 1.4;
   white-space: nowrap;
 }
@@ -379,19 +398,21 @@ onUnmounted(() => {
 
 /*
  * 可点击的上级：浅色常规字重，无下划线；当前页（末级）：深色加粗。
- * 靠颜色 + 字重两重区分，hover 时再加实线下划线给出可点的即时反馈。
+ * 靠颜色 + 字重两重区分，hover 时字号放大一号（约 1.1 倍）给出可点的即时反馈。
+ * 放大用 transform: scale 而非改 font-size：后者会改变宽度，把后面的面包屑挤得左右晃。
  */
 a.crumb {
   color: var(--text-secondary);
   font-weight: 400;
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 a.crumb:hover {
   color: var(--text-strong);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  transform: scale(1.1);
 }
 
 .crumb.current {
@@ -441,24 +462,55 @@ a.crumb:hover {
 .nav-links {
   display: flex;
   flex: none;
+  align-self: stretch; /* 撑满顶栏高度，导航链接才能顶到上下边 */
   align-items: center;
   gap: 1.5rem;
 }
 
+/*
+ * 可点击区域撑满顶栏整个高度；左右各向 gap 里伸出一半（padding 撑开、
+ * 负 margin 抵回），相邻链接的点击区正好相接，视觉间距与布局都不变。
+ */
 .nav-link {
-  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+  padding: 0 0.75rem;
+  margin: 0 -0.75rem;
+  font-size: 1.05rem;
   color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.2s ease;
+}
+
+/*
+ * 悬停反馈只作用于文字：字号放大一号（约 1.1 倍），背景不变。
+ * 用 transform: scale 而不是改 font-size：后者会改变文字宽度与行高，
+ * 把相邻链接挤得左右晃；scale 只影响绘制，不参与布局，且能平滑过渡。
+ */
+.nav-text {
+  display: inline-block; /* transform 对行内元素无效 */
+  transition: transform 0.2s ease;
 }
 
 .nav-link:hover {
   color: var(--text-strong);
 }
 
+.nav-link:hover .nav-text {
+  transform: scale(1.1);
+}
+
 .nav-link.router-link-active {
   color: var(--text-strong);
   font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-text,
+  a.crumb {
+    transition: none;
+  }
 }
 
 /* 主题切换按钮：与搜索图标同规格的纯图标按钮 */
@@ -514,7 +566,7 @@ a.crumb:hover {
 
 .search.open .search-input {
   /* 左边缘越过「文章」再多两个字宽，把整组导航链接都盖住 */
-  width: 14.5rem;
+  width: 15.25rem;
   padding: 0.3rem 0.6rem;
   border-color: var(--border-strong);
   opacity: 1;
@@ -577,7 +629,7 @@ a.crumb:hover {
   }
 
   .brand {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     letter-spacing: 0.03em;
   }
 
@@ -586,7 +638,9 @@ a.crumb:hover {
   }
 
   .nav-link {
-    font-size: 0.9rem;
+    padding: 0 0.5rem;
+    margin: 0 -0.5rem; /* 随 gap 收紧到 1rem，各伸出一半 */
+    font-size: 1rem;
   }
 
   /* 超小屏导航已占满整行，面包屑挤到只剩省略号，不如整段隐藏 */
@@ -600,6 +654,21 @@ a.crumb:hover {
    */
   .search.open .search-input {
     width: 12rem;
+  }
+}
+
+/*
+ * 超窄屏（如 320px）：全大写的站点名会与导航挤在一起，
+ * 展开的搜索框也会盖到站点名，故站点名再收小、搜索框再收窄一点。
+ */
+@media (max-width: 360px) {
+  .brand {
+    font-size: 1.05rem;
+    letter-spacing: 0.02em;
+  }
+
+  .search.open .search-input {
+    width: 11.5rem;
   }
 }
 </style>

@@ -48,6 +48,7 @@ dev:
 		cd web; nohup ./node_modules/.bin/vite > ../blog_dev/vite.log 2>&1 & echo $$! > $(FRONTEND_PID); \
 		echo "前端已启动（pid $$(cat $(FRONTEND_PID))），日志 blog_dev/vite.log"; \
 	fi
+	@echo ""
 	@echo "浏览器打开 http://localhost:5173/"
 
 # 停止后台的前后端进程，清理构建产物

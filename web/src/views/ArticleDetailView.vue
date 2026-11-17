@@ -582,6 +582,7 @@ watch(theme, () => renderMermaid(bodyRef.value))
   border-radius: 6px;
   overflow-x: auto;
   tab-size: 4;
+  line-height: 1.6;
 }
 
 .body :deep(code) {
